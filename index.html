@@ -48,6 +48,8 @@ const SNAPSHOT = D.SNAPSHOT;
 
 // Card 3: org-level referral onboardings (matches the 552 target definition)
 const PACE = D.PACE;
+const todaySoFar = PACE.todaySoFar || 0;
+const monthToNow = PACE.sepToDate + todaySoFar;
 
 // Card 2: campaign-level daily funnel
 const DAILY = D.DAILY;
@@ -280,10 +282,10 @@ function PaceTrack() {
     <div className="track" aria-label="Monthly onboardings pace">
       <div className="rail" />
       <div className="range" style={{ left: pct(projLow), width: pct(projHigh - projLow) }} />
-      <div className="done" style={{ width: pct(PACE.sepToDate) }} />
+      <div className="done" style={{ width: pct(monthToNow) }} />
 
       <div className="lbl above left" style={{ left: 0 }}>
-        <b>{PACE.sepToDate}</b>onboarded, 1 to {SNAPSHOT.fullDays} {PACE.monthShort}
+        <b>{monthToNow}</b>onboarded, 1 {PACE.monthShort} to now ({todaySoFar} today so far)
       </div>
       <div className="mark light" style={{ left: pct(projMid) }} />
       <div className="lbl above" style={{ left: pct(projMid) }}>
@@ -481,7 +483,7 @@ function MilestoneDashboard() {
       <section className="first">
         <div className="sechead">
           <h2>{PACE.monthName} onboardings against target</h2>
-          <span className="note">All referral onboardings, not just campaign signups, so it lines up with the {PACE.target} target.</span>
+          <span className="note">All referral onboardings, not just campaign signups, so it lines up with the {PACE.target} target. Projection uses full days only.</span>
         </div>
         <PaceTrack />
         <p className="note" style={{ marginTop: 22 }}>{N.pace}</p>

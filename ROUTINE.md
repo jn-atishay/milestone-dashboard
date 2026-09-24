@@ -31,7 +31,7 @@ If Mixpanel fails, keep the previous `POPUP` block and say so in `notes.popupHea
 Dates on the page are written like "24 Sep". Keep every key the current file has. Mapping:
 
 - `SNAPSHOT`: `asOf` "24 Sep 2026, 14:00 IST"; `campaignDay` = days since campaign_start + 1; `daysLeft` = campaign_end minus today; `fullDays` = full days elapsed in the current month (day of month minus 1); `campaignFullDays` = days since campaign_start.
-- `PACE` (from 02): `months` = the three `month` rows, oldest first, as `{month: "Jun", firstN, full}`; `sepDaily` = the `day` rows as a list of counts from day 1 to yesterday, with 0 for missing days; `sepToDate` = sum of `sepDaily`; `target` and `stretchPlus` from `config.targets["YYYY-MM"]`; `monthName` ("September"), `monthShort` ("Sep"), `daysInMonth`. The keys are called `sep...` for every month; keep the names.
+- `PACE` (from 02): `months` = the three `month` rows, oldest first, as `{month: "Jun", firstN, full}`; `sepDaily` = the `day` rows as a list of counts from day 1 to yesterday, with 0 for missing days; `sepToDate` = sum of `sepDaily`; `todaySoFar` = the count on the `today` row (onboardings so far today, 0 if none); `target` and `stretchPlus` from `config.targets["YYYY-MM"]`; `monthName` ("September"), `monthShort` ("Sep"), `daysInMonth`. The keys are called `sep...` for every month; keep the names.
 - `DAILY` (01, g = daily): `{day: "1 Sep", dow: k2, signups: v1, referrers: v2, onboardings: v3, activations: v4, claims: v5}` as numbers.
 - `QUALITY` (01, g = quality): `{week: "7 Sep", signups: v1, ob1d: v2, ob7d: v3, obSoFar: v4, actOfOb: v5, medianDays: v6}` as numbers, 0 for null.
 - `WEEKLY` (01, g = weekly): `{week: "7 Sep", period: k2, signups: v1, referrers: v2, perRef: v3}`.

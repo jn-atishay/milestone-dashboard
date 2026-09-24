@@ -1,7 +1,8 @@
 -- All referral onboardings (every campaign, referee deduped to earliest referrer), the definition the monthly target uses.
 -- Flagged referrers are NOT excluded here: their onboardings are real onboardings.
 -- Rows: 'month' = previous three months (full month, and first N days where N = full days elapsed this month);
---       'day'   = each full day of the current month.
+--       'day'   = each full day of the current month;
+--       'today' = onboardings so far today (always one row, 0 if none).
 WITH today AS (SELECT (now() AT TIME ZONE 'Asia/Kolkata')::date AS d),
 n AS (SELECT EXTRACT(day FROM d)::int - 1 AS full_days, date_trunc('month', d)::date AS m0 FROM today),
 referee_ob AS (SELECT exporter_id, MIN(created_at AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Kolkata') AS fo FROM cc_account GROUP BY 1),
@@ -18,4 +19,6 @@ FROM org, n WHERE ts < n.m0 GROUP BY 2
 UNION ALL
 SELECT 'day', ts::date::text, COUNT(*), NULL
 FROM org, n, today WHERE ts >= n.m0 AND ts::date < today.d GROUP BY 2
+UNION ALL
+SELECT 'today', (SELECT d FROM today)::text, (SELECT COUNT(*) FROM org, today WHERE org.ts::date = today.d), NULL
 ORDER BY 1, 2;

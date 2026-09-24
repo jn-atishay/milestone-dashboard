@@ -1,0 +1,672 @@
+import { useState } from "react";
+import {
+  ComposedChart, Bar, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
+  CartesianGrid, ReferenceLine, Legend, LineChart,
+} from "recharts";
+
+// ============================================================================
+// DATA SNAPSHOT
+// Pulled from Metabase (Prod Admin, db 6) on 14 Sep 2026 at ~05:40 IST using
+// the queries in milestone_campaign_dashboard_queries.md. To refresh, re-run
+// the queries and replace the blocks below. Nothing else in the file needs
+// to change.
+// ============================================================================
+
+const SNAPSHOT = D.SNAPSHOT;
+
+// Card 1
+
+
+// Card 3: org-level referral onboardings (matches the 552 target definition)
+const PACE = D.PACE;
+
+// Card 2: campaign-level daily funnel
+const DAILY = D.DAILY;
+
+// Card 4
+
+
+// Card 5 (top 15 by achieved, then onboarded)
+
+
+// Popup funnel from Mixpanel (Sept 1-23, type = moonshot_campaign, all at referralTarget 1)
+const POPUP = D.POPUP;
+
+// Per-referrer table (Metabase, 24 Sep 10:00 IST, exporter 85276 excluded). Columns:
+// id, name, business type, referrer's own onboarding date, referrer's own activation date,
+// campaign signups, campaign onboardings, campaign activations, gift claimed, cohort
+const BT = { F: "Freelancer", SP: "Sole prop", C: "Company", LLP: "LLP", PT: "Partnership", HUF: "HUF", "": "" };
+const COHORT = { FT: "First-time referrer", RN: "Repeat, never achieved", R1: "Repeat, 1-2 achieved", R3: "Repeat, 3+ achieved" };
+const GIFT = { P: "Polaroid", "": "" };
+const REFERRERS_RAW = D.REFERRERS_RAW;
+const REFERRERS = REFERRERS_RAW.map((r) => ({
+  id: r[0], name: r[1], bt: BT[r[2]] || r[2], onboarded: r[3] || "", activated: r[4] || "",
+  signups: r[5], obs: r[6], acts: r[7], gift: GIFT[r[8]] || r[8], cohort: COHORT[r[9]] || r[9],
+}));
+// ---- derived from the per-referrer table so totals always reconcile ----
+const sumBy = (rows, k) => rows.reduce((a, r) => a + r[k], 0);
+const HEADLINE = (() => {
+  const signups = sumBy(REFERRERS, "signups"), obs = sumBy(REFERRERS, "obs"), acts = sumBy(REFERRERS, "acts");
+  return {
+    signups, onboardings: obs, activations: acts, referrers: REFERRERS.length,
+    signupsPerReferrer: +(signups / Math.max(1, REFERRERS.length)).toFixed(2),
+    signupToOb: +(100 * obs / Math.max(1, signups)).toFixed(1),
+    obToAct: +(100 * acts / Math.max(1, obs)).toFixed(1),
+    onboardingsPerDay: +(obs / Math.max(1, SNAPSHOT.campaignFullDays || SNAPSHOT.fullDays)).toFixed(1),
+    rewardsClaimed: REFERRERS.filter((r) => r.gift).length,
+  };
+})();
+const RUNGS = [
+  { rung: "Nothing unlocked yet", range: "0", lo: 0, hi: 0 },
+  { rung: "Polaroid", range: "1-2", lo: 1, hi: 2 },
+  { rung: "AirPods 4", range: "3-4", lo: 3, hi: 4 },
+  { rung: "Ray-Ban Meta", range: "5-7", lo: 5, hi: 7 },
+  { rung: "iPhone 17", range: "8+", lo: 8, hi: 1e9 },
+];
+const LADDER = RUNGS.map((g) => {
+  const rs = REFERRERS.filter((r) => r.acts >= g.lo && r.acts <= g.hi);
+  return { rung: g.rung, range: g.range, referrers: rs.length, signups: sumBy(rs, "signups"), onboarded: sumBy(rs, "obs"),
+    achieved: sumBy(rs, "acts"), waiting: sumBy(rs, "obs") - sumBy(rs, "acts"), claimed: rs.filter((r) => r.gift).length };
+});
+const nextRung = (a) => (a < 1 ? [1, "Polaroid"] : a < 3 ? [3, "AirPods"] : a < 5 ? [5, "Ray-Ban"] : a < 8 ? [8, "iPhone"] : [null, "maxed"]);
+const NUDGE = REFERRERS.filter((r) => r.acts >= 1)
+  .sort((a, b) => b.acts - a.acts || b.obs - a.obs || b.signups - a.signups)
+  .slice(0, 12)
+  .map((r) => { const [t, nm] = nextRung(r.acts); return { id: r.id, name: r.name, signups: r.signups, onboarded: r.obs, achieved: r.acts, next: nm, needed: t ? t - r.acts : 0, waiting: r.obs - r.acts, claimed: r.gift }; });
+const NEW_VS_REPEAT = ["First-time referrer", "Repeat, never achieved", "Repeat, 1-2 achieved", "Repeat, 3+ achieved"].map((c) => {
+  const rs = REFERRERS.filter((r) => r.cohort === c); const sg = sumBy(rs, "signups"), ob = sumBy(rs, "obs");
+  return { type: c, referrers: rs.length, signups: sg, perRef: +(sg / Math.max(1, rs.length)).toFixed(2), onboarded: ob, achieved: sumBy(rs, "acts"), obPct: +(100 * ob / Math.max(1, sg)).toFixed(1) };
+});
+const N = D.notes || {};
+const SHOW_NAMES = REFERRERS.some((r) => r.name);
+
+
+// Referee quality, Sept campaign vs Aug (Metabase, 24 Sep). Referees deduped to first referral.
+// "Active in 10d" = share of referees onboarded at least 10 days ago who had a settled payment within 10 days of onboarding.
+// Money is USD at the September median settlement rate of 95 INR per USD.
+const FX = D.FX;
+const Q_FUNNEL = D.Q_FUNNEL;
+const Q_BT = D.Q_BT;
+const Q_VOL = D.Q_VOL;
+
+const REF_COLS_ALL = [
+  { key: "id", label: "Exporter ID", num: true },
+  { key: "bt", label: "Business type" },
+  { key: "onboarded", label: "Onboarded" },
+  { key: "activated", label: "Activated" },
+  { key: "signups", label: "Signups", num: true },
+  { key: "obs", label: "Onboardings", num: true },
+  { key: "acts", label: "Activations", num: true },
+  { key: "gift", label: "Gift claimed" },
+  { key: "cohort", label: "Cohort" },
+];
+
+
+
+// Card 6
+const CLAIMS = D.CLAIMS;
+
+// Card 7: weekly, all referral campaigns before 31 Aug, campaign 26 after
+const WEEKLY = D.WEEKLY;
+
+// Card 8: MTD vs same days last month, payees excluded from base
+const COHORTS = D.COHORTS;
+
+// Card 9
+
+
+// Card 10
+const QUALITY = D.QUALITY;
+
+// ============================================================================
+// DERIVED
+// ============================================================================
+
+const shares = PACE.months.map((m) => m.firstN / m.full);
+const avgShare = shares.reduce((a, b) => a + b, 0) / shares.length;
+const projMid = Math.round(PACE.sepToDate / avgShare);
+const projLow = Math.round(PACE.sepToDate / Math.max(...shares));
+const projHigh = Math.round(PACE.sepToDate / Math.min(...shares));
+const straightLine = Math.round((PACE.sepToDate / SNAPSHOT.fullDays) * PACE.daysInMonth);
+
+const dailyWithAvg = DAILY.map((d, i) => {
+  const window = DAILY.slice(Math.max(0, i - 6), i + 1);
+  const avg = window.reduce((a, b) => a + b.signups, 0) / window.length;
+  return { ...d, avg7: Math.round(avg * 10) / 10 };
+});
+const week1 = DAILY.slice(0, 7).reduce((a, b) => a + b.signups, 0);
+const week2 = DAILY.slice(7, 14).reduce((a, b) => a + b.signups, 0);
+const lastDay = DAILY[DAILY.length - 1];
+
+const fmt = (n) => n.toLocaleString("en-IN");
+
+// ============================================================================
+// STYLES
+// ============================================================================
+
+const css = `
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+.msd { font-family: 'IBM Plex Sans', system-ui, -apple-system, sans-serif; color: #171C2E; background: #FAFAFC; padding: 32px 36px 48px; font-size: 14px; line-height: 1.45; -webkit-font-smoothing: antialiased; font-variant-numeric: tabular-nums; }
+.msd * { box-sizing: border-box; }
+.msd h1 { font-size: 26px; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
+.msd h2 { font-size: 15px; font-weight: 600; margin: 0 0 4px; }
+.msd .sub { color: #6C7386; font-size: 13px; margin: 0; }
+.msd .head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; margin-bottom: 28px; }
+.msd .daycount { text-align: right; }
+.msd .daycount b { font-size: 26px; font-weight: 600; display: block; line-height: 1.1; }
+.msd section { padding: 22px 0; border-top: 1px solid #E4E7EE; }
+.msd section.first { border-top: none; padding-top: 0; }
+.msd .sechead { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 14px; }
+.msd .note { color: #6C7386; font-size: 13px; max-width: 72ch; }
+.msd .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; }
+.msd .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 36px; }
+@media (max-width: 900px) { .msd .grid2, .msd .grid3 { grid-template-columns: 1fr; } .msd { padding: 20px 16px; } }
+
+/* stats row */
+.msd .stats { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+@media (max-width: 900px) { .msd .stats { grid-template-columns: repeat(3, 1fr); } }
+.msd .stat { padding: 10px 0 0; border-top: 2px solid #171C2E; }
+.msd .stat b { display: block; font-size: 24px; font-weight: 600; line-height: 1.1; }
+.msd .stat span { display: block; color: #6C7386; font-size: 12.5px; margin-top: 3px; }
+.msd .stat small { display: block; color: #6C7386; font-size: 12px; margin-top: 4px; }
+
+/* pace track */
+.msd .track { position: relative; height: 118px; margin: 30px 0 6px; }
+.msd .track .rail { position: absolute; left: 0; right: 0; top: 56px; height: 14px; background: #E9EBF2; border-radius: 3px; }
+.msd .track .done { position: absolute; left: 0; top: 56px; height: 14px; background: #2F5BEA; border-radius: 3px 0 0 3px; }
+.msd .track .range { position: absolute; top: 56px; height: 14px; background: rgba(47,91,234,0.18); border-left: 1px dashed #2F5BEA; border-right: 1px dashed #2F5BEA; }
+.msd .track .mark { position: absolute; top: 46px; width: 2px; height: 34px; background: #171C2E; }
+.msd .track .mark.light { background: #9AA1B4; }
+.msd .track .lbl { position: absolute; font-size: 12px; white-space: nowrap; color: #6C7386; transform: translateX(-50%); }
+.msd .track .lbl b { display: block; color: #171C2E; font-size: 15px; font-weight: 600; }
+.msd .track .lbl.above { top: 0; }
+.msd .track .lbl.below { top: 86px; }
+.msd .track .lbl.left { transform: translateX(0); }
+.msd .track .lbl.right { transform: translateX(-100%); }
+
+/* tables */
+.msd table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.msd th { text-align: left; font-weight: 500; color: #6C7386; padding: 6px 8px 8px 0; border-bottom: 1px solid #E4E7EE; white-space: nowrap; }
+.msd td { padding: 7px 8px 7px 0; border-bottom: 1px solid #F0F1F5; vertical-align: top; }
+.msd th.num, .msd td.num { text-align: right; padding-right: 0; padding-left: 8px; }
+.msd tr.parent td { font-weight: 600; }
+.msd td.indent { padding-left: 18px; color: #3B4256; }
+.msd .up { color: #1B8A5A; } .msd .down { color: #C9432B; } .msd .flat { color: #6C7386; }
+.msd .bar { display: inline-block; height: 8px; background: #2F5BEA; vertical-align: middle; border-radius: 2px; margin-right: 8px; }
+.msd .bar.neg { background: #C9432B; }
+
+/* ladder */
+.msd .rung { display: grid; grid-template-columns: 150px 1fr 60px; gap: 12px; align-items: center; padding: 8px 0; border-bottom: 1px solid #F0F1F5; }
+.msd .rung .name { font-weight: 500; } .msd .rung .name small { display: block; color: #6C7386; font-weight: 400; font-size: 12px; }
+.msd .rung .fill { height: 18px; background: #E9EBF2; border-radius: 3px; position: relative; overflow: hidden; }
+.msd .rung .fill i { position: absolute; left: 0; top: 0; bottom: 0; background: #2F5BEA; }
+.msd .rung .fill em { position: absolute; left: 0; top: 0; bottom: 0; background: repeating-linear-gradient(45deg, #B9C7F5 0 4px, #D6DEF9 4px 8px); }
+.msd .rung .n { text-align: right; font-weight: 600; }
+.msd .legend { display: flex; gap: 18px; font-size: 12px; color: #6C7386; margin-top: 10px; }
+.msd .legend i { display: inline-block; width: 12px; height: 10px; vertical-align: -1px; margin-right: 6px; border-radius: 2px; background: #2F5BEA; }
+.msd .legend i.hatch { background: repeating-linear-gradient(45deg, #B9C7F5 0 3px, #D6DEF9 3px 6px); }
+
+.msd .pill { display: inline-block; padding: 1px 7px; border-radius: 10px; font-size: 11.5px; background: #EEF2FF; color: #2F5BEA; }
+.msd .tabs { display: flex; gap: 4px; margin-bottom: 12px; }
+.msd .tabs button { font: inherit; font-size: 13px; padding: 5px 12px; border: 1px solid #E4E7EE; background: #fff; border-radius: 6px; cursor: pointer; color: #3B4256; }
+.msd .tabs button.on { background: #171C2E; color: #fff; border-color: #171C2E; }
+.msd .tabs button:focus-visible { outline: 2px solid #2F5BEA; outline-offset: 2px; }
+.msd .callout { border-left: 3px solid #2F5BEA; padding: 6px 14px; color: #3B4256; font-size: 13px; margin: 0 0 16px; max-width: 78ch; }
+.msd .viewtabs { display: flex; gap: 0; border-bottom: 1px solid #E4E7EE; margin: 0 0 24px; }
+.msd .viewtabs button { font: inherit; font-size: 14px; font-weight: 500; padding: 8px 16px; border: none; border-bottom: 2px solid transparent; background: none; cursor: pointer; color: #6C7386; margin-bottom: -1px; }
+.msd .viewtabs button.on { color: #171C2E; border-bottom-color: #171C2E; }
+.msd .viewtabs button:focus-visible { outline: 2px solid #2F5BEA; outline-offset: -2px; }
+.msd .sortable th { cursor: pointer; user-select: none; }
+.msd .sortable th:hover { color: #171C2E; }
+.msd .sortable th .arrow { display: inline-block; width: 10px; margin-left: 4px; color: #2F5BEA; font-size: 11px; }
+.msd .sortable td { padding-top: 5px; padding-bottom: 5px; white-space: nowrap; }
+.msd .sortable td.name { white-space: normal; min-width: 180px; }
+.msd .tablewrap { overflow-x: auto; max-height: 640px; overflow-y: auto; border: 1px solid #E4E7EE; border-radius: 4px; }
+.msd .tablewrap table { min-width: 1000px; }
+.msd .tablewrap thead th { position: sticky; top: 0; background: #FAFAFC; z-index: 1; padding: 8px 8px 8px 0; }
+.msd .tablewrap thead th:first-child, .msd .tablewrap td:first-child { padding-left: 10px; }
+.msd .tablewrap thead th.num, .msd .tablewrap td.num { padding-right: 10px; }
+.msd .filters { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; font-size: 13px; color: #6C7386; }
+.msd .filters select, .msd .filters input { font: inherit; font-size: 13px; padding: 5px 8px; border: 1px solid #E4E7EE; border-radius: 4px; background: #fff; color: #171C2E; }
+.msd .insights { max-width: 82ch; margin-top: 20px; }
+.msd .insights p { margin: 0 0 10px; font-size: 13.5px; color: #3B4256; }
+.msd footer { color: #6C7386; font-size: 12.5px; margin-top: 30px; padding-top: 16px; border-top: 1px solid #E4E7EE; max-width: 80ch; }
+`;
+
+// ============================================================================
+// COMPONENTS
+// ============================================================================
+
+function Delta({ v }) {
+  if (v === null || v === undefined) return <span className="flat">n/a</span>;
+  const cls = v > 2 ? "up" : v < -2 ? "down" : "flat";
+  const sign = v > 0 ? "+" : "";
+  return <span className={cls}>{sign}{v.toFixed(1)}%</span>;
+}
+
+function PaceTrack() {
+  const max = Math.max(PACE.stretchPlus, projHigh) * 1.06;
+  const pct = (v) => `${(v / max) * 100}%`;
+  return (
+    <div className="track" aria-label="Monthly onboardings pace">
+      <div className="rail" />
+      <div className="range" style={{ left: pct(projLow), width: pct(projHigh - projLow) }} />
+      <div className="done" style={{ width: pct(PACE.sepToDate) }} />
+
+      <div className="lbl above left" style={{ left: 0 }}>
+        <b>{PACE.sepToDate}</b>onboarded, 1 to {SNAPSHOT.fullDays} {PACE.monthShort}
+      </div>
+      <div className="mark light" style={{ left: pct(projMid) }} />
+      <div className="lbl above" style={{ left: pct(projMid) }}>
+        <b>{projMid}</b>projected, range {projLow} to {projHigh}
+      </div>
+      <div className="mark" style={{ left: pct(PACE.target) }} />
+      <div className="lbl below" style={{ left: pct(PACE.target) }}>
+        <b>{PACE.target}</b>{PACE.monthShort} target
+      </div>
+      <div className="mark" style={{ left: pct(PACE.stretchPlus) }} />
+      <div className="lbl below" style={{ left: pct(PACE.stretchPlus) }}>
+        <b>{PACE.stretchPlus}</b>stretch plus
+      </div>
+    </div>
+  );
+}
+
+function CustomTip({ active, payload, label }) {
+  if (!active || !payload || !payload.length) return null;
+  return (
+    <div style={{ background: "#fff", border: "1px solid #E4E7EE", padding: "8px 10px", fontSize: 12.5, borderRadius: 4 }}>
+      <div style={{ fontWeight: 600, marginBottom: 4 }}>{label}</div>
+      {payload.map((p) => (
+        <div key={p.dataKey} style={{ color: "#3B4256" }}>{p.name}: <b>{p.value}</b></div>
+      ))}
+    </div>
+  );
+}
+
+const REF_COLS = SHOW_NAMES ? [REF_COLS_ALL[0], { key: "name", label: "Name" }, ...REF_COLS_ALL.slice(1)] : REF_COLS_ALL;
+
+function ReferrerTable() {
+  const [sortKey, setSortKey] = useState("acts");
+  const [dir, setDir] = useState(-1);
+  const [cohort, setCohort] = useState("all");
+  const [bt, setBt] = useState("all");
+  const [q, setQ] = useState("");
+
+  const onSort = (key) => {
+    if (key === sortKey) setDir(-dir);
+    else { setSortKey(key); setDir(REF_COLS.find((c) => c.key === key).num ? -1 : 1); }
+  };
+  const rows = REFERRERS
+    .filter((r) => cohort === "all" || r.cohort === cohort)
+    .filter((r) => bt === "all" || r.bt === bt)
+    .filter((r) => !q || r.name.toLowerCase().includes(q.toLowerCase()) || String(r.id).includes(q))
+    .sort((a, b) => {
+      const av = a[sortKey], bv = b[sortKey];
+      if (av === bv) return b.signups - a.signups || a.id - b.id;
+      if (av === "" || av === null) return 1;
+      if (bv === "" || bv === null) return -1;
+      return (av < bv ? -1 : 1) * dir;
+    });
+  const sum = (k) => rows.reduce((a, r) => a + r[k], 0);
+
+  return (
+    <>
+      <div className="filters">
+        <input placeholder={SHOW_NAMES ? "Search name or id" : "Search exporter id"} value={q} onChange={(e) => setQ(e.target.value)} />
+        <select value={cohort} onChange={(e) => setCohort(e.target.value)}>
+          <option value="all">All cohorts</option>
+          {Object.values(COHORT).map((c) => <option key={c} value={c}>{c}</option>)}
+        </select>
+        <select value={bt} onChange={(e) => setBt(e.target.value)}>
+          <option value="all">All business types</option>
+          {["Freelancer", "Sole prop", "Company", "LLP", "Partnership", "HUF"].map((c) => <option key={c} value={c}>{c}</option>)}
+        </select>
+        <span>{rows.length} referrers, {sum("signups")} signups, {sum("obs")} onboarded, {sum("acts")} activated. Click a header to sort.</span>
+      </div>
+      <div className="tablewrap">
+        <table className="sortable">
+          <thead>
+            <tr>
+              {REF_COLS.map((c) => (
+                <th key={c.key} className={c.num ? "num" : ""} onClick={() => onSort(c.key)}>
+                  {c.label}<span className="arrow">{sortKey === c.key ? (dir === 1 ? "\u25B2" : "\u25BC") : ""}</span>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r) => (
+              <tr key={r.id}>
+                <td className="num">{r.id}</td>
+                {SHOW_NAMES && <td className="name">{r.name}</td>}
+                <td>{r.bt}</td>
+                <td>{r.onboarded}</td>
+                <td>{r.activated || <span style={{ color: "#9AA1B4" }}>not yet</span>}</td>
+                <td className="num">{r.signups}</td>
+                <td className="num">{r.obs}</td>
+                <td className="num">{r.acts}</td>
+                <td>{r.gift}</td>
+                <td>{r.cohort}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
+  );
+}
+
+export default function MilestoneDashboard() {
+  const [tab, setTab] = useState("mix");
+  const [view, setView] = useState("overview");
+  const maxRef = Math.max(...LADDER.map((r) => r.referrers));
+
+  return (
+    <div className="msd">
+      <style>{css}</style>
+
+      <div className="head">
+        <div>
+          <h1>Milestone referral campaign</h1>
+          <p className="sub">1 Sep to 31 Oct 2026. Ladder: 1 Polaroid, 3 AirPods, 5 Ray-Ban Meta, 8 iPhone 17. Data as of {SNAPSHOT.asOf}.</p>
+        </div>
+        <div className="daycount">
+          <b>Day {SNAPSHOT.campaignDay} of 61</b>
+          <span className="sub">{SNAPSHOT.daysLeft} days left</span>
+        </div>
+      </div>
+
+      <div className="viewtabs" role="tablist">
+        <button className={view === "overview" ? "on" : ""} onClick={() => setView("overview")}>Overview</button>
+        <button className={view === "referrers" ? "on" : ""} onClick={() => setView("referrers")}>Referrers</button>
+        <button className={view === "quality" ? "on" : ""} onClick={() => setView("quality")}>Referee quality</button>
+      </div>
+
+      {view === "quality" && (
+        <section className="first">
+          <div className="sechead">
+            <h2>Are campaign referees different from the referees we usually get?</h2>
+            <span className="note">{N.qualityHeader}</span>
+          </div>
+
+          <h2 style={{ fontSize: 14, marginTop: 8 }}>Funnel by source</h2>
+          <table style={{ marginBottom: 6 }}>
+            <thead><tr><th>Referees from</th><th className="num">Signups</th><th className="num">Onboarded in 1 day</th><th className="num">In 7 days</th><th className="num">Onboarded 10+ days ago</th><th className="num">Active within 10 days</th><th className="num">Median first settlement</th></tr></thead>
+            <tbody>
+              {Q_FUNNEL.map((r) => (
+                <tr key={r.src}><td>{r.src}</td><td className="num">{fmt(r.n)}</td><td className="num">{r.ob1d}%</td><td className="num">{r.ob7d}%</td><td className="num">{r.matureN}</td><td className="num">{r.act10}%</td><td className="num">${fmt(Math.round(r.medianFirstInr / FX))}</td></tr>
+              ))}
+            </tbody>
+          </table>
+          <p className="note">{N.qualityWindow}</p>
+
+          <div className="grid2" style={{ marginTop: 22 }}>
+            <div>
+              <h2 style={{ fontSize: 14 }}>Business type of onboarded referees</h2>
+              <table>
+                <thead><tr><th>Type</th><th className="num">Aug</th><th className="num">Share</th><th className="num">Sept</th><th className="num">Share</th><th className="num">Active 10d, Aug</th><th className="num">Sept</th></tr></thead>
+                <tbody>
+                  {Q_BT.map((r) => (
+                    <tr key={r.bt}><td>{r.bt}</td><td className="num">{r.preN}</td><td className="num">{r.preShare}%</td><td className="num">{r.cN}</td><td className="num">{r.cShare}%</td><td className="num">{r.preAct}%</td><td className="num">{r.cAct === null ? <span style={{ color: "#9AA1B4" }}>n/a</span> : `${r.cAct}%`}</td></tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div>
+              <h2 style={{ fontSize: 14 }}>Stated monthly volume of onboarded referees</h2>
+              <table>
+                <thead><tr><th>Stated at signup</th><th className="num">Aug</th><th className="num">Share</th><th className="num">Sept</th><th className="num">Share</th><th className="num">Active 10d, Aug</th><th className="num">Sept</th></tr></thead>
+                <tbody>
+                  {Q_VOL.map((r) => (
+                    <tr key={r.vol}><td>{r.vol}</td><td className="num">{r.preN}</td><td className="num">{r.preShare}%</td><td className="num">{r.cN}</td><td className="num">{r.cShare}%</td><td className="num">{r.preAct}%</td><td className="num">{r.cAct === null ? <span style={{ color: "#9AA1B4" }}>n/a</span> : `${r.cAct}%`}</td></tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="insights">
+            <h2 style={{ marginTop: 4 }}>Early read on quality</h2>
+            {(N.refereeQuality || []).map((t, i) => <p key={i}>{t}</p>)}
+          </div>
+        </section>
+      )}
+
+      {view === "referrers" && (
+        <section className="first">
+          <div className="sechead">
+            <h2>Every campaign referrer: signups, onboardings, activations</h2>
+            <span className="note">Campaign 26 only. Onboarded and activated dates are the referrer's own. Cohort is based on referral history before 1 Sep.</span>
+          </div>
+          <ReferrerTable />
+          <div className="insights">
+            <h2 style={{ marginTop: 4 }}>What the table says</h2>
+            {(N.referrers || []).map((t, i) => <p key={i}>{t}</p>)}
+          </div>
+        </section>
+      )}
+
+      {view === "overview" && (<>
+      {/* PACE */}
+      <section className="first">
+        <div className="sechead">
+          <h2>{PACE.monthName} onboardings against target</h2>
+          <span className="note">All referral onboardings, not just campaign signups, so it lines up with the {PACE.target} target.</span>
+        </div>
+        <PaceTrack />
+        <p className="note" style={{ marginTop: 22 }}>{N.pace}</p>
+      </section>
+
+      {/* HEADLINE */}
+      <section>
+        <div className="sechead"><h2>Campaign totals</h2><span className="note">Signups on campaign 26 only.</span></div>
+        <div className="stats">
+          <div className="stat"><b>{HEADLINE.signups}</b><span>signups</span></div>
+          <div className="stat"><b>{HEADLINE.referrers}</b><span>referrers</span><small>{HEADLINE.signupsPerReferrer} signups each</small></div>
+          <div className="stat"><b>{HEADLINE.onboardings}</b><span>onboarded</span><small>{HEADLINE.signupToOb}% of signups</small></div>
+          <div className="stat"><b>{HEADLINE.activations}</b><span>activated</span><small>{HEADLINE.obToAct}% of onboarded</small></div>
+          <div className="stat"><b>{HEADLINE.onboardingsPerDay}</b><span>onboardings per day</span></div>
+          <div className="stat"><b>{HEADLINE.rewardsClaimed}</b><span>rewards claimed</span><small>all Polaroid</small></div>
+        </div>
+        {N.excluded && <p className="callout" style={{ marginTop: 16, borderLeftColor: "#C9432B" }}>{N.excluded}</p>}
+      </section>
+
+      {/* DAILY */}
+      <section>
+        <div className="sechead">
+          <h2>Daily signups and onboardings</h2>
+          <span className="note">{N.daily}</span>
+        </div>
+        <div style={{ width: "100%", height: 260 }}>
+          <ResponsiveContainer>
+            <ComposedChart data={dailyWithAvg} margin={{ top: 10, right: 10, left: -18, bottom: 0 }}>
+              <CartesianGrid vertical={false} stroke="#EEF0F4" />
+              <XAxis dataKey="day" tick={{ fontSize: 11.5, fill: "#6C7386" }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 11.5, fill: "#6C7386" }} axisLine={false} tickLine={false} />
+              <Tooltip content={<CustomTip />} cursor={{ fill: "rgba(47,91,234,0.06)" }} />
+              <Legend iconType="square" iconSize={10} wrapperStyle={{ fontSize: 12, color: "#6C7386" }} />
+              <Bar dataKey="signups" name="Signups" fill="#2F5BEA" radius={[2, 2, 0, 0]} maxBarSize={28} />
+              <Bar dataKey="onboardings" name="Onboardings" fill="#B9C7F5" radius={[2, 2, 0, 0]} maxBarSize={28} />
+              <Line dataKey="avg7" name="Signups, 7-day avg" stroke="#171C2E" strokeWidth={2} dot={false} />
+              <Line dataKey="activations" name="Activations" stroke="#1B8A5A" strokeWidth={1.5} dot={{ r: 2 }} />
+            </ComposedChart>
+          </ResponsiveContainer>
+        </div>
+      </section>
+
+      {/* LADDER + NUDGE */}
+      <section>
+        <div className="grid2">
+          <div>
+            <div className="sechead"><h2>Where referrers sit on the ladder</h2></div>
+            {LADDER.map((r) => (
+              <div className="rung" key={r.rung}>
+                <div className="name">{r.rung}<small>{r.range} activated</small></div>
+                <div className="fill" title={`${r.referrers} referrers, ${r.waiting} onboarded referees waiting to activate`}>
+                  <i style={{ width: `${(r.referrers / maxRef) * 100}%` }} />
+                  {r.waiting > 0 && <em style={{ left: `${(r.referrers / maxRef) * 100}%`, width: `${Math.min(100 - (r.referrers / maxRef) * 100, (r.waiting / maxRef) * 100)}%` }} />}
+                </div>
+                <div className="n">{r.referrers}</div>
+              </div>
+            ))}
+            <div className="legend"><span><i />referrers on this rung</span><span><i className="hatch" />onboarded referees still to activate</span></div>
+            <p className="note" style={{ marginTop: 12 }}>{N.ladder}</p>
+          </div>
+          <div>
+            <div className="sechead"><h2>Closest to the next rung</h2><span className="note">For Support and Sales to nudge.</span></div>
+            <table>
+              <thead><tr><th>Referrer</th><th className="num">Active</th><th className="num">Waiting</th><th style={{ paddingLeft: 16 }}>Next</th><th className="num">Needs</th></tr></thead>
+              <tbody>
+                {NUDGE.map((n) => (
+                  <tr key={n.id}>
+                    <td>{n.name ? <>{n.name} <span style={{ color: "#9AA1B4" }}>{n.id}</span></> : <>Exporter {n.id}</>}{n.claimed && <> <span className="pill">claimed {n.claimed}</span></>}</td>
+                    <td className="num">{n.achieved}</td>
+                    <td className="num">{n.waiting || ""}</td>
+                    <td style={{ paddingLeft: 16 }}>{n.next}</td>
+                    <td className="num">{n.needed}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      {/* COHORTS */}
+      <section>
+        <div className="sechead">
+          <h2>Share rate by cohort, {D.COHORT_LABELS.now} MTD vs same days in {D.COHORT_LABELS.prev}</h2>
+          <span className="note">Share rate = referrers in the window / users in the cohort. Payees excluded, so bases run a little lower than the leadership sheet.</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Cohort</th><th className="num">Base</th>
+              <th className="num">Referrers {D.COHORT_LABELS.now}</th><th className="num">Share {D.COHORT_LABELS.now}</th>
+              <th className="num">Referrers Aug</th><th className="num">Share Aug</th>
+              <th style={{ paddingLeft: 24 }}>Change</th>
+            </tr>
+          </thead>
+          <tbody>
+            {COHORTS.map((c) => (
+              <tr key={c.id} className={c.indent ? "" : "parent"}>
+                <td className={c.indent ? "indent" : ""}>{c.id}&nbsp; {c.label}</td>
+                <td className="num">{fmt(c.base)}</td>
+                <td className="num">{c.refNow}</td>
+                <td className="num">{c.rateNow.toFixed(2)}%</td>
+                <td className="num">{c.refPrev}</td>
+                <td className="num">{c.ratePrev.toFixed(2)}%</td>
+                <td style={{ paddingLeft: 24, whiteSpace: "nowrap" }}>
+                  <span className={`bar${c.delta < 0 ? " neg" : ""}`} style={{ width: Math.min(90, Math.abs(c.delta) * 1.1) }} />
+                  <Delta v={c.delta} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p className="note" style={{ marginTop: 12 }}>{N.cohorts}</p>
+      </section>
+
+      {/* WEEKLY + MIX + QUALITY */}
+      <section>
+        <div className="grid2">
+          <div>
+            <div className="sechead"><h2>Weekly signups, before and during</h2><span className="note">Signups per referrer on the right axis.</span></div>
+            <div style={{ width: "100%", height: 240 }}>
+              <ResponsiveContainer>
+                <ComposedChart data={WEEKLY} margin={{ top: 10, right: 0, left: -18, bottom: 0 }}>
+                  <CartesianGrid vertical={false} stroke="#EEF0F4" />
+                  <XAxis dataKey="week" tick={{ fontSize: 11.5, fill: "#6C7386" }} axisLine={false} tickLine={false} />
+                  <YAxis yAxisId="l" tick={{ fontSize: 11.5, fill: "#6C7386" }} axisLine={false} tickLine={false} />
+                  <YAxis yAxisId="r" orientation="right" domain={[0.9, 1.5]} tick={{ fontSize: 11.5, fill: "#6C7386" }} axisLine={false} tickLine={false} width={34} />
+                  <Tooltip content={<CustomTip />} cursor={{ fill: "rgba(47,91,234,0.06)" }} />
+                  <ReferenceLine yAxisId="l" x="31 Aug" stroke="#9AA1B4" strokeDasharray="3 3" />
+                  <Bar yAxisId="l" dataKey="signups" name="Signups" maxBarSize={30} radius={[2, 2, 0, 0]}
+                    fill="#2F5BEA" shape={(p) => <rect x={p.x} y={p.y} width={p.width} height={p.height} rx={2} fill={p.payload.period === "campaign" ? "#2F5BEA" : "#C4C9D6"} />} />
+                  <Line yAxisId="r" dataKey="perRef" name="Signups per referrer" stroke="#171C2E" strokeWidth={2} dot={{ r: 2.5 }} />
+                </ComposedChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+          <div>
+            <div className="tabs" role="tablist">
+              <button className={tab === "mix" ? "on" : ""} onClick={() => setTab("mix")}>Who is referring</button>
+              <button className={tab === "quality" ? "on" : ""} onClick={() => setTab("quality")}>Referee quality</button>
+              <button className={tab === "claims" ? "on" : ""} onClick={() => setTab("claims")}>Claims</button>
+            </div>
+            {tab === "mix" && (
+              <>
+                <table>
+                  <thead><tr><th>Referrer type</th><th className="num">Referrers</th><th className="num">Signups</th><th className="num">Each</th><th className="num">Onboarded</th><th className="num">OB %</th></tr></thead>
+                  <tbody>
+                    {NEW_VS_REPEAT.map((r) => (
+                      <tr key={r.type}><td>{r.type}</td><td className="num">{r.referrers}</td><td className="num">{r.signups}</td><td className="num">{r.perRef.toFixed(2)}</td><td className="num">{r.onboarded}</td><td className="num">{r.obPct}%</td></tr>
+                    ))}
+                  </tbody>
+                </table>
+                <p className="note" style={{ marginTop: 10 }}>{N.mix}</p>
+              </>
+            )}
+            {tab === "quality" && (
+              <>
+                <table>
+                  <thead><tr><th>Signup week</th><th className="num">Signups</th><th className="num">OB in 1d</th><th className="num">OB in 7d</th><th className="num">OB so far</th><th className="num">Active of OB</th><th className="num">Median days OB to active</th></tr></thead>
+                  <tbody>
+                    {QUALITY.map((q) => (
+                      <tr key={q.week}><td>{q.week}</td><td className="num">{q.signups}</td><td className="num">{q.ob1d}%</td><td className="num">{q.ob7d}%</td><td className="num">{q.obSoFar}%</td><td className="num">{q.actOfOb}%</td><td className="num">{q.medianDays}</td></tr>
+                    ))}
+                  </tbody>
+                </table>
+                <p className="note" style={{ marginTop: 10 }}>{N.weeklyQuality}</p>
+              </>
+            )}
+            {tab === "claims" && (
+              <>
+                <table>
+                  <thead><tr><th>Reward</th><th className="num">At</th><th>Status</th><th className="num">Count</th><th>First</th><th>Last</th><th className="num">Avg activations at claim</th></tr></thead>
+                  <tbody>
+                    {CLAIMS.map((c) => (
+                      <tr key={c.reward}><td>{c.reward}</td><td className="num">{c.threshold}</td><td>{c.status}</td><td className="num">{c.count}</td><td>{c.first}</td><td>{c.last}</td><td className="num">{c.avgAchieved.toFixed(1)}</td></tr>
+                    ))}
+                  </tbody>
+                </table>
+                <p className="note" style={{ marginTop: 10 }}>{N.claims}</p>
+              </>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* POPUP FUNNEL */}
+      <section>
+        <div className="sechead">
+          <h2>Reward popup: what people choose</h2>
+          <span className="note">{N.popupHeader}</span>
+        </div>
+        <div className="grid3">
+          <div>
+            <div className="stats" style={{ gridTemplateColumns: "1fr 1fr" }}>
+              <div className="stat"><b>{fmt(POPUP.widgetUniqueUsers)}</b><span>saw the campaign widget</span><small>unique users, {POPUP.window}</small></div>
+              <div className="stat"><b>{(100 * HEADLINE.referrers / Math.max(1, POPUP.widgetUniqueUsers)).toFixed(1)}%</b><span>of them referred</span><small>{HEADLINE.referrers} referrers</small></div>
+            </div>
+          </div>
+          <div>
+            <div className="rung"><div className="name">Opened claim popup</div><div className="fill"><i style={{ width: "100%" }} /></div><div className="n">{POPUP.claimCta}</div></div>
+            <div className="rung"><div className="name">Took the reward<small>exits to default $30 program</small></div><div className="fill"><i style={{ width: `${(POPUP.claimConfirm / POPUP.claimCta) * 100}%` }} /></div><div className="n">{POPUP.claimConfirm}</div></div>
+            <div className="rung"><div className="name">Chose to keep referring</div><div className="fill" /><div className="n">{POPUP.keepReferring}</div></div>
+          </div>
+          <div>
+            {(N.popup || []).map((t, i) => <p key={i} className="note" style={i === 0 ? { margin: 0 } : {}}>{t}</p>)}
+          </div>
+        </div>
+      </section>
+
+      </>)}
+
+      <footer>
+        Refreshed automatically every hour from Metabase and Mixpanel. Last refresh {SNAPSHOT.asOf}. Referral counts on the referee's first settled payment. Internal ids 2, 3, 4, 14, the affiliate referrer 38679 and any flagged referrers listed above are excluded from campaign metrics. The monthly onboarding count against target includes all referral onboardings.
+      </footer>
+    </div>
+  );
+}

@@ -1,0 +1,14 @@
+{
+  "metabase_database_id": 6,
+  "campaign_id": 26,
+  "campaign_start": "2026-09-01",
+  "campaign_end": "2026-10-31",
+  "campaign_days": 61,
+  "always_excluded_referrers": [2, 3, 4, 14, 38679],
+  "flagged_referrers": [85276],
+  "targets": {
+    "2026-09": { "target": 552, "stretchPlus": 600 },
+    "2026-10": { "target": 662, "stretchPlus": 777 }
+  },
+  "show_customer_names": false
+}

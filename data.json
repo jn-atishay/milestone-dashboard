@@ -1,6 +1,6 @@
 {
   "SNAPSHOT": {
-    "asOf": "25 Sep 2026, 16:00 IST",
+    "asOf": "25 Sep 2026, 17:00 IST",
     "campaignStart": "2026-09-01",
     "campaignEnd": "2026-10-31",
     "campaignDay": 25,
@@ -30,7 +30,7 @@
       }
     ],
     "sepToDate": 454,
-    "todaySoFar": 21,
+    "todaySoFar": 23,
     "sepDaily": [
       17,
       25,
@@ -378,9 +378,9 @@
     {
       "week": "21 Sep",
       "period": "campaign",
-      "signups": 205,
-      "referrers": 145,
-      "perRef": 1.41
+      "signups": 210,
+      "referrers": 147,
+      "perRef": 1.43
     }
   ],
   "COHORTS": [
@@ -454,29 +454,29 @@
       "id": "2",
       "label": "New activations this month (M0)",
       "indent": 0,
-      "base": 1132,
-      "refNow": 54,
-      "rateNow": 4.77,
+      "base": 1151,
+      "refNow": 55,
+      "rateNow": 4.78,
       "refPrev": 70,
-      "ratePrev": 3.73,
-      "delta": 27.9
+      "ratePrev": 3.72,
+      "delta": 28.5
     },
     {
       "id": "3",
       "label": "Not activated, onboarded this month",
       "indent": 0,
-      "base": 2498,
-      "refNow": 31,
-      "rateNow": 1.24,
+      "base": 2486,
+      "refNow": 30,
+      "rateNow": 1.21,
       "refPrev": 16,
       "ratePrev": 0.94,
-      "delta": 31.9
+      "delta": 28.7
     },
     {
       "id": "4",
       "label": "Not activated, old onboarder",
       "indent": 0,
-      "base": 33086,
+      "base": 33077,
       "refNow": 55,
       "rateNow": 0.17,
       "refPrev": 53,
@@ -495,8 +495,8 @@
       "ob1d": 43.1,
       "ob7d": 52.0,
       "obSoFar": 55.4,
-      "actOfOb": 37.2,
-      "medianDays": 6.7
+      "actOfOb": 38.9,
+      "medianDays": 6.8
     },
     {
       "week": "7 Sep",
@@ -513,16 +513,16 @@
       "ob1d": 42.9,
       "ob7d": 51.9,
       "obSoFar": 52.9,
-      "actOfOb": 15.0,
-      "medianDays": 3.0
+      "actOfOb": 16.0,
+      "medianDays": 3.4
     },
     {
       "week": "21 Sep",
-      "signups": 204,
-      "ob1d": 41.7,
-      "ob7d": 44.1,
-      "obSoFar": 44.1,
-      "actOfOb": 3.3,
+      "signups": 209,
+      "ob1d": 41.6,
+      "ob7d": 44.0,
+      "obSoFar": 44.0,
+      "actOfOb": 5.4,
       "medianDays": 2.3
     }
   ],
@@ -721,6 +721,18 @@
       "R1"
     ],
     [
+      151098,
+      "Mohd Anas",
+      "SP",
+      "2025-12-18",
+      "2026-01-05",
+      3,
+      2,
+      2,
+      "",
+      "FT"
+    ],
+    [
       84548,
       "Syed Muiz",
       "F",
@@ -788,18 +800,6 @@
       "2026-07-06",
       3,
       3,
-      1,
-      "",
-      "FT"
-    ],
-    [
-      151098,
-      "Mohd Anas",
-      "SP",
-      "2025-12-18",
-      "2026-01-05",
-      3,
-      2,
       1,
       "",
       "FT"
@@ -1357,6 +1357,18 @@
       "FT"
     ],
     [
+      202389,
+      "Siddhi Hemant Kambli",
+      "F",
+      "2026-05-08",
+      "2026-05-15",
+      1,
+      1,
+      1,
+      "",
+      "FT"
+    ],
+    [
       203513,
       "Mahesh Gangadhar Hatwar",
       "F",
@@ -1405,6 +1417,18 @@
       "R1"
     ],
     [
+      213718,
+      "Rudraksh Sharma",
+      "F",
+      "2026-06-03",
+      "2026-07-10",
+      1,
+      1,
+      1,
+      "",
+      "FT"
+    ],
+    [
       214627,
       "Yatharth Gupta",
       "SP",
@@ -1427,6 +1451,18 @@
       1,
       "",
       "R1"
+    ],
+    [
+      221765,
+      "Bahauddin Aziz",
+      "F",
+      "2026-06-24",
+      "2026-07-07",
+      1,
+      1,
+      1,
+      "",
+      "R3"
     ],
     [
       223668,
@@ -1561,6 +1597,18 @@
       "FT"
     ],
     [
+      245131,
+      "Valanda Harshalkumar Bhikhalal",
+      "F",
+      "2026-08-19",
+      "2026-09-01",
+      1,
+      1,
+      1,
+      "",
+      "RN"
+    ],
+    [
       249755,
       "Surjeet Singh",
       "F",
@@ -1693,6 +1741,18 @@
       "R1"
     ],
     [
+      261087,
+      "Divyanshu Gupta",
+      "F",
+      "2026-09-21",
+      null,
+      4,
+      2,
+      0,
+      "",
+      "FT"
+    ],
+    [
       35703,
       "Dominic Deepan",
       "C",
@@ -1769,18 +1829,6 @@
       "Sai Akshay R",
       "F",
       "2026-09-04",
-      null,
-      3,
-      2,
-      0,
-      "",
-      "FT"
-    ],
-    [
-      261087,
-      "Divyanshu Gupta",
-      "F",
-      "2026-09-21",
       null,
       3,
       2,
@@ -3181,6 +3229,18 @@
       "R1"
     ],
     [
+      168409,
+      "Srinivasan Rajagopal",
+      "C",
+      "2026-02-03",
+      "2026-02-05",
+      1,
+      1,
+      0,
+      "",
+      "R1"
+    ],
+    [
       168580,
       "Hariharasudhan An S",
       "F",
@@ -3625,18 +3685,6 @@
       "FT"
     ],
     [
-      202389,
-      "Siddhi Hemant Kambli",
-      "F",
-      "2026-05-08",
-      "2026-05-15",
-      1,
-      1,
-      0,
-      "",
-      "FT"
-    ],
-    [
       204047,
       "Sarvesh Agrawal",
       "C",
@@ -3750,18 +3798,6 @@
       "F",
       "2026-06-02",
       null,
-      1,
-      1,
-      0,
-      "",
-      "FT"
-    ],
-    [
-      213718,
-      "Rudraksh Sharma",
-      "F",
-      "2026-06-03",
-      "2026-07-10",
       1,
       1,
       0,
@@ -3899,18 +3935,6 @@
       0,
       "",
       "FT"
-    ],
-    [
-      221765,
-      "Bahauddin Aziz",
-      "F",
-      "2026-06-24",
-      "2026-07-07",
-      1,
-      1,
-      0,
-      "",
-      "R3"
     ],
     [
       223435,
@@ -4285,18 +4309,6 @@
       "FT"
     ],
     [
-      245131,
-      "Valanda Harshalkumar Bhikhalal",
-      "F",
-      "2026-08-19",
-      "2026-09-01",
-      1,
-      1,
-      0,
-      "",
-      "RN"
-    ],
-    [
       247154,
       "Ashok Soni",
       "LLP",
@@ -4525,6 +4537,18 @@
       "FT"
     ],
     [
+      260268,
+      "Mayank Srivastava",
+      "LLP",
+      "2026-09-16",
+      null,
+      1,
+      1,
+      0,
+      "",
+      "FT"
+    ],
+    [
       260911,
       "Shivam Sandilya",
       "SP",
@@ -4657,6 +4681,18 @@
       "R1"
     ],
     [
+      212658,
+      "Bhavik Ashokbhai Rupareliya",
+      "SP",
+      "2026-06-03",
+      "2026-06-04",
+      5,
+      0,
+      0,
+      "",
+      "FT"
+    ],
+    [
       22942,
       "Anjali Singh",
       "C",
@@ -4667,18 +4703,6 @@
       0,
       "",
       "R1"
-    ],
-    [
-      212658,
-      "Bhavik Ashokbhai Rupareliya",
-      "SP",
-      "2026-06-03",
-      "2026-06-04",
-      4,
-      0,
-      0,
-      "",
-      "FT"
     ],
     [
       136879,
@@ -4734,6 +4758,18 @@
       "SP",
       "2026-09-22",
       "2026-09-24",
+      3,
+      0,
+      0,
+      "",
+      "FT"
+    ],
+    [
+      264428,
+      "Prince Kumar Mahato",
+      "C",
+      "2026-09-25",
+      null,
       3,
       0,
       0,
@@ -4865,18 +4901,6 @@
       "Aryan Gupta",
       "F",
       null,
-      null,
-      2,
-      0,
-      0,
-      "",
-      "FT"
-    ],
-    [
-      264428,
-      "Prince Kumar Mahato",
-      "C",
-      "2026-09-25",
       null,
       2,
       0,
@@ -5689,6 +5713,18 @@
       "FT"
     ],
     [
+      152518,
+      "Prateek Kharkwal",
+      "C",
+      "2026-07-13",
+      null,
+      1,
+      0,
+      0,
+      "",
+      "FT"
+    ],
+    [
       152799,
       "Robins Nagar",
       "C",
@@ -5747,18 +5783,6 @@
       0,
       "",
       "RN"
-    ],
-    [
-      168409,
-      "Srinivasan Rajagopal",
-      "C",
-      "2026-02-03",
-      "2026-02-05",
-      1,
-      0,
-      0,
-      "",
-      "R1"
     ],
     [
       169084,
@@ -6637,6 +6661,18 @@
       "FT"
     ],
     [
+      244626,
+      "Mahendra Nemichand Jain",
+      "C",
+      "2026-08-18",
+      "2026-09-01",
+      1,
+      0,
+      0,
+      "",
+      "RN"
+    ],
+    [
       244885,
       "Nishant",
       "F",
@@ -6809,19 +6845,7 @@
       "Sahil Sachdeva",
       "C",
       "2026-09-15",
-      null,
-      1,
-      0,
-      0,
-      "",
-      "FT"
-    ],
-    [
-      260268,
-      "Mayank Srivastava",
-      "LLP",
-      "2026-09-16",
-      null,
+      "2026-09-25",
       1,
       0,
       0,
@@ -6831,25 +6855,25 @@
   ],
   "qualityRefreshedOn": "2026-09-25",
   "notes": {
-    "pace": "The share of the month that days 1 to 24 delivered in Jun, Jul and Aug was 79%, 76% and 76%. Applied to the 454 onboardings so far, that projects to about 589 for September. A straight line run rate of 18.9 a day gives about 568. Week 1 brought 145 onboardings, week 2 brought 107, week 3 brought 118, and 22 to 24 Sep brought 84 across three days. Aug reached 353 by this point and closed at 462, but Aug had a 31 Aug deadline that pulled its last week forward; Sept has no deadline, so read the projection as a ceiling and the straight line as a floor. Both sit above the 552 target, which now needs about 16 a day across the last six days against a run rate of 19. Day 25 has brought 21 onboardings so far. 600 needs about 24 a day.",
+    "pace": "The share of the month that days 1 to 24 delivered in Jun, Jul and Aug was 79%, 76% and 76%. Applied to the 454 onboardings so far, that projects to about 589 for September. A straight line run rate of 18.9 a day gives about 568. Week 1 brought 145 onboardings, week 2 brought 107, week 3 brought 118, and 22 to 24 Sep brought 84 across three days. Aug reached 353 by this point and closed at 462, but Aug had a 31 Aug deadline that pulled its last week forward; Sept has no deadline, so read the projection as a ceiling and the straight line as a floor. Both sit above the 552 target, which now needs about 16 a day across the last six days against a run rate of 19. Day 25 has brought 23 onboardings so far. 600 needs about 24 a day.",
     "daily": "7-day average line. Week 1 signups 243, week 2 161, week 3 204, and 22 to 24 Sep 150 across three days. 22 Sep was the best day of the campaign at 60 signups; 24 Sep was second at 54 signups from 33 referrers, with 20 onboardings and 2 claims. With 54 signups spread across 33 referrers, no single referrer sent more than about 22 in the last day, so nothing to flag. Today is not charted until the day is complete.",
-    "ladder": "292 onboarded referees belong to people who have not unlocked anything yet. At the usual 70 to 75% activation rate that is roughly 200 more Polaroids in the pipeline. Exporter 133487 has unlocked Ray-Ban at 6 and has not claimed, so is going for the iPhone. Exporter 224027 has reached AirPods at 3 and has not claimed. Five people are one activation from AirPods. 78 people have unlocked at least the Polaroid and 21 have claimed it, every claim at exactly one activation.",
+    "ladder": "290 onboarded referees belong to people who have not unlocked anything yet. At the usual 70 to 75% activation rate that is roughly 200 more Polaroids in the pipeline. Exporter 133487 has unlocked Ray-Ban at 6 and has not claimed, so is going for the iPhone. Exporter 224027 has reached AirPods at 3 and has not claimed. Six people are one activation from AirPods. 82 people have unlocked at least the Polaroid and 21 have claimed it, every claim at exactly one activation.",
     "cohorts": "The lift on the activated base is +20% for the month to date, rate 1.65% against 1.37% in Aug. Past referrers (1b, +49%) and recently dormant users (1.2, +41%) carry it. Never-referrers (1a) are at 1.11% against 1.08%, essentially level with Aug: the campaign has reached about as many first-time referrers as last month, not more.",
     "mix": "62% of campaign referrers have never referred before, but first-timers are only level with Aug on a like-for-like basis; the referrer increase leans on repeats. Past power referrers (3+ prior achievements) bring 2.59 signups each and only 40% onboard, so they are sharing wider and shallower.",
     "weeklyQuality": "Across campaign referrals (38679 excluded) next-day onboarding is running 42 to 50% by signup week, 43% in the 31 Aug week, 50% on 7 Sep, then 43% and 42%, below the 55% August referrals reached in the funnel. The gap sits with referrers sending 2 or more signups: single-signup senders reach a next-day onboarding at 53%, people sending 2 or more at 34%. The 21 Sep week is still filling in, at 44% onboarded so far.",
-    "claims": "21 of the 78 people who unlocked a reward have claimed it, all at the Polaroid rung and all at exactly one activation. The two referrers at AirPods and above, exporter 224027 at three and exporter 133487 at six, have not claimed, which is the behaviour the ladder was designed for.",
+    "claims": "21 of the 82 people who unlocked a reward have claimed it, all at the Polaroid rung and all at exactly one activation. The two referrers at AirPods and above, exporter 224027 at three and exporter 133487 at six, have not claimed, which is the behaviour the ladder was designed for.",
     "popupHeader": "Mixpanel, Sept 1 to 24. Claims are all at the first rung, and the keep referring button has been pressed once.",
     "popup": [
       "The keep referring button was pressed once this period, the only time in the campaign. Nineteen people confirmed the camera claim and eight opened the claim without confirming. At the first rung the trade is a camera already earned against two more activations at 17 to 19 days each, and for most people that is still a bad bet.",
       "16,439 unique users loaded the campaign widget over the 24 days but only 27 opened a claim, so the drop is at intent to claim rather than awareness. The two referrers who have gone past the first rung, one now at AirPods and one at Ray-Ban, have not claimed, so button presses understate intent. Worth checking with Tech whether the keep referring button changes any state."
     ],
     "referrers": [
-      "514 people have referred on the campaign, excluding the flagged referrer 85276. 420 of them (82%) sent exactly one signup, and those onboard at 62%. The other 94 sent 364 signups between them, 46% of the total, but only 157 onboarded (43%) and 34 activated. Volume and ladder progress are not the same thing: the top ten senders produced 136 signups, 46 onboardings and 13 activations, and exporter 38154's 35 signups have yielded 6 onboardings and 1 activation.",
-      "The healthiest repeat cohort is referrers with 1 to 2 prior achievements. 91 people, 1.58 signups each, 58% onboarding, 26 activations. They go a little deeper than first-timers without the dilution. Past power referrers (3+ achieved) send 2.59 each but only 40% onboard. First-timers are the largest group at 320 (62%) and convert at 54%.",
-      "185 referrers (36%) have zero onboarded referees against 236 signups. That is the cheapest recovery pool in the campaign: the referrer already made the ask, the referee already signed up, someone just needs to finish the form.",
-      "98 referrers (19%) have never activated on Skydo themselves. They brought 148 signups, 68 onboarded, 6 activated. The ladder is being promoted by people who have not used the product, which explains some of the weaker referee quality.",
-      "Referrers who signed up in the past but never achieved a milestone (66 of them) brought 79 signups, 44 onboarded and 6 activated, in line with first-timers.",
-      "78 have unlocked at least the Polaroid. 21 have claimed it. The 57 who have not are still on the ladder, including the one referrer at AirPods and the one at Ray-Ban."
+      "516 people have referred on the campaign, excluding the flagged referrer 85276. 422 of them (82%) sent exactly one signup, and those onboard at 62%. The other 94 sent 367 signups between them, 46% of the total, but only 157 onboarded (43%) and 35 activated. Volume and ladder progress are not the same thing: the top ten senders produced 136 signups, 46 onboardings and 13 activations, and exporter 38154's 35 signups have yielded 6 onboardings and 1 activation.",
+      "The healthiest repeat cohort is referrers with 1 to 2 prior achievements. 91 people, 1.58 signups each, 59% onboarding, 26 activations. They go a little deeper than first-timers without the dilution. Past power referrers (3+ achieved) send 2.59 each but only 40% onboard. First-timers are the largest group at 321 (62%) and convert at 54%.",
+      "185 referrers (36%) have zero onboarded referees against 238 signups. That is the cheapest recovery pool in the campaign: the referrer already made the ask, the referee already signed up, someone just needs to finish the form.",
+      "98 referrers (19%) have never activated on Skydo themselves. They brought 150 signups, 69 onboarded, 6 activated. The ladder is being promoted by people who have not used the product, which explains some of the weaker referee quality.",
+      "Referrers who signed up in the past but never achieved a milestone (67 of them) brought 80 signups, 44 onboarded and 7 activated, in line with first-timers.",
+      "82 have unlocked at least the Polaroid. 21 have claimed it. The 61 who have not are still on the ladder, including the one referrer at AirPods and the one at Ray-Ban."
     ],
     "refereeQuality": [
       "Referees from single-signup referrers look about as good as August's and a little better on value. 53% onboard in a day against 55%, 20% activate within 10 days against 16%, and the median first settlement is about $2,155 against $1,867.",

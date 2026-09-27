@@ -1,6 +1,6 @@
 {
   "SNAPSHOT": {
-    "asOf": "27 Sep 2026, 20:04 IST",
+    "asOf": "27 Sep 2026, 21:00 IST",
     "campaignStart": "2026-09-01",
     "campaignEnd": "2026-10-31",
     "campaignDay": 27,
@@ -300,7 +300,7 @@
     }
   ],
   "POPUP": {
-    "widgetUniqueUsers": 17065,
+    "widgetUniqueUsers": 17064,
     "claimCta": 30,
     "claimConfirm": 22,
     "keepReferring": 1,
@@ -398,9 +398,9 @@
     {
       "week": "21 Sep",
       "period": "campaign",
-      "signups": 250,
+      "signups": 254,
       "referrers": 169,
-      "perRef": 1.48
+      "perRef": 1.5
     }
   ],
   "COHORTS": [
@@ -485,7 +485,7 @@
       "id": "3",
       "label": "Not activated, onboarded this month",
       "indent": 0,
-      "base": 2652,
+      "base": 2651,
       "refNow": 34,
       "rateNow": 1.28,
       "refPrev": 19,
@@ -538,10 +538,10 @@
     },
     {
       "week": "21 Sep",
-      "signups": 249,
-      "ob1d": 40.6,
-      "ob7d": 43.4,
-      "obSoFar": 43.4,
+      "signups": 253,
+      "ob1d": 39.9,
+      "ob7d": 42.7,
+      "obSoFar": 42.7,
       "actOfOb": 4.6,
       "medianDays": 2.3
     }
@@ -7132,12 +7132,12 @@
     "ladder": "304 onboarded referees belong to people who have not unlocked anything yet. At the usual 70 to 75% activation rate that is roughly 210 to 230 more Polaroids in the pipeline. Exporter 133487 has unlocked Ray-Ban at 6 and has not claimed, so is going for the iPhone. Exporter 224027 has reached AirPods at 3 and has not claimed. Six people are one activation from AirPods. 83 people have unlocked at least the Polaroid and 24 have claimed it, every claim at exactly one activation.",
     "cohorts": "The lift on the activated base is +21% for the month to date, rate 1.75% against 1.45% in Aug. Past referrers (1b, +51%) and recently dormant users (1.2, +37%) carry it. Never-referrers (1a) are at 1.17% against 1.15%, essentially level with Aug: the campaign has reached about as many first-time referrers as last month, not materially more.",
     "mix": "62% of campaign referrers have never referred before, but first-timers are only level with Aug on a like-for-like basis; the referrer increase leans on repeats. Past power referrers (3+ prior achievements) bring 2.54 signups each and only 42% onboard, so they are sharing wider and shallower.",
-    "weeklyQuality": "Across campaign referrals (38679 excluded) next-day onboarding is running 41 to 50% by signup week, 43% in the 31 Aug week, 50% on 7 Sep, then 43% and 41%, below the 55% August referrals reached in the funnel. The gap sits with referrers sending 2 or more signups: single-signup senders reach a next-day onboarding at 54%, people sending 2 or more at 34%. The 21 Sep week is still filling in, at 43% onboarded so far.",
+    "weeklyQuality": "Across campaign referrals (38679 excluded) next-day onboarding is running 40 to 50% by signup week, 43% in the 31 Aug week, 50% on 7 Sep, then 43% and 40%, below the 55% August referrals reached in the funnel. The gap sits with referrers sending 2 or more signups: single-signup senders reach a next-day onboarding at 54%, people sending 2 or more at 34%. The 21 Sep week is still filling in, at 43% onboarded so far.",
     "claims": "24 of the 83 people who unlocked a reward have claimed it, all at the Polaroid rung and all at exactly one activation. The two referrers at AirPods and above, exporter 224027 at three and exporter 133487 at six, have not claimed, which is the behaviour the ladder was designed for.",
-    "popupHeader": "Mixpanel could not be refreshed this run, so these popup numbers are carried over from the last successful pull covering Sept 1 to 26. Claims are all at the first rung, and the keep referring button has been pressed once.",
+    "popupHeader": "Mixpanel refreshed this run, covering Sept 1 to 26. 17,064 unique users loaded the campaign widget, 30 opened a claim and 22 confirmed. Claims are all at the first rung, and the keep referring button has been pressed once.",
     "popup": [
       "The keep referring button was pressed once this period, the only time in the campaign. Twenty-two people confirmed the camera claim and thirty opened the claim, so eight opened without confirming. At the first rung the trade is a camera already earned against two more activations at 17 to 19 days each, and for most people that is still a bad bet.",
-      "17,065 unique users loaded the campaign widget over the 26 days but only 30 opened a claim, so the drop is at intent to claim rather than awareness. The two referrers who have gone past the first rung, one now at AirPods and one at Ray-Ban, have not claimed, so button presses understate intent. Worth checking with Tech whether the keep referring button changes any state."
+      "17,064 unique users loaded the campaign widget over the 26 days but only 30 opened a claim, so the drop is at intent to claim rather than awareness. The two referrers who have gone past the first rung, one now at AirPods and one at Ray-Ban, have not claimed, so button presses understate intent. Worth checking with Tech whether the keep referring button changes any state."
     ],
     "referrers": [
       "537 people have referred on the campaign, excluding the flagged referrer 85276. 440 of them (82%) sent exactly one signup, and those onboard at 62%. The other 97 sent 393 signups between them, 47% of the total, but only 161 onboarded (41%) and 35 activated. Volume and ladder progress are not the same thing: the top ten senders produced 151 signups, 48 onboardings and 14 activations, and exporter 38154's 38 signups have yielded 6 onboardings and 1 activation.",

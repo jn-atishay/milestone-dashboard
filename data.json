@@ -1,6 +1,6 @@
 {
   "SNAPSHOT": {
-    "asOf": "29 Sep 2026, 17:00 IST",
+    "asOf": "29 Sep 2026, 18:00 IST",
     "campaignStart": "2026-09-01",
     "campaignEnd": "2026-10-31",
     "campaignDay": 29,
@@ -331,7 +331,7 @@
       "reward": "Polaroid Camera",
       "threshold": 1,
       "status": "Claimed",
-      "count": 26,
+      "count": 27,
       "first": "1 Sep",
       "last": "29 Sep",
       "avgAchieved": 1
@@ -425,9 +425,9 @@
     {
       "week": "28 Sep",
       "period": "campaign",
-      "signups": 52,
-      "referrers": 38,
-      "perRef": 1.37
+      "signups": 53,
+      "referrers": 39,
+      "perRef": 1.36
     }
   ],
   "COHORTS": [
@@ -435,7 +435,7 @@
       "id": "1",
       "label": "Activated before month start",
       "indent": 0,
-      "base": 19902,
+      "base": 19901,
       "refNow": 363,
       "rateNow": 1.82,
       "refPrev": 283,
@@ -446,7 +446,7 @@
       "id": "1a",
       "label": "never referred before",
       "indent": 1,
-      "base": 15853,
+      "base": 15852,
       "refNow": 190,
       "rateNow": 1.2,
       "refPrev": 180,
@@ -479,7 +479,7 @@
       "id": "1.2",
       "label": "recently dormant (txn in prev 3 mo)",
       "indent": 1,
-      "base": 4594,
+      "base": 4593,
       "refNow": 90,
       "rateNow": 1.96,
       "refPrev": 54,
@@ -501,18 +501,18 @@
       "id": "2",
       "label": "New activations this month (M0)",
       "indent": 0,
-      "base": 1267,
+      "base": 1269,
       "refNow": 65,
-      "rateNow": 5.13,
+      "rateNow": 5.12,
       "refPrev": 89,
       "ratePrev": 4.36,
-      "delta": 17.7
+      "delta": 17.4
     },
     {
       "id": "3",
       "label": "Not activated, onboarded this month",
       "indent": 0,
-      "base": 2763,
+      "base": 2760,
       "refNow": 37,
       "rateNow": 1.34,
       "refPrev": 25,
@@ -574,10 +574,10 @@
     },
     {
       "week": "28 Sep",
-      "signups": 52,
-      "ob1d": 63.5,
-      "ob7d": 63.5,
-      "obSoFar": 63.5,
+      "signups": 53,
+      "ob1d": 62.3,
+      "ob7d": 62.3,
+      "obSoFar": 62.3,
       "actOfOb": 0.0,
       "medianDays": 0
     }
@@ -1337,7 +1337,7 @@
       1,
       1,
       1,
-      "",
+      "P",
       "RN"
     ],
     [
@@ -5445,6 +5445,18 @@
       "RN"
     ],
     [
+      164855,
+      "Aarnav Sharad Saboo",
+      "SP",
+      "2026-04-01",
+      "2026-04-10",
+      2,
+      0,
+      0,
+      "",
+      "RN"
+    ],
+    [
       210512,
       "Gaurav Dange",
       "F",
@@ -6451,18 +6463,6 @@
       0,
       "",
       "FT"
-    ],
-    [
-      164855,
-      "Aarnav Sharad Saboo",
-      "SP",
-      "2026-04-01",
-      "2026-04-10",
-      1,
-      0,
-      0,
-      "",
-      "RN"
     ],
     [
       169084,
@@ -7489,23 +7489,23 @@
   "notes": {
     "pace": "The share of the month that days 1 to 28 delivered in Jun, Jul and Aug was 89%, 85% and 88%. Applied to the 529 onboardings so far, that projects to roughly 594 to 620 for September, centred near 604. A straight line run rate of 18.9 a day gives about 567. Week 1 brought 145 onboardings, week 2 brought 107, week 3 brought 119, and week 4, 22 to 28 Sep, brought 158. Aug reached 409 by this point and closed at 462, but Aug had a 31 Aug deadline that pulled its last week forward; Sept has no deadline, so read the projection as a ceiling and the straight line as a floor. Both the projection and the straight line sit above the 552 target; with 529 already in, the target needs about 12 a day across the last two days and 600 needs about 36 a day. Day 29 has already brought 24 onboardings.",
     "daily": "7-day average line. Week 1 signups 243, week 2 161, week 3 204, and week 4, 22 to 28 Sep, 257. 22 Sep is still the best day of the campaign at 60 signups. The last full day, 28 Sep, brought 31 signups from 22 referrers, with 29 onboardings, 9 activations and 1 claim, one of the strongest onboarding days of the month after a near-idle Sunday. No single referrer sent more than 25 signups in the last 24 hours, so there is nothing to flag. Today is not charted until the day is complete.",
-    "ladder": "331 onboarded referees belong to people who have not unlocked anything yet. At the usual 70 to 75% activation rate that is roughly 232 to 248 more Polaroids in the pipeline. Exporter 224027 has reached the Ray-Ban rung at 5 activations and exporter 133487 is past it at 6, both beyond AirPods and neither has claimed, so both are still climbing toward the iPhone at 8. Seven people are one activation from AirPods. 94 people have unlocked at least the Polaroid and 26 have claimed it, every claim at exactly one activation.",
+    "ladder": "331 onboarded referees belong to people who have not unlocked anything yet. At the usual 70 to 75% activation rate that is roughly 232 to 248 more Polaroids in the pipeline. Exporter 224027 has reached the Ray-Ban rung at 5 activations and exporter 133487 is past it at 6, both beyond AirPods and neither has claimed, so both are still climbing toward the iPhone at 8. Seven people are one activation from AirPods. 94 people have unlocked at least the Polaroid and 27 have claimed it, every claim at exactly one activation.",
     "cohorts": "The lift on the activated base is +21% for the month to date, rate 1.82% against 1.51% in Aug. Past referrers (1b, +56%) and recently dormant users (1.2, +58%) carry it. Never-referrers (1a) are at 1.20% against 1.20%, flat with Aug: the campaign has reached about as many first-time referrers as last month, not more.",
     "mix": "62% of campaign referrers have never referred before, but on a like-for-like basis first-timers are only level with Aug; the referrer increase leans on repeats. Past power referrers (3+ prior achievements) bring 2.51 signups each and only 46% onboard, so they are sharing wider and shallower.",
     "weeklyQuality": "Across campaign referrals (38679 excluded) next-day onboarding is running 40 to 50% by signup week, 43% in the 31 Aug week, 50% on 7 Sep, then 43% and 40%, below the 55% August referrals reached in the funnel. The gap sits with referrers sending 2 or more signups: single-signup senders reach next-day onboarding at 54%, people sending 2 or more at 34%. The 21 Sep week is now complete at 48% onboarded.",
-    "claims": "26 of the 94 people who unlocked a reward have claimed it, all at the Polaroid rung and all at exactly one activation. The two referrers past the first rung, exporter 224027 at five activations and exporter 133487 at six, have not claimed, which is the behaviour the ladder was designed for.",
+    "claims": "27 of the 94 people who unlocked a reward have claimed it, all at the Polaroid rung and all at exactly one activation. The two referrers past the first rung, exporter 224027 at five activations and exporter 133487 at six, have not claimed, which is the behaviour the ladder was designed for.",
     "popupHeader": "Mixpanel refreshed this run, covering Sept 1 to 28. 17,612 unique users loaded the campaign widget, 31 opened a claim and 23 confirmed. Claims are all at the first rung, and the keep referring button has been pressed once.",
     "popup": [
       "The keep referring button was pressed once this period, the only time in the campaign. Twenty-three people confirmed the camera claim and thirty-one opened the claim, so eight opened without confirming. At the first rung the trade is a camera already earned against two more activations at 17 to 19 days each, and for most people that is still a bad bet.",
       "17,612 unique users loaded the campaign widget over the 28 days but only 31 opened a claim, so the drop is at intent to claim rather than awareness. The two referrers who have gone past the first rung, now at the Ray-Ban rung and beyond, have not claimed, so button presses understate intent. Worth checking with Tech whether the keep referring button changes any state."
     ],
     "referrers": [
-      "564 people have referred on the campaign, excluding the flagged referrer 85276. 463 of them (82%) sent exactly one signup, and those onboard at 65%. The other 101 sent 423 signups between them, 48% of the total, but only 44% onboarded and 42 activated. Volume and ladder progress are not the same thing: exporter 38154's 39 signups have yielded 6 onboardings and 1 activation, and exporter 260681's 24 signups have yielded 4 onboardings and no activations.",
+      "564 people have referred on the campaign, excluding the flagged referrer 85276. 462 of them (82%) sent exactly one signup, and those onboard at 65%. The other 102 sent 425 signups between them, 48% of the total, but only 44% onboarded and 42 activated. Volume and ladder progress are not the same thing: exporter 38154's 39 signups have yielded 6 onboardings and 1 activation, and exporter 260681's 24 signups have yielded 4 onboardings and no activations.",
       "The healthiest repeat cohort is referrers with 1 to 2 prior achievements. 101 people, 1.64 signups each, 60% of signups onboard, 29 activations. They go a little deeper than first-timers without the dilution. Past power referrers (3+ achieved) send 2.51 each but only 46% onboard. First-timers are the largest group at 350 (62%) and their signups onboard at 56%.",
-      "188 referrers (33%) have zero onboarded referees against 246 signups. That is the cheapest recovery pool in the campaign: the referrer already made the ask, the referee already signed up, someone just needs to finish the form.",
+      "188 referrers (33%) have zero onboarded referees against 247 signups. That is the cheapest recovery pool in the campaign: the referrer already made the ask, the referee already signed up, someone just needs to finish the form.",
       "102 referrers (18%) have never activated on Skydo themselves. They brought 172 signups, 83 onboarded, 7 activated. The ladder is being promoted by people who have not used the product, which explains some of the weaker referee quality.",
-      "Referrers who signed up in the past but never achieved a milestone (72 of them) brought 90 signups, 49 onboarded and 9 activated, in line with first-timers.",
-      "94 have unlocked at least the Polaroid. 26 have claimed it. The 68 who have not are still on the ladder, including the two referrers now at the Ray-Ban rung and beyond."
+      "Referrers who signed up in the past but never achieved a milestone (72 of them) brought 91 signups, 49 onboarded and 9 activated, in line with first-timers.",
+      "94 have unlocked at least the Polaroid. 27 have claimed it. The 67 who have not are still on the ladder, including the two referrers now at the Ray-Ban rung and beyond."
     ],
     "refereeQuality": [
       "Referees from single-signup referrers look about as good as August's and a little better on value. 54% onboard in a day against 55%, 17% activate within 10 days against 15%, and the median first settlement is about $2,065 against $1,871.",

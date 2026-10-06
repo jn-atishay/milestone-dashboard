@@ -1,12 +1,12 @@
 {
   "SNAPSHOT": {
-    "asOf": "5 Oct 2026, 20:00 IST",
+    "asOf": "6 Oct 2026, 09:00 IST",
     "campaignStart": "2026-09-01",
     "campaignEnd": "2026-10-31",
-    "campaignDay": 35,
-    "daysLeft": 26,
-    "fullDays": 4,
-    "campaignFullDays": 34
+    "campaignDay": 36,
+    "daysLeft": 25,
+    "fullDays": 5,
+    "campaignFullDays": 35
   },
   "PACE": {
     "target": 662,
@@ -15,27 +15,28 @@
     "months": [
       {
         "month": "Jul",
-        "firstN": 50,
+        "firstN": 56,
         "full": 409
       },
       {
         "month": "Aug",
-        "firstN": 54,
+        "firstN": 85,
         "full": 463
       },
       {
         "month": "Sep",
-        "firstN": 98,
+        "firstN": 110,
         "full": 604
       }
     ],
-    "sepToDate": 63,
-    "todaySoFar": 19,
+    "sepToDate": 85,
+    "todaySoFar": 2,
     "sepDaily": [
       29,
       12,
       12,
-      10
+      10,
+      22
     ],
     "monthName": "October",
     "monthShort": "Oct",
@@ -347,14 +348,23 @@
       "onboardings": 10,
       "activations": 0,
       "claims": 1
+    },
+    {
+      "day": "5 Oct",
+      "dow": "Mon",
+      "signups": 29,
+      "referrers": 28,
+      "onboardings": 23,
+      "activations": 20,
+      "claims": 2
     }
   ],
   "POPUP": {
-    "widgetUniqueUsers": 19429,
-    "claimCta": 50,
-    "claimConfirm": 38,
+    "widgetUniqueUsers": 19752,
+    "claimCta": 51,
+    "claimConfirm": 39,
     "keepReferring": 1,
-    "window": "1 Sep to 4 Oct"
+    "window": "1 Sep to 5 Oct"
   },
   "CLAIMS": [
     {
@@ -474,100 +484,100 @@
       "id": "1",
       "label": "Activated before month start",
       "indent": 0,
-      "base": 21236,
-      "refNow": 58,
-      "rateNow": 0.27,
-      "refPrev": 92,
-      "ratePrev": 0.46,
-      "delta": -41.3
+      "base": 21235,
+      "refNow": 72,
+      "rateNow": 0.34,
+      "refPrev": 104,
+      "ratePrev": 0.52,
+      "delta": -34.6
     },
     {
       "id": "1a",
       "label": "never referred before",
       "indent": 1,
       "base": 16879,
-      "refNow": 20,
-      "rateNow": 0.12,
-      "refPrev": 42,
-      "ratePrev": 0.27,
-      "delta": -55.6
+      "refNow": 29,
+      "rateNow": 0.17,
+      "refPrev": 49,
+      "ratePrev": 0.31,
+      "delta": -45.2
     },
     {
       "id": "1b",
       "label": "referred in the past",
       "indent": 1,
-      "base": 4357,
-      "refNow": 38,
-      "rateNow": 0.87,
-      "refPrev": 50,
-      "ratePrev": 1.24,
-      "delta": -29.8
+      "base": 4356,
+      "refNow": 43,
+      "rateNow": 0.99,
+      "refPrev": 55,
+      "ratePrev": 1.36,
+      "delta": -27.2
     },
     {
       "id": "1.1",
       "label": "transacted this month",
       "indent": 1,
-      "base": 1011,
-      "refNow": 6,
-      "rateNow": 0.59,
-      "refPrev": 26,
-      "ratePrev": 0.77,
-      "delta": -23.4
+      "base": 2882,
+      "refNow": 12,
+      "rateNow": 0.42,
+      "refPrev": 29,
+      "ratePrev": 0.86,
+      "delta": -51.2
     },
     {
       "id": "1.2",
       "label": "recently dormant (txn in prev 3 mo)",
       "indent": 1,
-      "base": 12645,
-      "refNow": 44,
-      "rateNow": 0.35,
-      "refPrev": 56,
-      "ratePrev": 0.58,
-      "delta": -39.7
+      "base": 10812,
+      "refNow": 50,
+      "rateNow": 0.46,
+      "refPrev": 64,
+      "ratePrev": 0.67,
+      "delta": -31.3
     },
     {
       "id": "1.3",
       "label": "dormant (no txn 3+ mo)",
       "indent": 1,
-      "base": 7580,
-      "refNow": 8,
-      "rateNow": 0.11,
-      "refPrev": 10,
-      "ratePrev": 0.14,
-      "delta": -21.4
+      "base": 7541,
+      "refNow": 10,
+      "rateNow": 0.13,
+      "refPrev": 11,
+      "ratePrev": 0.16,
+      "delta": -18.8
     },
     {
       "id": "2",
       "label": "New activations this month (M0)",
       "indent": 0,
-      "base": 209,
+      "base": 212,
       "refNow": 2,
-      "rateNow": 0.96,
-      "refPrev": 9,
-      "ratePrev": 0.78,
-      "delta": 23.1
+      "rateNow": 0.94,
+      "refPrev": 13,
+      "ratePrev": 1.11,
+      "delta": -15.3
     },
     {
       "id": "3",
       "label": "Not activated, onboarded this month",
       "indent": 0,
-      "base": 303,
-      "refNow": 2,
-      "rateNow": 0.66,
+      "base": 427,
+      "refNow": 5,
+      "rateNow": 1.17,
       "refPrev": 3,
-      "ratePrev": 0.69,
-      "delta": -4.3
+      "ratePrev": 0.61,
+      "delta": 91.8
     },
     {
       "id": "4",
       "label": "Not activated, old onboarder",
       "indent": 0,
-      "base": 35792,
-      "refNow": 12,
-      "rateNow": 0.03,
-      "refPrev": 8,
-      "ratePrev": 0.02,
-      "delta": 50.0
+      "base": 35789,
+      "refNow": 16,
+      "rateNow": 0.04,
+      "refPrev": 10,
+      "ratePrev": 0.03,
+      "delta": 33.3
     }
   ],
   "COHORT_LABELS": {
@@ -608,15 +618,15 @@
       "ob1d": 40.2,
       "ob7d": 50.4,
       "obSoFar": 51.2,
-      "actOfOb": 21.5,
+      "actOfOb": 22.3,
       "medianDays": 7.0
     },
     {
       "week": "28 Sep",
       "signups": 209,
       "ob1d": 54.1,
-      "ob7d": 60.8,
-      "obSoFar": 60.8,
+      "ob7d": 61.2,
+      "obSoFar": 61.2,
       "actOfOb": 6.3,
       "medianDays": 2.6
     }
@@ -627,25 +637,25 @@
       "src": "Sept referrals",
       "n": 949,
       "ob1d": 45.6,
-      "ob7d": 54.1,
-      "matureN": 410,
-      "act10": 17.6,
-      "medianFirstInr": 151781
+      "ob7d": 54.2,
+      "matureN": 433,
+      "act10": 16.9,
+      "medianFirstInr": 143805
     },
     {
       "src": "Oct, single-signup referrers",
-      "n": 69,
-      "ob1d": 44.9,
-      "ob7d": 49.3,
-      "matureN": 0,
-      "act10": null,
-      "medianFirstInr": null
+      "n": 90,
+      "ob1d": 47.8,
+      "ob7d": 54.4,
+      "matureN": 1,
+      "act10": 0.0,
+      "medianFirstInr": 34988
     },
     {
       "src": "Oct, 2+ signup referrers",
-      "n": 28,
-      "ob1d": 50,
-      "ob7d": 57.1,
+      "n": 36,
+      "ob1d": 52.8,
+      "ob7d": 58.3,
       "matureN": 0,
       "act10": null,
       "medianFirstInr": null
@@ -654,47 +664,47 @@
   "Q_BT": [
     {
       "bt": "Freelancer",
-      "preN": 329,
-      "preShare": 60.6,
-      "preAct": 16.9,
-      "cN": 35,
-      "cShare": 70,
-      "cAct": null
+      "preN": 333,
+      "preShare": 60.9,
+      "preAct": 15.7,
+      "cN": 46,
+      "cShare": 65.7,
+      "cAct": 0.0
     },
     {
       "bt": "Sole prop",
       "preN": 136,
-      "preShare": 25,
-      "preAct": 19.8,
-      "cN": 11,
-      "cShare": 22,
+      "preShare": 24.9,
+      "preAct": 19.1,
+      "cN": 17,
+      "cShare": 24.3,
       "cAct": null
     },
     {
       "bt": "Company",
       "preN": 49,
-      "preShare": 9,
+      "preShare": 9.0,
       "preAct": 12.5,
-      "cN": 1,
-      "cShare": 2,
+      "cN": 4,
+      "cShare": 5.7,
       "cAct": null
     },
     {
       "bt": "LLP",
       "preN": 14,
       "preShare": 2.6,
-      "preAct": 25,
+      "preAct": 30.8,
       "cN": 2,
-      "cShare": 4,
+      "cShare": 2.9,
       "cAct": null
     },
     {
       "bt": "Partnership",
       "preN": 15,
-      "preShare": 2.8,
+      "preShare": 2.7,
       "preAct": 18.2,
       "cN": 1,
-      "cShare": 2,
+      "cShare": 1.4,
       "cAct": null
     },
     {
@@ -711,26 +721,26 @@
     {
       "vol": "Not stated",
       "preN": 190,
-      "preShare": 35,
-      "preAct": 18.6,
-      "cN": 14,
-      "cShare": 28,
+      "preShare": 34.7,
+      "preAct": 18.9,
+      "cN": 23,
+      "cShare": 32.9,
       "cAct": null
     },
     {
       "vol": "Under $10K a month",
-      "preN": 331,
-      "preShare": 61,
-      "preAct": 17.4,
-      "cN": 36,
-      "cShare": 72,
-      "cAct": null
+      "preN": 332,
+      "preShare": 60.7,
+      "preAct": 16.1,
+      "cN": 46,
+      "cShare": 65.7,
+      "cAct": 0.0
     },
     {
       "vol": "$10K to 20K",
       "preN": 5,
       "preShare": 0.9,
-      "preAct": 0,
+      "preAct": 0.0,
       "cN": null,
       "cShare": null,
       "cAct": null
@@ -739,18 +749,18 @@
       "vol": "$20K to 50K",
       "preN": 1,
       "preShare": 0.2,
-      "preAct": 0,
+      "preAct": 0.0,
       "cN": null,
       "cShare": null,
       "cAct": null
     },
     {
       "vol": "$50K and above",
-      "preN": 16,
-      "preShare": 2.9,
-      "preAct": 15.4,
-      "cN": null,
-      "cShare": null,
+      "preN": 19,
+      "preShare": 3.5,
+      "preAct": 14.3,
+      "cN": 1,
+      "cShare": 1.4,
       "cAct": null
     }
   ],
@@ -780,6 +790,18 @@
       "R3"
     ],
     [
+      204041,
+      "Manni Kumawat",
+      "F",
+      "2026-05-13",
+      "2026-07-06",
+      8,
+      8,
+      3,
+      "",
+      "R1"
+    ],
+    [
       194258,
       "Rudani Yash Mukeshbhai",
       "LLP",
@@ -802,18 +824,6 @@
       3,
       "AirPods 4",
       "FT"
-    ],
-    [
-      204041,
-      "Manni Kumawat",
-      "F",
-      "2026-05-13",
-      "2026-07-06",
-      8,
-      8,
-      2,
-      "",
-      "R1"
     ],
     [
       125530,
@@ -2453,11 +2463,23 @@
       "SP",
       "2026-08-05",
       "2026-08-07",
-      9,
-      7,
+      10,
+      8,
       0,
       "",
       "RN"
+    ],
+    [
+      17802,
+      "Gyayak Jain",
+      "C",
+      "2024-09-04",
+      "2025-09-23",
+      5,
+      5,
+      0,
+      "",
+      "R3"
     ],
     [
       96382,
@@ -2470,18 +2492,6 @@
       0,
       "",
       "FT"
-    ],
-    [
-      17802,
-      "Gyayak Jain",
-      "C",
-      "2024-09-04",
-      "2025-09-23",
-      4,
-      4,
-      0,
-      "",
-      "R3"
     ],
     [
       14459,
@@ -2604,6 +2614,18 @@
       "FT"
     ],
     [
+      268109,
+      "Jatin Sharma",
+      "F",
+      "2026-10-01",
+      null,
+      4,
+      2,
+      0,
+      "",
+      "FT"
+    ],
+    [
       35703,
       "Dominic Deepan",
       "C",
@@ -2633,6 +2655,18 @@
       "F",
       "2026-09-11",
       "2026-09-22",
+      3,
+      2,
+      0,
+      "",
+      "FT"
+    ],
+    [
+      239337,
+      "Raj Kumar Pagariya",
+      "SP",
+      "2026-08-06",
+      "2026-08-12",
       3,
       2,
       0,
@@ -2748,18 +2782,6 @@
       "FT"
     ],
     [
-      239337,
-      "Raj Kumar Pagariya",
-      "SP",
-      "2026-08-06",
-      "2026-08-12",
-      2,
-      2,
-      0,
-      "",
-      "FT"
-    ],
-    [
       241018,
       "Vayugundla Venkata Siva Dhanush",
       "SP",
@@ -2824,18 +2846,6 @@
       "Malay Acharya",
       "F",
       "2026-09-30",
-      null,
-      2,
-      2,
-      0,
-      "",
-      "FT"
-    ],
-    [
-      268109,
-      "Jatin Sharma",
-      "F",
-      "2026-10-01",
       null,
       2,
       2,
@@ -2938,6 +2948,18 @@
       0,
       "",
       "R3"
+    ],
+    [
+      27471,
+      "Yuvraj Rahul Chavan",
+      "SP",
+      "2024-09-09",
+      "2024-09-13",
+      2,
+      1,
+      0,
+      "",
+      "R1"
     ],
     [
       32973,
@@ -3466,18 +3488,6 @@
       0,
       "",
       "FT"
-    ],
-    [
-      27471,
-      "Yuvraj Rahul Chavan",
-      "SP",
-      "2024-09-09",
-      "2024-09-13",
-      1,
-      1,
-      0,
-      "",
-      "R1"
     ],
     [
       29425,
@@ -4174,6 +4184,18 @@
       0,
       "",
       "FT"
+    ],
+    [
+      131213,
+      "Anish Narayana M",
+      "F",
+      "2025-10-12",
+      "2025-10-28",
+      1,
+      1,
+      0,
+      "",
+      "R3"
     ],
     [
       132792,
@@ -5196,6 +5218,18 @@
       "FT"
     ],
     [
+      211084,
+      "Pulkit Keshar",
+      "C",
+      "2026-05-28",
+      "2026-06-09",
+      1,
+      1,
+      0,
+      "",
+      "FT"
+    ],
+    [
       211470,
       "Aniket Gain",
       "F",
@@ -6159,6 +6193,18 @@
       267706,
       "Daram Haveela",
       "F",
+      "2026-09-30",
+      null,
+      1,
+      1,
+      0,
+      "",
+      "FT"
+    ],
+    [
+      267841,
+      "Madhumitha Palanisamy",
+      "SP",
       "2026-09-30",
       null,
       1,
@@ -7296,18 +7342,6 @@
       "R1"
     ],
     [
-      131213,
-      "Anish Narayana M",
-      "F",
-      "2025-10-12",
-      "2025-10-28",
-      1,
-      0,
-      0,
-      "",
-      "R3"
-    ],
-    [
       132521,
       "Pratham Pravin Chauhan",
       "SP",
@@ -7997,18 +8031,6 @@
       "F",
       "2026-05-28",
       "2026-06-29",
-      1,
-      0,
-      0,
-      "",
-      "FT"
-    ],
-    [
-      211084,
-      "Pulkit Keshar",
-      "C",
-      "2026-05-28",
-      "2026-06-09",
       1,
       0,
       0,
@@ -8712,37 +8734,37 @@
       "FT"
     ]
   ],
-  "qualityRefreshedOn": "2026-10-05",
+  "qualityRefreshedOn": "2026-10-06",
   "notes": {
-    "pace": "October is four full days old, so these projections are noisy but starting to firm up. 63 referral onboardings have landed so far (29 on 1 Oct, 12 on 2 Oct, 12 on 3 Oct, 10 on 4 Oct), with 19 in already today. The first four days of Jul, Aug and Sep delivered 12.2%, 11.7% and 16.2% of their full months, which on 63 onboardings centres the projection near 470 with a wide band from about 390 to 540. A straight line from four days reads about 490. Every one of those is below plan. The arithmetic that matters: the 662 October target needs about 21 onboardings a day across the month, and just under 600 more from here over the 27 days left including today, close to 22 a day. For context, September closed at 604 onboardings against its 552 target, so the slow October start is coming off a strong month rather than a weak one.",
-    "daily": "7-day average line. The September campaign weeks ran 251, 189, 190, 255 and 209 signups; 22 Sep is still the best single day at 60. The last full day, 4 Oct, brought 18 signups from 17 referrers, with 10 onboardings, no activations and 1 claim, a quiet Sunday. The day before, 3 Oct, was similar at 21 signups and 12 onboardings. The weekend carried no activations as settlements paused, after 1 Oct posted 20 activations, the highest of the campaign, when September settlements caught up. No referrer sent more than a handful of signups on either day, so nothing crosses the 25-in-24-hours line and there is nothing to flag. Today is not charted until it is complete.",
-    "ladder": "373 onboarded referees belong to people who have not unlocked anything yet. At the usual 70 to 75% activation rate that is roughly 260 to 280 more Polaroids in the pipeline. 140 people have now unlocked at least the Polaroid and 43 have claimed a reward. On the upper rungs, exporter 236698 reached the AirPods rung at 3 activations and has claimed it, exporter 194258 has just joined it at 3 and not claimed, exporter 224027 is at the Ray-Ban rung at 5, and exporter 133487 is past it at 6, the last two still climbing toward the iPhone at 8. Twelve people sit at exactly 2 activations, one short of the AirPods rung.",
-    "cohorts": "This is four full days of October against the same four days of September, so read the lift as direction, not size, and the direction is down across the board. The activated base (cohort 1) refers at 0.27% against 0.46%, about 41% lower, which is 58 referrers versus 92 on four days. Past referrers (1b, 0.87% against 1.24%) and the recently dormant (1.2, 0.35% against 0.58%) are both softer. The two groups ahead are small: new M0 activations (2) at 0.96% against 0.78% on just 2 referrers, and old non-activated onboarders (4) at 0.03% against 0.02%. Never-referrers (1a) are at 0.12% against 0.27%, 20 referrers versus 42, down by more than half. September opened fast, so October starting below it on four days is not yet a worry. Come back once a full week of October is in.",
-    "mix": "63% of campaign referrers (418 of 663) have never referred before. The repeat referrers go deeper per head: those with 1 to 2 prior achievements send 1.65 signups each and onboard at 65%, while past power referrers with 3 or more achievements send 2.58 each but onboard only 49%, sharing wider and shallower. On the cohort view it is still only four days of October, so the first-timer rate is not yet readable.",
-    "weeklyQuality": "Across campaign referrals (38679 excluded) next-day onboarding by signup week ran 43%, 50%, 43%, 40% and now 54% for the 28 Sep week, which onboarded fastest of the recent weeks. The 21 Sep week has filled in to 51% onboarded and the 28 Sep week to 61%. Activation of those onboarded falls off down the weeks as expected, since the newest weeks have had the least time: 47% for 31 Aug down to 6% for 28 Sep. The split by referrer type holds, single-signup senders onboard their referees at 66% against 49% for people sending 2 or more.",
-    "claims": "43 of the 140 people who have unlocked a reward have claimed one: 42 Polaroids at exactly one activation and 1 AirPods 4 at the 3 activation threshold. The first Polaroid was claimed on 1 Sep and the most recent on 5 Oct; the single AirPods claim came on 30 Sep. The two referrers furthest up the ladder, exporter 224027 at five activations and exporter 133487 at six, have still not claimed anything, which is the behaviour the ladder was designed for.",
-    "popupHeader": "Mixpanel refreshed this run, covering 1 Sep to 4 Oct. 19,429 unique users loaded the campaign widget, 50 opened a claim and 38 confirmed. The keep referring button has been pressed once across the whole campaign.",
+    "pace": "October is five full days old, so these projections are firming up but still early. 85 referral onboardings have landed so far (29 on 1 Oct, 12 on 2 Oct, 12 on 3 Oct, 10 on 4 Oct, 22 on 5 Oct), with 2 more in today. The first five days of July, August and September delivered 13.7%, 18.4% and 18.2% of their full months, which on 85 onboardings centres the projection in the 465 to 520 range, with a wider high end near 620 off July's slower ramp. A straight line from five days reads about 525. The arithmetic that matters: the 662 October target needs about 21 onboardings a day across the month, and 577 more from here over the 26 days left including today, about 22 a day. For context, September closed at 604 onboardings against its 552 target, so the slow October start follows a strong month rather than a weak one.",
+    "daily": "Seven day average line. The September campaign weeks ran 251, 189, 190, 255 and 209 signups; 22 Sep is still the best single day at 60. The last full day, 5 Oct, was a busy Monday: 29 signups from 28 referrers, 23 onboardings, 20 activations and 2 claims. Those 20 activations tie 1 Oct for the highest of the campaign, both Mondays where weekend settlements landed together. The weekend before was quiet, 4 Oct with 18 signups, 10 onboardings and no activations, and 3 Oct with 21 and 12. The 5 Oct signups were spread across 28 referrers, so no one sent more than a couple and there is nothing to flag. Today is not charted until it is complete.",
+    "ladder": "378 onboarded referees sit under referrers who have not unlocked anything yet, the pipeline still waiting on a first activation. 140 people have now unlocked at least the Polaroid and 43 have claimed a reward. On the upper rungs, three referrers are at the AirPods rung at 3 activations: exporter 236698 has claimed it, while exporter 204041 and exporter 194258 have not. Exporter 224027 is at the Ray-Ban rung at 5 and exporter 133487 is past it at 6, both still climbing toward the iPhone at 8 and neither has claimed. Eleven people sit at exactly 2 activations, one short of the AirPods rung.",
+    "cohorts": "This is five full days of October against the same five days of September, so read the lift as direction, not size, and the direction is down across most cohorts. The activated base (cohort 1) refers at 0.34% against 0.52%, about 35% lower, 72 referrers versus 104. Never-referrers (1a) are the softest, 0.17% against 0.31%, down 45%, 29 referrers versus 49. Past referrers (1b, 0.99% against 1.36%) and the recently dormant (1.2, 0.46% against 0.67%) are both down too. Two small groups are up: not-activated onboarders from this month (cohort 3) at 1.17% against 0.61% on just 5 referrers, and old non-activated onboarders (cohort 4) at 0.04% against 0.03%. New M0 activations (cohort 2) are down to 0.94% from 1.11% on 2 referrers. September opened fast, so October sitting below it on five days is early signal, not yet a worry. Come back once a full week is in.",
+    "mix": "63% of campaign referrers (419 of 664) have never referred before. The repeat referrers go deeper per head: those with 1 to 2 prior achievements send 1.65 signups each and onboard at 65%, while past power referrers with 3 or more achievements send 2.6 each but onboard only 50%, sharing wider and shallower. On the cohort view it is still only five days of October, so the first-timer rate for the month is not yet readable.",
+    "weeklyQuality": "Across campaign referrals (internal and flagged ids excluded) next-day onboarding by signup week ran 43%, 50%, 43%, 40% and 54% for the 28 Sep week, which onboarded fastest of the recent weeks. The 21 Sep week has filled to 50% onboarded in seven days and 51% so far; the 28 Sep week is at 61% on both. Activation of those onboarded falls off down the weeks as expected, since the newest weeks have had the least time: 47% for 31 Aug down to 6% for 28 Sep. The split by referrer type holds: single-signup senders onboard their referees at 66% against 49% for people sending 2 or more.",
+    "claims": "43 of the 140 people who have unlocked a reward have claimed one: 42 Polaroids at a single activation and 1 AirPods 4 at the three activation threshold. The first Polaroid was claimed on 1 Sep and the most recent on 5 Oct; the single AirPods claim came on 30 Sep. The two referrers furthest up the ladder, exporter 224027 at five activations and exporter 133487 at six, have still not claimed anything, the behaviour the ladder was designed for.",
+    "popupHeader": "Mixpanel refreshed this run, covering 1 Sep to 5 Oct. 19,752 unique users loaded the campaign widget, 51 opened a claim and 39 confirmed. The keep referring button has been pressed once across the whole campaign.",
     "popup": [
-      "The keep referring button has been pressed once in the entire campaign. Thirty-eight people confirmed a claim and fifty opened one, so twelve opened without confirming. Most people at the first rung still take the camera rather than push on, though two referrers have now reached the AirPods rung at three activations and one of them has claimed it.",
-      "19,429 unique users loaded the campaign widget over the window but only 50 opened a claim, so the drop is at intent to claim rather than awareness. One AirPods 4 has been taken, the first reward above the Polaroid rung. The two referrers furthest up the ladder, now at the Ray-Ban rung and beyond, still have not claimed, so button presses understate real intent. Worth checking with Tech whether the keep referring button changes any state."
+      "The keep referring button has been pressed once in the entire campaign. 39 people confirmed a claim and 51 opened one, so twelve opened without confirming. Most people at the first rung still take the camera rather than push on, though three referrers have now reached the AirPods rung at three activations and one of them has claimed it.",
+      "19,752 unique users loaded the campaign widget over the window but only 51 opened a claim, so the drop is at intent to claim rather than awareness. One AirPods 4 has been taken, the only reward above the Polaroid rung so far. The two referrers furthest up the ladder, now at the Ray-Ban rung and beyond, still have not claimed, so button presses understate real intent. Worth checking with Tech whether the keep referring button changes any state."
     ],
     "referrers": [
-      "663 people have referred on the campaign, excluding the flagged referrer 85276. 531 of them (80%) sent exactly one signup, and those onboard at 66%. The other 132 sent 536 signups between them, 50% of the total, but only 49% onboarded and 65 activated. Volume and ladder progress are not the same thing: exporter 38154's 40 signups have yielded 8 onboardings and 1 activation, exporter 260681's 34 signups 8 onboardings and 1 activation, and exporter 5561's 30 signups 8 onboardings and 1 activation.",
-      "The healthiest repeat cohort is referrers with 1 to 2 prior achievements. 124 people, 1.65 signups each, 65% of signups onboard, 47 activations. They go a little deeper than first-timers without the dilution. Past power referrers (3 or more achieved) are 45 people sending 2.58 each but onboarding only 49%. First-timers are the largest group at 418 (63%) and their signups onboard at 57%.",
-      "210 referrers (32%) have zero onboarded referees against 265 signups. That is the cheapest recovery pool in the campaign: the referrer already made the ask, the referee already signed up, someone just needs to finish the form.",
-      "113 referrers (17%) have never activated on Skydo themselves. They brought 216 signups, 106 onboarded, 16 activated. The ladder is being promoted by people who have not used the product, which explains some of the weaker referee quality.",
-      "Referrers who signed up in the past but never achieved a milestone (76 of them) brought 101 signups, 55 onboarded and 11 activated, in line with first-timers.",
+      "664 people have referred on the campaign, excluding the flagged referrer 85276. 531 of them (80%) sent exactly one signup, and those onboard at 66%. The other 133 sent 543 signups between them, about half the total, but only 49% onboarded and 66 activated. Volume and ladder progress are not the same thing: exporter 38154's 40 signups have yielded 8 onboardings and 1 activation, exporter 260681's 34 signups 8 onboardings and 1 activation, and exporter 5561's 30 signups 8 onboardings and 1 activation.",
+      "The healthiest repeat cohort is referrers with 1 to 2 prior achievements: 124 people, 1.65 signups each, 65% of signups onboard, 48 activations. They go a little deeper than first-timers without the dilution. Past power referrers (3 or more achieved) are 45 people sending 2.6 each but onboarding only 50%. First-timers are the largest group at 419 (63%) and their signups onboard at 57%.",
+      "208 referrers (31%) have zero onboarded referees against 263 signups. That is the cheapest recovery pool in the campaign: the referrer already made the ask, the referee already signed up, someone just needs to finish the form.",
+      "114 referrers (17%) have never activated on Skydo themselves. They brought 219 signups, 107 onboarded, 16 activated. Part of the ladder is being promoted by people who have not used the product, which explains some of the weaker referee quality.",
+      "Referrers who signed up in the past but never achieved a milestone (76 of them) brought 102 signups, 56 onboarded and 11 activated, in line with first-timers.",
       "140 have unlocked at least the Polaroid. 43 have claimed a reward, 42 Polaroids and 1 AirPods 4. The rest are still on the ladder, including the two referrers now at the Ray-Ban rung and beyond."
     ],
     "refereeQuality": [
-      "October referees are only a few days old, so there is nothing to judge yet. 69 came from single-signup referrers and onboard at 45% next day, 28 came from 2 or more signup referrers and onboard at 50%. None are old enough to have matured on activation or value.",
-      "The settled benchmark is September, now the comparison column: 949 referees, 46% onboard in a day and 54% in a week, and of the 410 old enough to judge, 18% activate within 10 days. Their median first settlement is about $1,580.",
-      "On business mix, September onboardings were 61% freelancers, 25% sole props and 9% companies. October's 50 onboarded referees so far skew the same way, 70% freelancer and 22% sole prop, but 50 people is too few to read.",
-      "On stated volume, 61% of September onboardings stated under $10K a month and 35% stated nothing, with only about 3% at $50K or more. October is too thin to compare, with just 50 onboarded referees split 72% under $10K and 28% not stated.",
-      "Net: October is too young to say anything about referee quality. Read September as the settled month and treat the first October numbers as noise until a week or two of referees have had time to onboard and settle."
+      "October referees are only a few days old, so there is little to judge yet. 90 came from single-signup referrers and onboard at 48% next day, 36 came from 2 or more signup referrers and onboard at 53%. Almost none are old enough to have matured: just one has passed the 10 day mark and it has not activated.",
+      "The settled benchmark is September, now the comparison column: 949 referees, 46% onboard in a day and 54% in a week, and of the 433 old enough to judge, 17% activate within 10 days. Their median first settlement is about $1,500.",
+      "On business mix, September onboardings were 61% freelancers, 25% sole props and 9% companies. October's 70 onboarded referees so far skew the same way, 66% freelancer and 24% sole prop, but 70 is too few to read.",
+      "On stated volume, 61% of September onboardings stated under $10K a month and 35% stated nothing, with about 3% at $50K or more. October is too thin to compare, with the 70 onboarded referees split 66% under $10K, 33% not stated and one at $50K or more.",
+      "Net: October is too young to say anything firm about referee quality. Read September as the settled month and treat the first October numbers as noise until a week or two of referees have had time to onboard and settle."
     ],
-    "qualityHeader": "Referees deduped to their first referral, 38679 and internal ids excluded. September against October so far (to 4 Oct), flagged referrer 85276 excluded. Money in USD at the October median rate of Rs 96 per dollar.",
-    "qualityWindow": "Activation is measured on a 10-day window. October referees are only a few days old, so none have matured yet and the current-month activation and value columns are empty. Read September as the settled result and October as early signal only.",
+    "qualityHeader": "Referees deduped to their first referral, internal and flagged ids excluded. September against October so far (to 5 Oct), flagged referrer 85276 excluded. Money in USD at the October median rate of Rs 96 per dollar.",
+    "qualityWindow": "Activation is measured on a 10 day window. October referees are only a few days old, so almost none have matured yet and the current month activation and value columns are nearly empty. Read September as the settled result and October as early signal only.",
     "excluded": "Excluded from every campaign number on this page: exporter 85276 (freelancer, onboarded May 2025, never transacted). 120 signups, 119 of them between 02:47 and 09:54 IST on 24 Sep, one every 56 seconds on median. 115 distinct phone numbers, so these look like real people, but 83 never picked a business type and 2 have onboarded. The pattern fits a link posted into a large group rather than personal referrals. Left in, it would push signups to 833, signups per referrer to 1.74 and first-timer onboarding to 43%. Onboardings are barely affected. Worth an Ops review before any of these referees activate."
   }
 }

@@ -1,6 +1,6 @@
 {
   "SNAPSHOT": {
-    "asOf": "8 Oct 2026, 09:00 IST",
+    "asOf": "8 Oct 2026, 10:00 IST",
     "campaignStart": "2026-09-01",
     "campaignEnd": "2026-10-31",
     "campaignDay": 38,
@@ -380,7 +380,7 @@
     }
   ],
   "POPUP": {
-    "widgetUniqueUsers": 20342,
+    "widgetUniqueUsers": 20341,
     "claimCta": 66,
     "claimConfirm": 49,
     "keepReferring": 1,
@@ -9319,10 +9319,10 @@
     "mix": "63% of campaign referrers (450 of 709) have never referred before and their signups onboard at 57%. The repeat referrers go deeper per head: those with 1 to 2 prior achievements send 1.63 signups each and onboard at 66%, while past power referrers with 3 or more achievements send 2.60 each but onboard only 52%, sharing wider and shallower. On the cohort view it is still only seven days of October, so the first-timer rate for the month is not yet readable.",
     "weeklyQuality": "Across campaign referrals (internal and flagged ids excluded) next-day onboarding by signup week ran 43%, 50%, 43%, 40% and 54% through the 28 Sep week, which onboarded fastest of the settled weeks. The 21 Sep week has filled to 50% onboarded in seven days and 51% so far; the 28 Sep week is at 64% and 65%. Activation of those onboarded falls off down the weeks as expected, since the newest weeks have had the least time: 50% for 31 Aug down to 13% for 28 Sep and 9% for the 5 Oct week. The split by referrer type holds: single-signup senders onboard their referees at 67% against 49% for people sending 2 or more.",
     "claims": "58 of the 176 people who have unlocked a reward have claimed one: 57 Polaroids at a single activation and 1 AirPods 4 at the three activation threshold. The first Polaroid was claimed on 1 Sep and the most recent on 8 Oct; the single AirPods claim came on 30 Sep. The two referrers furthest up the ladder, exporter 224027 at seven activations and exporter 133487 at six, have still not claimed anything, the behaviour the ladder was designed for.",
-    "popupHeader": "Mixpanel refreshed this run, covering 1 Sep to 7 Oct. 20,342 unique users loaded the campaign widget, 66 opened a claim and 49 confirmed. The keep referring button has been pressed once across the whole campaign.",
+    "popupHeader": "Mixpanel refreshed this run, covering 1 Sep to 7 Oct. 20,341 unique users loaded the campaign widget, 66 opened a claim and 49 confirmed. The keep referring button has been pressed once across the whole campaign.",
     "popup": [
       "The keep referring button has been pressed once in the entire campaign. 49 people confirmed a claim and 66 opened one, so seventeen opened without confirming. Most people at the first rung still take the camera rather than push on, though five referrers have now reached the AirPods rung at three activations and one of them has claimed it.",
-      "20,342 unique users loaded the campaign widget over the window but only 66 opened a claim, so the drop is at intent to claim rather than awareness. One AirPods 4 has been taken, the only reward above the Polaroid rung so far. The two referrers furthest up the ladder, now at seven and six activations, still have not claimed, so button presses understate real intent. Worth checking with Tech whether the keep referring button changes any state."
+      "20,341 unique users loaded the campaign widget over the window but only 66 opened a claim, so the drop is at intent to claim rather than awareness. One AirPods 4 has been taken, the only reward above the Polaroid rung so far. The two referrers furthest up the ladder, now at seven and six activations, still have not claimed, so button presses understate real intent. Worth checking with Tech whether the keep referring button changes any state."
     ],
     "referrers": [
       "709 people have referred on the campaign, excluding the flagged referrer 85276. 571 of them (81%) sent exactly one signup, and those onboard at 67%. The other 138 sent 578 signups between them, about half the total, but only 49% onboarded and 82 activations came from 52 of them. Volume and ladder progress are not the same thing: exporter 38154's 40 signups have yielded 8 onboardings and 1 activation, exporter 260681's 36 signups 9 onboardings and 1 activation, and exporter 5561's 33 signups 9 onboardings and 1 activation.",

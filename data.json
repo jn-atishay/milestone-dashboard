@@ -1,6 +1,6 @@
 {
   "SNAPSHOT": {
-    "asOf": "12 Oct 2026, 13:00 IST",
+    "asOf": "12 Oct 2026, 14:00 IST",
     "campaignStart": "2026-09-01",
     "campaignEnd": "2026-10-31",
     "campaignDay": 42,
@@ -557,8 +557,8 @@
     {
       "week": "12 Oct",
       "period": "campaign",
-      "signups": 8,
-      "referrers": 8,
+      "signups": 9,
+      "referrers": 9,
       "perRef": 1.0
     }
   ],
@@ -633,7 +633,7 @@
       "id": "2",
       "label": "New activations this month (M0)",
       "indent": 0,
-      "base": 538,
+      "base": 539,
       "refNow": 12,
       "rateNow": 2.23,
       "refPrev": 31,
@@ -655,7 +655,7 @@
       "id": "4",
       "label": "Not activated, old onboarder",
       "indent": 0,
-      "base": 35501,
+      "base": 35499,
       "refNow": 31,
       "rateNow": 0.09,
       "refPrev": 22,
@@ -724,10 +724,10 @@
     },
     {
       "week": "12 Oct",
-      "signups": 7,
-      "ob1d": 57.1,
-      "ob7d": 57.1,
-      "obSoFar": 57.1,
+      "signups": 8,
+      "ob1d": 50.0,
+      "ob7d": 50.0,
+      "obSoFar": 50.0,
       "actOfOb": 0.0,
       "medianDays": 0
     }
@@ -1148,7 +1148,7 @@
       "F",
       "2026-09-17",
       null,
-      39,
+      40,
       10,
       1,
       "",
@@ -10026,10 +10026,10 @@
       "21,145 unique users loaded the campaign widget over the window but only 84 opened a claim, so the drop is at intent to claim rather than awareness. An iPhone 17 has been claimed at the eight activation top rung, the second reward taken above the Polaroid. Two referrers now sit at six activations without claiming, so button presses understate real intent. Worth checking with Tech whether the keep referring button changes any state."
     ],
     "referrers": [
-      "762 people have referred on the campaign, excluding the flagged referrer 85276. 604 of them (79%) sent exactly one signup, and those onboard at 69%. The other 158 sent 654 signups between them, about half the total of 1,258, but only 50% onboarded and 102 activations came from them. Volume and ladder progress are not the same thing: exporter 38154's 42 signups have yielded 9 onboardings and 1 activation, exporter 260681's 39 signups 10 onboardings and 1 activation, and exporter 5561's 35 signups 9 onboardings and 1 activation.",
+      "762 people have referred on the campaign, excluding the flagged referrer 85276. 604 of them (79%) sent exactly one signup, and those onboard at 69%. The other 158 sent 655 signups between them, about half the total of 1,259, but only 50% onboarded and 102 activations came from them. Volume and ladder progress are not the same thing: exporter 38154's 42 signups have yielded 9 onboardings and 1 activation, exporter 260681's 40 signups 10 onboardings and 1 activation, and exporter 5561's 35 signups 9 onboardings and 1 activation.",
       "The healthiest repeat cohort is referrers with 1 to 2 prior achievements: 143 people, 1.65 signups each, 67% of signups onboard, 62 activations. They go a little deeper than first-timers without the dilution. Past power referrers (3 or more achieved) are 50 people sending 2.64 each but onboarding only 56%. First-timers are the largest group at 491 (64%) and their signups onboard at 57%.",
       "220 referrers (29%) have zero onboarded referees against 279 signups. That is the cheapest recovery pool in the campaign: the referrer already made the ask, the referee already signed up, someone just needs to finish the form.",
-      "132 referrers (17%) have never activated on Skydo themselves. They brought 265 signups, 127 onboarded, 21 activated. Part of the ladder is being promoted by people who have not used the product, which explains some of the weaker referee quality.",
+      "132 referrers (17%) have never activated on Skydo themselves. They brought 266 signups, 127 onboarded, 21 activated. Part of the ladder is being promoted by people who have not used the product, which explains some of the weaker referee quality.",
       "Referrers who signed up in the past but never achieved a milestone (78 of them) brought 113 signups, 67 onboarded and 22 activated, in line with first-timers.",
       "204 have unlocked at least the Polaroid. 78 have claimed a reward, 76 Polaroids, 1 AirPods 4 and 1 iPhone 17. The rest are still on the ladder, including the two referrers at six activations."
     ],

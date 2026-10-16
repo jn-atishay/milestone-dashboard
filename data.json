@@ -1,6 +1,6 @@
 {
   "SNAPSHOT": {
-    "asOf": "16 Oct 2026, 17:00 IST",
+    "asOf": "16 Oct 2026, 18:00 IST",
     "campaignStart": "2026-09-01",
     "campaignEnd": "2026-10-31",
     "campaignDay": 46,
@@ -30,7 +30,7 @@
       }
     ],
     "sepToDate": 286,
-    "todaySoFar": 16,
+    "todaySoFar": 19,
     "sepDaily": [
       29,
       12,
@@ -471,7 +471,7 @@
       "reward": "Polaroid Camera",
       "threshold": 1,
       "status": "Claimed",
-      "count": 102,
+      "count": 103,
       "first": "1 Sep",
       "last": "16 Oct",
       "avgAchieved": 1
@@ -597,9 +597,9 @@
     {
       "week": "12 Oct",
       "period": "campaign",
-      "signups": 136,
-      "referrers": 107,
-      "perRef": 1.27
+      "signups": 139,
+      "referrers": 109,
+      "perRef": 1.28
     }
   ],
   "COHORTS": [
@@ -640,7 +640,7 @@
       "id": "1.1",
       "label": "transacted this month",
       "indent": 1,
-      "base": 6838,
+      "base": 6840,
       "refNow": 95,
       "rateNow": 1.39,
       "refPrev": 113,
@@ -651,7 +651,7 @@
       "id": "1.2",
       "label": "recently dormant (txn in prev 3 mo)",
       "indent": 1,
-      "base": 6998,
+      "base": 6997,
       "refNow": 82,
       "rateNow": 1.17,
       "refPrev": 83,
@@ -662,7 +662,7 @@
       "id": "1.3",
       "label": "dormant (no txn 3+ mo)",
       "indent": 1,
-      "base": 7396,
+      "base": 7395,
       "refNow": 26,
       "rateNow": 0.35,
       "refPrev": 22,
@@ -673,18 +673,18 @@
       "id": "2",
       "label": "New activations this month (M0)",
       "indent": 0,
-      "base": 777,
+      "base": 779,
       "refNow": 16,
-      "rateNow": 2.06,
+      "rateNow": 2.05,
       "refPrev": 41,
       "ratePrev": 2.52,
-      "delta": -18.3
+      "delta": -18.7
     },
     {
       "id": "3",
       "label": "Not activated, onboarded this month",
       "indent": 0,
-      "base": 1414,
+      "base": 1413,
       "refNow": 16,
       "rateNow": 1.13,
       "refPrev": 9,
@@ -695,7 +695,7 @@
       "id": "4",
       "label": "Not activated, old onboarder",
       "indent": 0,
-      "base": 35348,
+      "base": 35347,
       "refNow": 34,
       "rateNow": 0.1,
       "refPrev": 26,
@@ -764,11 +764,11 @@
     },
     {
       "week": "12 Oct",
-      "signups": 134,
-      "ob1d": 46.3,
-      "ob7d": 48.5,
-      "obSoFar": 48.5,
-      "actOfOb": 12.3,
+      "signups": 137,
+      "ob1d": 47.4,
+      "ob7d": 49.6,
+      "obSoFar": 49.6,
+      "actOfOb": 11.8,
       "medianDays": 0.6
     }
   ],
@@ -2067,7 +2067,7 @@
       1,
       1,
       1,
-      "",
+      "P",
       "FT"
     ],
     [
@@ -3883,6 +3883,18 @@
       "R1"
     ],
     [
+      273951,
+      "Vishesh Sachdev",
+      "F",
+      "2026-10-16",
+      null,
+      6,
+      4,
+      0,
+      "",
+      "FT"
+    ],
+    [
       96382,
       "Gaurav Mittal",
       "F",
@@ -3914,18 +3926,6 @@
       null,
       4,
       4,
-      0,
-      "",
-      "FT"
-    ],
-    [
-      273951,
-      "Vishesh Sachdev",
-      "F",
-      "2026-10-16",
-      null,
-      5,
-      3,
       0,
       "",
       "FT"
@@ -5081,6 +5081,18 @@
       0,
       "",
       "R3"
+    ],
+    [
+      32557,
+      "Siddharth Arora",
+      "PT",
+      "2024-10-04",
+      "2024-11-21",
+      1,
+      1,
+      0,
+      "",
+      "R1"
     ],
     [
       34605,
@@ -7771,6 +7783,18 @@
       "FT"
     ],
     [
+      260588,
+      "Sharmistha Mukherjee",
+      "SP",
+      "2026-09-17",
+      null,
+      1,
+      1,
+      0,
+      "",
+      "FT"
+    ],
+    [
       260911,
       "Shivam Sandilya",
       "SP",
@@ -8493,7 +8517,7 @@
     [
       24063,
       "Sarthak Saklecha",
-      "F",
+      "SP",
       "2024-09-09",
       "2025-04-25",
       1,
@@ -8573,18 +8597,6 @@
       0,
       "",
       "FT"
-    ],
-    [
-      32557,
-      "Siddharth Arora",
-      "PT",
-      "2024-10-04",
-      "2024-11-21",
-      1,
-      0,
-      0,
-      "",
-      "R1"
     ],
     [
       32855,
@@ -9113,6 +9125,18 @@
       0,
       "",
       "FT"
+    ],
+    [
+      107136,
+      "Sai Mahesh J",
+      "SP",
+      "2026-07-13",
+      "2026-07-29",
+      1,
+      0,
+      0,
+      "",
+      "RN"
     ],
     [
       109844,
@@ -10809,25 +10833,25 @@
   ],
   "qualityRefreshedOn": "2026-10-16",
   "notes": {
-    "pace": "October is 15 full days old and the straight line pace is tracking a little under target. 286 referral onboardings have landed in the first 15 full days (29 on 1 Oct, 12 on 2 Oct, 13 on 3 Oct, 10 on 4 Oct, 23 on 5 Oct, 30 on 6 Oct, 20 on 7 Oct, 33 on 8 Oct, 27 on 9 Oct, 8 on 10 Oct, 5 on 11 Oct, 15 on 12 Oct, 20 on 13 Oct, 21 on 14 Oct, 20 on 15 Oct), with 16 so far today. The first 15 days of July, August and September delivered 46.8%, 48.1% and 43.9% of their full months, which on 286 onboardings centres the projection near 619, with a low around 595 off August's faster ramp and a high near 651 off September's slower ramp. A straight line from 15 days reads about 591. The arithmetic that matters: the 662 October target needs about 21 to 22 onboardings a day across the month, and about 376 more from here over the 16 days left including today, close to 23 to 24 a day, against a recent run rate near 16 to 17 a day over the last seven days. For context, September closed at 608 onboardings against its 552 target, so October has ground to make up but the gap is still small.",
+    "pace": "October is 15 full days old and the straight line pace is tracking a little under target. 286 referral onboardings have landed in the first 15 full days (29 on 1 Oct, 12 on 2 Oct, 13 on 3 Oct, 10 on 4 Oct, 23 on 5 Oct, 30 on 6 Oct, 20 on 7 Oct, 33 on 8 Oct, 27 on 9 Oct, 8 on 10 Oct, 5 on 11 Oct, 15 on 12 Oct, 20 on 13 Oct, 21 on 14 Oct, 20 on 15 Oct), with 19 so far today. The first 15 days of July, August and September delivered 46.8%, 48.1% and 43.9% of their full months, which on 286 onboardings centres the projection near 619, with a low around 595 off August's faster ramp and a high near 651 off September's slower ramp. A straight line from 15 days reads about 591. The arithmetic that matters: the 662 October target needs about 21 to 22 onboardings a day across the month, and about 376 more from here over the 16 days left including today, close to 23 to 24 a day, against a recent run rate near 16 to 17 a day over the last seven days. For context, September closed at 608 onboardings against its 552 target, so October has ground to make up but the gap is still small.",
     "daily": "Seven day average line. The September campaign weeks ran 251, 189, 190, 255 and 209 signups; the first full October week (5 Oct) closed at 208 across 156 referrers, and the week starting 12 Oct opened with 15, 28, 28 and 34 signups Monday to Thursday. 22 Sep is still the best single day at 60. The last full day, 15 Oct, was a solid Thursday: 34 signups from 30 distinct referrers, 22 onboardings, 12 activations and 7 claims. Activations held a strong weekday run of 20, 20, 21, 16 and 17 across 5 to 9 Oct, dipped to 1 then 0 over the weekend, and ran 6, 12, 15 and 12 Monday to Thursday this week. With 34 signups from 30 distinct referrers on the last day, no single referrer is anywhere near the 25 in 24 hours flag threshold. Today is not charted until it is complete.",
-    "ladder": "408 onboarded referees sit under referrers who have not unlocked anything yet, the pipeline still waiting on a first activation. 245 people have now unlocked at least the Polaroid and 107 have claimed a reward. The headline remains the top rung: exporter 224027 has reached 8 activations and claimed the iPhone 17, the only claim at the highest tier. Just below, exporter 18133 sits at 7 activations and exporter 133487 at 6, and neither has claimed. Exporter 204041 is at 4 activations. Eight referrers sit at exactly 3 activations, the AirPods rung: exporter 236698, exporter 84548, exporter 198993 and exporter 243022 have all claimed the AirPods 4, while exporter 204064, exporter 194258, exporter 140158 and exporter 152513 have not. 13 people sit at exactly 2 activations, one short of the AirPods rung.",
-    "cohorts": "This is 15 full days of October against the same 15 days of September, so read the lift as direction, not size, and the direction is down across most of the activated base. Cohort 1 refers at 0.96% against 1.1%, about 13% lower, 203 referrers versus 218. Never-referrers (1a) are the softest, 0.56% against 0.73%, down about 23%, 94 referrers versus 115, the group to watch. The near-exception is past referrers (1b) at 2.5% against 2.55%, essentially flat on a larger base, 109 referrers versus 103. This-month transactors (1.1, 1.39% against 1.76%, down about 21%) and the recently dormant (1.2, 1.17% against 1.26%) are both down, while the long dormant (1.3) edged up to 0.35% from 0.32%. New M0 activations (cohort 2) are 2.06% against 2.52% on 16 referrers, down about 18%. The clearest lifts sit in the two thin non-activated cohorts: this-month non-activated onboarders (cohort 3) at 1.13% against 0.71% on 16 referrers, up about 59%, and old non-activated onboarders (cohort 4) at 0.1% against 0.08%. September opened fast, so October sitting below it on 15 days is early signal, not yet a worry. Come back once a couple of full weeks are in.",
-    "mix": "65% of campaign referrers (534 of 825) have never referred before and their signups onboard at 58%. The repeat referrers go deeper per head: those with 1 to 2 prior achievements send 1.72 signups each and onboard at 67%, while past power referrers with 3 or more achievements send 2.59 each but onboard only 56%, sharing wider and shallower. On the cohort view it is still only 15 days of October, so the first-timer rate for the month is not yet readable.",
+    "ladder": "411 onboarded referees sit under referrers who have not unlocked anything yet, the pipeline still waiting on a first activation. 245 people have now unlocked at least the Polaroid and 108 have claimed a reward. The headline remains the top rung: exporter 224027 has reached 8 activations and claimed the iPhone 17, the only claim at the highest tier. Just below, exporter 18133 sits at 7 activations and exporter 133487 at 6, and neither has claimed. Exporter 204041 is at 4 activations. Eight referrers sit at exactly 3 activations, the AirPods rung: exporter 236698, exporter 84548, exporter 198993 and exporter 243022 have all claimed the AirPods 4, while exporter 204064, exporter 194258, exporter 140158 and exporter 152513 have not. 13 people sit at exactly 2 activations, one short of the AirPods rung.",
+    "cohorts": "This is 15 full days of October against the same 15 days of September, so read the lift as direction, not size, and the direction is down across most of the activated base. Cohort 1 refers at 0.96% against 1.1%, about 13% lower, 203 referrers versus 218. Never-referrers (1a) are the softest, 0.56% against 0.73%, down about 23%, 94 referrers versus 115, the group to watch. The near-exception is past referrers (1b) at 2.5% against 2.55%, essentially flat on a larger base, 109 referrers versus 103. This-month transactors (1.1, 1.39% against 1.76%, down about 21%) and the recently dormant (1.2, 1.17% against 1.26%) are both down, while the long dormant (1.3) edged up to 0.35% from 0.32%. New M0 activations (cohort 2) are 2.05% against 2.52% on 16 referrers, down about 19%. The clearest lifts sit in the two thin non-activated cohorts: this-month non-activated onboarders (cohort 3) at 1.13% against 0.71% on 16 referrers, up about 59%, and old non-activated onboarders (cohort 4) at 0.1% against 0.08%. September opened fast, so October sitting below it on 15 days is early signal, not yet a worry. Come back once a couple of full weeks are in.",
+    "mix": "65% of campaign referrers (535 of 827) have never referred before and their signups onboard at 58%. The repeat referrers go deeper per head: those with 1 to 2 prior achievements send 1.72 signups each and onboard at 67%, while past power referrers with 3 or more achievements send 2.59 each but onboard only 56%, sharing wider and shallower. On the cohort view it is still only 15 days of October, so the first-timer rate for the month is not yet readable.",
     "weeklyQuality": "Across campaign referrals (internal and flagged ids excluded) next-day onboarding by signup week ran 43%, 50%, 43%, 40% and 54% through the 28 Sep week, which onboarded fastest of the settled weeks. The 21 Sep week filled to 50% onboarded in seven days and 52% so far; the 28 Sep week is at 65% and 68%. Activation of those onboarded falls off down the weeks as expected, since the newest weeks have had the least time: 59% for 31 Aug down to 26% for 28 Sep and about 21% for the 5 Oct week. The split by referrer type holds: single-signup senders onboard their referees at 69% against 51% for people sending two or more.",
-    "claims": "107 of the 245 people who have unlocked a reward have claimed one: 102 Polaroids at a single activation, 4 AirPods 4 at the three activation threshold and 1 iPhone 17 at the eight activation top rung. The first Polaroid was claimed on 1 Sep and the most recent on 16 Oct; the four AirPods claims span 30 Sep to 15 Oct; the iPhone 17 was claimed on 8 Oct by exporter 224027, the referrer at the top of the ladder. Below the top, exporter 18133 sits at seven activations and exporter 133487 at six, and neither has claimed.",
+    "claims": "108 of the 245 people who have unlocked a reward have claimed one: 103 Polaroids at a single activation, 4 AirPods 4 at the three activation threshold and 1 iPhone 17 at the eight activation top rung. The first Polaroid was claimed on 1 Sep and the most recent on 16 Oct; the four AirPods claims span 30 Sep to 15 Oct; the iPhone 17 was claimed on 8 Oct by exporter 224027, the referrer at the top of the ladder. Below the top, exporter 18133 sits at seven activations and exporter 133487 at six, and neither has claimed.",
     "popupHeader": "Mixpanel refreshed this run, covering 1 Sep to 15 Oct. 22,135 unique users loaded the campaign widget, 106 opened a claim and 83 confirmed. The keep referring button has been used by three people across the whole campaign.",
     "popup": [
       "The keep referring button has been used by three people in the campaign. 83 people confirmed a claim and 106 opened one, so twenty-three opened without confirming. Twelve referrers have now reached at least the AirPods rung at three activations, and five of them have claimed above the Polaroid: four the AirPods 4 and one the iPhone 17 at the top rung.",
       "22,135 unique users loaded the campaign widget over the window but only 106 opened a claim, so the drop is at intent to claim rather than awareness. An iPhone 17 has been claimed at the eight activation top rung and four AirPods 4 have been claimed, the five rewards taken above the Polaroid. Exporter 18133 now sits at seven activations and exporter 133487 at six, neither claimed, so button presses understate real intent. Worth checking with Tech whether the keep referring button changes any state."
     ],
     "referrers": [
-      "825 people have referred on the campaign, excluding the flagged referrer 85276. 657 of them (80%) sent exactly one signup, and those onboard at 69%. The other 168 sent 728 signups between them, just over half the total of 1,385, but only 51% onboarded and 120 activations came from them. Volume and ladder progress are not the same thing: exporter 38154's 44 signups have yielded 9 onboardings and 2 activations, exporter 260681's 42 signups 10 onboardings and 1 activation, and exporter 5561's 39 signups 10 onboardings and 1 activation.",
-      "The healthiest repeat cohort is referrers with 1 to 2 prior achievements: 154 people, 1.72 signups each, 67% of signups onboard, 71 activations. They go a little deeper than first-timers without the dilution. Past power referrers (3 or more achieved) are 54 people sending 2.59 each but onboarding only 56%. First-timers are the largest group at 534 (65%) and their signups onboard at 58%.",
+      "827 people have referred on the campaign, excluding the flagged referrer 85276. 659 of them (80%) sent exactly one signup, and those onboard at 69%. The other 168 sent 729 signups between them, just over half the total of 1,388, but only 51% onboarded and 120 activations came from them. Volume and ladder progress are not the same thing: exporter 38154's 44 signups have yielded 9 onboardings and 2 activations, exporter 260681's 42 signups 10 onboardings and 1 activation, and exporter 5561's 39 signups 10 onboardings and 1 activation.",
+      "The healthiest repeat cohort is referrers with 1 to 2 prior achievements: 154 people, 1.72 signups each, 67% of signups onboard, 71 activations. They go a little deeper than first-timers without the dilution. Past power referrers (3 or more achieved) are 54 people sending 2.59 each but onboarding only 56%. First-timers are the largest group at 535 (65%) and their signups onboard at 58%.",
       "233 referrers (28%) have zero onboarded referees against 293 signups. That is the cheapest recovery pool in the campaign: the referrer already made the ask, the referee already signed up, someone just needs to finish the form.",
-      "137 referrers (17%) have never activated on Skydo themselves. They brought 287 signups, 139 onboarded, 25 activated. Part of the ladder is being promoted by people who have not used the product, which explains some of the weaker referee quality.",
-      "Referrers who signed up in the past but never achieved a milestone (83 of them) brought 120 signups, 70 onboarded and 23 activated, in line with first-timers.",
-      "245 have unlocked at least the Polaroid. 107 have claimed a reward, 102 Polaroids, 4 AirPods 4 and 1 iPhone 17. The rest are still on the ladder, including exporter 18133 at seven activations and exporter 133487 at six."
+      "138 referrers (17%) have never activated on Skydo themselves. They brought 289 signups, 141 onboarded, 25 activated. Part of the ladder is being promoted by people who have not used the product, which explains some of the weaker referee quality.",
+      "Referrers who signed up in the past but never achieved a milestone (84 of them) brought 121 signups, 70 onboarded and 23 activated, in line with first-timers.",
+      "245 have unlocked at least the Polaroid. 108 have claimed a reward, 103 Polaroids, 4 AirPods 4 and 1 iPhone 17. The rest are still on the ladder, including exporter 18133 at seven activations and exporter 133487 at six."
     ],
     "refereeQuality": [
       "October referees are still young, so there is little to judge yet. 237 came from single-signup referrers and onboard at 52% next day, 175 came from 2 or more signup referrers and onboard at 43%. About 79 are now old enough to have matured past the 10 day mark, 47 from single-signup referrers and 32 from multi, and early activation within 10 days is running near 15% on the single side and 22% on the multi side, a handful of activations each.",

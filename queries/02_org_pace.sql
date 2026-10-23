@@ -9,7 +9,7 @@ referee_ob AS (SELECT exporter_id, MIN(created_at AT TIME ZONE 'UTC' AT TIME ZON
 rd AS (
   SELECT DISTINCT ON (referee_exporter_id) referee_exporter_id FROM referral_relation
   WHERE referral_state IN ('ONBOARDING_COMPLETE','ACHIEVED') AND is_deleted = false
-    AND referrer_exporter_id IS NOT NULL AND referrer_exporter_id NOT IN (2,3,4,14,38679)
+    AND referrer_exporter_id IS NOT NULL AND referrer_exporter_id NOT IN (2,3,4,14,38679,272788)
   ORDER BY referee_exporter_id, referral_date
 ),
 org AS (SELECT ro.fo AS ts FROM rd JOIN referee_ob ro ON ro.exporter_id = rd.referee_exporter_id, n WHERE ro.fo >= n.m0 - INTERVAL '3 months')

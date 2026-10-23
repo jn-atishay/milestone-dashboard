@@ -4,7 +4,7 @@
   "campaign_start": "2026-09-01",
   "campaign_end": "2026-10-31",
   "campaign_days": 61,
-  "always_excluded_referrers": [2, 3, 4, 14, 38679],
+  "always_excluded_referrers": [2, 3, 4, 14, 38679, 272788],
   "flagged_referrers": [85276],
   "targets": {
     "2026-09": { "target": 552, "stretchPlus": 600 },

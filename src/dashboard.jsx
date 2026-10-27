@@ -1,51 +1,44 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   ComposedChart, Bar, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
-  CartesianGrid, ReferenceLine, Legend, LineChart,
+  CartesianGrid, ReferenceLine, Legend, LineChart, BarChart, Cell,
 } from "recharts";
 
 // ============================================================================
-// DATA SNAPSHOT
-// Pulled from Metabase (Prod Admin, db 6) on 14 Sep 2026 at ~05:40 IST using
-// the queries in milestone_campaign_dashboard_queries.md. To refresh, re-run
-// the queries and replace the blocks below. Nothing else in the file needs
-// to change.
+// DATA
+// Everything comes from data.json (loaded into D before this runs). scripts/refresh.py rebuilds it every hour;
+// the notes inside it are written by the scheduled Claude job. Nothing in this file holds data.
 // ============================================================================
 
 const SNAPSHOT = D.SNAPSHOT;
-
-// Card 1
-
-
-// Card 3: org-level referral onboardings (matches the 552 target definition)
 const PACE = D.PACE;
 const todaySoFar = PACE.todaySoFar || 0;
 const monthToNow = PACE.sepToDate + todaySoFar;
-
-// Card 2: campaign-level daily funnel
 const DAILY = D.DAILY;
-
-// Card 4
-
-
-// Card 5 (top 15 by achieved, then onboarded)
-
-
-// Popup funnel from Mixpanel (Sept 1-23, type = moonshot_campaign, all at referralTarget 1)
 const POPUP = D.POPUP;
+const CLAIMS = D.CLAIMS;
+const WEEKLY = D.WEEKLY;
+const COHORTS = D.COHORTS;
+const QUALITY = D.QUALITY;
+const FX = D.FX;
+const Q_FUNNEL = D.Q_FUNNEL;
+const Q_BT = D.Q_BT;
+const Q_VOL = D.Q_VOL;
+const TRENDS = D.TRENDS || [];
+const GOLD = D.GOLD || null;
+const CAMPAIGNS = D.CAMPAIGNS || [];
+const N = D.notes || {};
+const LBL = D.COHORT_LABELS || { now: PACE.monthShort, prev: "" };
 
-// Per-referrer table (Metabase, 24 Sep 10:00 IST, exporter 85276 excluded). Columns:
-// id, name, business type, referrer's own onboarding date, referrer's own activation date,
-// campaign signups, campaign onboardings, campaign activations, gift claimed, cohort
 const BT = { F: "Freelancer", SP: "Sole prop", C: "Company", LLP: "LLP", PT: "Partnership", HUF: "HUF", "": "" };
 const COHORT = { FT: "First-time referrer", RN: "Repeat, never achieved", R1: "Repeat, 1-2 achieved", R3: "Repeat, 3+ achieved" };
 const GIFT = { P: "Polaroid", "": "" };
-const REFERRERS_RAW = D.REFERRERS_RAW;
-const REFERRERS = REFERRERS_RAW.map((r) => ({
-  id: r[0], name: r[1], bt: BT[r[2]] || r[2], onboarded: r[3] || "", activated: r[4] || "",
+const REFERRERS = (D.REFERRERS_RAW || []).map((r) => ({
+  id: r[0], name: r[1] || "", bt: BT[r[2]] || r[2], onboarded: r[3] || "", activated: r[4] || "",
   signups: r[5], obs: r[6], acts: r[7], gift: GIFT[r[8]] || r[8], cohort: COHORT[r[9]] || r[9],
 }));
-// ---- derived from the per-referrer table so totals always reconcile ----
+const SHOW_NAMES = REFERRERS.some((r) => r.name);
+
 const sumBy = (rows, k) => rows.reduce((a, r) => a + r[k], 0);
 const HEADLINE = (() => {
   const signups = sumBy(REFERRERS, "signups"), obs = sumBy(REFERRERS, "obs"), acts = sumBy(REFERRERS, "acts");
@@ -54,7 +47,7 @@ const HEADLINE = (() => {
     signupsPerReferrer: +(signups / Math.max(1, REFERRERS.length)).toFixed(2),
     signupToOb: +(100 * obs / Math.max(1, signups)).toFixed(1),
     obToAct: +(100 * acts / Math.max(1, obs)).toFixed(1),
-    onboardingsPerDay: +(obs / Math.max(1, SNAPSHOT.campaignFullDays || SNAPSHOT.fullDays)).toFixed(1),
+    onboardingsPerDay: +(obs / Math.max(1, SNAPSHOT.campaignFullDays || 1)).toFixed(1),
     rewardsClaimed: REFERRERS.filter((r) => r.gift).length,
   };
 })();
@@ -75,21 +68,315 @@ const NUDGE = REFERRERS.filter((r) => r.acts >= 1)
   .sort((a, b) => b.acts - a.acts || b.obs - a.obs || b.signups - a.signups)
   .slice(0, 12)
   .map((r) => { const [t, nm] = nextRung(r.acts); return { id: r.id, name: r.name, signups: r.signups, onboarded: r.obs, achieved: r.acts, next: nm, needed: t ? t - r.acts : 0, waiting: r.obs - r.acts, claimed: r.gift }; });
-const NEW_VS_REPEAT = ["First-time referrer", "Repeat, never achieved", "Repeat, 1-2 achieved", "Repeat, 3+ achieved"].map((c) => {
+const NEW_VS_REPEAT = Object.values(COHORT).map((c) => {
   const rs = REFERRERS.filter((r) => r.cohort === c); const sg = sumBy(rs, "signups"), ob = sumBy(rs, "obs");
   return { type: c, referrers: rs.length, signups: sg, perRef: +(sg / Math.max(1, rs.length)).toFixed(2), onboarded: ob, achieved: sumBy(rs, "acts"), obPct: +(100 * ob / Math.max(1, sg)).toFixed(1) };
 });
-const N = D.notes || {};
-const SHOW_NAMES = REFERRERS.some((r) => r.name);
 
+// Pace projection: scale this month's full days by the share of each of the last three months that had landed by the same day.
+const shares = PACE.months.filter((m) => m.full > 0).map((m) => m.firstN / m.full);
+const hasPace = SNAPSHOT.fullDays > 0 && shares.length > 0;
+const projMid = hasPace ? Math.round(PACE.sepToDate / (shares.reduce((a, b) => a + b, 0) / shares.length)) : null;
+const projLow = hasPace ? Math.round(PACE.sepToDate / Math.max(...shares)) : null;
+const projHigh = hasPace ? Math.round(PACE.sepToDate / Math.min(...shares)) : null;
+const straightLine = hasPace ? Math.round((PACE.sepToDate / SNAPSHOT.fullDays) * PACE.daysInMonth) : null;
 
-// Referee quality, Sept campaign vs Aug (Metabase, 24 Sep). Referees deduped to first referral.
-// "Active in 10d" = share of referees onboarded at least 10 days ago who had a settled payment within 10 days of onboarding.
-// Money is USD at the September median settlement rate of 95 INR per USD.
-const FX = D.FX;
-const Q_FUNNEL = D.Q_FUNNEL;
-const Q_BT = D.Q_BT;
-const Q_VOL = D.Q_VOL;
+const dailyWithAvg = DAILY.map((d, i) => {
+  const window = DAILY.slice(Math.max(0, i - 6), i + 1);
+  return { ...d, avg7: Math.round((window.reduce((a, b) => a + b.signups, 0) / window.length) * 10) / 10 };
+});
+
+const fmt = (n) => (n === null || n === undefined ? "n/a" : n.toLocaleString("en-IN"));
+const fmtc = (n) => (n === null || n === undefined ? "n/a" : Math.abs(n) >= 10000 ? (n / 1000).toFixed(1).replace(/\.0$/, "") + "K" : n.toLocaleString("en-IN"));
+const pct = (a, b, d = 1) => (b ? (100 * a / b).toFixed(d) + "%" : "n/a");
+
+// ============================================================================
+// THEME (values from the validated reference palette; chart colours are passed as hex because SVG attributes cannot read CSS variables everywhere)
+// ============================================================================
+
+const THEMES = {
+  light: { page: "#f9f9f7", surface: "#fcfcfb", ink: "#0b0b0b", ink2: "#52514e", muted: "#898781", grid: "#e1e0d9", axis: "#c3c2b7",
+    s1: "#2a78d6", s2: "#eb6834", s3: "#1baf7a", s4: "#eda100", dim: "#c3c2b7", good: "#006300", bad: "#d03b3b", warn: "#fab219",
+    ramp: ["#86b6ef", "#6da7ec", "#5598e7", "#3987e5", "#2a78d6", "#1c5cab", "#104281"], wash: "rgba(42,120,214,0.10)" },
+  dark: { page: "#0d0d0d", surface: "#1a1a19", ink: "#f0efec", ink2: "#c3c2b7", muted: "#898781", grid: "#2c2c2a", axis: "#383835",
+    s1: "#3987e5", s2: "#d95926", s3: "#199e70", s4: "#c98500", dim: "#4a4a47", good: "#0ca30c", bad: "#e66767", warn: "#fab219",
+    ramp: ["#86b6ef", "#6da7ec", "#5598e7", "#3987e5", "#2a78d6", "#256abf", "#184f95"], wash: "rgba(57,135,229,0.14)" },
+};
+// Colour follows the entity everywhere on the page: signups blue, onboardings aqua, activations orange, rolling average ink.
+
+function currentMode() {
+  const t = document.documentElement.dataset.theme;
+  if (t === "dark" || t === "light") return t;
+  return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+function useTheme() {
+  const [mode, setMode] = useState(currentMode);
+  useEffect(() => {
+    const mq = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
+    const fn = () => setMode(currentMode());
+    if (mq) (mq.addEventListener ? mq.addEventListener("change", fn) : mq.addListener(fn));
+    window.addEventListener("themechange", fn);
+    return () => { if (mq) (mq.removeEventListener ? mq.removeEventListener("change", fn) : mq.removeListener(fn)); window.removeEventListener("themechange", fn); };
+  }, []);
+  return THEMES[mode];
+}
+function readPref() { try { const t = localStorage.getItem("theme"); return t === "dark" || t === "light" ? t : "auto"; } catch (e) { return "auto"; } }
+function setPref(pref) {
+  try { if (pref === "auto") localStorage.removeItem("theme"); else localStorage.setItem("theme", pref); } catch (e) { /* private window */ }
+  if (pref === "auto") delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = pref;
+  window.dispatchEvent(new Event("themechange"));
+}
+
+// ============================================================================
+// STYLES
+// ============================================================================
+
+const css = `
+:root { color-scheme: light; --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink2: #52514e; --muted: #898781; --grid: #e1e0d9; --axis: #c3c2b7; --border: rgba(11,11,11,0.10);
+  --accent: #2a78d6; --accent-soft: rgba(42,120,214,0.10); --good: #006300; --bad: #d03b3b; --warn: #fab219; --warn-soft: rgba(250,178,25,0.16); --bad-soft: rgba(208,59,59,0.12); --good-soft: rgba(12,163,12,0.12);
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --dim: #c3c2b7; --hatch-a: #b7d3f6; --hatch-b: #e1e0d9; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { color-scheme: dark; --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink2: #c3c2b7; --muted: #898781; --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,0.10);
+  --accent: #3987e5; --accent-soft: rgba(57,135,229,0.16); --good: #0ca30c; --bad: #e66767; --warn-soft: rgba(250,178,25,0.18); --bad-soft: rgba(230,103,103,0.16); --good-soft: rgba(12,163,12,0.18);
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --dim: #4a4a47; --hatch-a: #256abf; --hatch-b: #2c2c2a; } }
+:root[data-theme="dark"] { color-scheme: dark; --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink2: #c3c2b7; --muted: #898781; --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,0.10);
+  --accent: #3987e5; --accent-soft: rgba(57,135,229,0.16); --good: #0ca30c; --bad: #e66767; --warn-soft: rgba(250,178,25,0.18); --bad-soft: rgba(230,103,103,0.16); --good-soft: rgba(12,163,12,0.18);
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --dim: #4a4a47; --hatch-a: #256abf; --hatch-b: #2c2c2a; }
+html, body { background: var(--page); margin: 0; }
+.app { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: var(--ink); background: var(--page); font-size: 14px; line-height: 1.45; -webkit-font-smoothing: antialiased; min-height: 100vh; }
+.app * { box-sizing: border-box; }
+.app h1 { font-size: 20px; font-weight: 650; margin: 0; letter-spacing: -0.01em; }
+.app h2 { font-size: 15px; font-weight: 600; margin: 0 0 4px; }
+.app h3 { font-size: 13.5px; font-weight: 600; margin: 0 0 8px; }
+.app p { margin: 0; }
+.app a { color: var(--accent); }
+.app .sub, .app .note { color: var(--ink2); font-size: 13px; }
+.app .muted { color: var(--muted); }
+.app .wrap { max-width: 1180px; margin: 0 auto; padding: 0 20px 56px; }
+@media (max-width: 640px) { .app .wrap { padding: 0 16px 48px; } }
+
+/* top bar */
+.app .top { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--page) 88%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+.app .topin { max-width: 1180px; margin: 0 auto; padding: 12px 20px 0; display: flex; flex-direction: column; gap: 10px; }
+@media (max-width: 640px) { .app .topin { padding: 10px 16px 0; } }
+.app .brand { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.app .brand .l { display: flex; align-items: center; gap: 12px; }
+.app .logo { width: 28px; height: 28px; border-radius: 8px; background: var(--accent); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 13px; letter-spacing: 0.02em; }
+.app .fresh { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--ink2); padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); white-space: nowrap; }
+.app .fresh i { width: 8px; height: 8px; border-radius: 50%; background: var(--good); display: inline-block; }
+.app .fresh.stale i { background: var(--warn); } .app .fresh.old i { background: var(--bad); }
+.app .r { display: flex; align-items: center; gap: 8px; }
+.app .btn { font: inherit; font-size: 12.5px; padding: 5px 10px; border: 1px solid var(--border); background: var(--surface); color: var(--ink2); border-radius: 8px; cursor: pointer; }
+.app .btn:hover { color: var(--ink); }
+.app .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.app nav { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; margin: 0 -4px; }
+.app nav::-webkit-scrollbar { display: none; }
+.app nav button { font: inherit; font-size: 13.5px; font-weight: 500; padding: 8px 12px 10px; border: none; border-bottom: 2px solid transparent; background: none; cursor: pointer; color: var(--ink2); white-space: nowrap; margin-bottom: -1px; }
+.app nav button.on { color: var(--ink); border-bottom-color: var(--ink); }
+.app nav button:hover { color: var(--ink); }
+.app nav button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; border-radius: 4px; }
+.app nav button b { font-weight: 500; color: var(--muted); font-size: 11.5px; margin-left: 6px; }
+
+/* page head + sections */
+.app .pagehead { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin: 26px 0 18px; }
+.app .pagehead .sub { max-width: 80ch; }
+.app .count { text-align: right; }
+.app .count b { font-size: 22px; font-weight: 650; display: block; line-height: 1.1; }
+.app section { padding: 22px 0; border-top: 1px solid var(--grid); }
+.app section.first { border-top: none; padding-top: 4px; }
+.app .sechead { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 14px; flex-wrap: wrap; }
+.app .sechead .note { max-width: 72ch; }
+.app .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+.app .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 28px; }
+.app .grid32 { display: grid; grid-template-columns: 3fr 2fr; gap: 32px; }
+@media (max-width: 900px) { .app .grid2, .app .grid3, .app .grid32 { grid-template-columns: 1fr; gap: 24px; } }
+.app .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; }
+.app .chart { width: 100%; }
+.app .chart svg { overflow: visible; }
+
+/* stat tiles */
+.app .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.app .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px 11px; min-width: 0; }
+.app .stat .lab { color: var(--ink2); font-size: 12.5px; display: block; margin-bottom: 6px; }
+.app .stat .val { font-size: 24px; font-weight: 650; line-height: 1.05; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.app .stat .val.hero { font-size: 40px; }
+.app .stat .val svg { align-self: center; }
+.app .stat .sub { display: block; font-size: 12px; margin-top: 6px; color: var(--muted); }
+.app .delta { font-size: 12.5px; font-weight: 500; white-space: nowrap; }
+.app .delta.up { color: var(--good); } .app .delta.down { color: var(--bad); } .app .delta.flat { color: var(--muted); }
+.app .pill { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 11.5px; background: var(--accent-soft); color: var(--accent); font-weight: 500; }
+.app .pill.live { background: var(--good-soft); color: var(--good); }
+.app .pill.ended, .app .pill.gray { background: var(--grid); color: var(--ink2); }
+.app .pill.warn { background: var(--warn-soft); color: var(--ink); }
+
+/* pace track */
+.app .track { position: relative; height: 118px; margin: 30px 0 6px; }
+.app .track .rail { position: absolute; left: 0; right: 0; top: 56px; height: 14px; background: var(--grid); border-radius: 4px; }
+.app .track .done { position: absolute; left: 0; top: 56px; height: 14px; background: var(--s1); border-radius: 4px 0 0 4px; }
+.app .track .range { position: absolute; top: 56px; height: 14px; background: var(--accent-soft); border-left: 1px solid var(--accent); border-right: 1px solid var(--accent); }
+.app .track .mark { position: absolute; top: 46px; width: 2px; height: 34px; background: var(--ink); }
+.app .track .mark.light { background: var(--muted); }
+.app .track .lbl { position: absolute; font-size: 12px; white-space: nowrap; color: var(--ink2); transform: translateX(-50%); }
+.app .track .lbl b { display: block; color: var(--ink); font-size: 15px; font-weight: 600; }
+.app .track .lbl.above { top: 0; } .app .track .lbl.below { top: 86px; }
+.app .track .lbl.left { transform: translateX(0); } .app .track .lbl.right { transform: translateX(-100%); }
+
+/* tables */
+.app table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
+.app th { text-align: left; font-weight: 500; color: var(--ink2); padding: 6px 8px 8px 0; border-bottom: 1px solid var(--axis); white-space: nowrap; }
+.app td { padding: 7px 8px 7px 0; border-bottom: 1px solid var(--grid); vertical-align: top; }
+.app th.num, .app td.num { text-align: right; padding-right: 0; padding-left: 8px; }
+.app tr.parent td { font-weight: 600; }
+.app td.indent { padding-left: 18px; color: var(--ink2); }
+.app tr.hl td { background: var(--accent-soft); }
+.app .bar { display: inline-block; height: 8px; background: var(--s1); vertical-align: middle; border-radius: 2px; margin-right: 8px; }
+.app .bar.neg { background: var(--bad); }
+.app .tablewrap { overflow-x: auto; max-height: 640px; overflow-y: auto; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+.app .tablewrap table { min-width: 960px; }
+.app .tablewrap thead th { position: sticky; top: 0; background: var(--surface); z-index: 1; padding: 9px 8px 9px 0; }
+.app .tablewrap thead th:first-child, .app .tablewrap td:first-child { padding-left: 12px; }
+.app .tablewrap thead th.num, .app .tablewrap td.num { padding-right: 12px; }
+.app .tablewrap.short { max-height: none; border: none; background: none; border-radius: 0; }
+.app .tablewrap.short table { min-width: 560px; }
+.app .tablewrap.short thead th { background: var(--page); }
+.app .tablewrap.short thead th:first-child, .app .tablewrap.short td:first-child { padding-left: 0; }
+.app .tablewrap.short thead th.num, .app .tablewrap.short td.num { padding-right: 0; }
+.app .sortable th { cursor: pointer; user-select: none; }
+.app .sortable th:hover { color: var(--ink); }
+.app .sortable th .arrow { display: inline-block; width: 10px; margin-left: 4px; color: var(--accent); font-size: 11px; }
+.app .sortable td { padding-top: 5px; padding-bottom: 5px; white-space: nowrap; }
+.app .sortable td.name { white-space: normal; min-width: 180px; }
+.app .filters { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; font-size: 13px; color: var(--ink2); }
+.app .filters select, .app .filters input { font: inherit; font-size: 13px; padding: 6px 9px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--ink); }
+
+/* ladder + funnel */
+.app .rung { display: grid; grid-template-columns: 150px 1fr 60px; gap: 12px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--grid); }
+.app .rung .name { font-weight: 500; } .app .rung .name small { display: block; color: var(--ink2); font-weight: 400; font-size: 12px; }
+.app .rung .fill { height: 16px; background: var(--grid); border-radius: 4px; position: relative; overflow: hidden; }
+.app .rung .fill i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--s1); border-radius: 4px 0 0 4px; }
+.app .rung .fill em { position: absolute; left: 0; top: 0; bottom: 0; background: repeating-linear-gradient(45deg, var(--hatch-a) 0 4px, var(--hatch-b) 4px 8px); }
+.app .rung .n { text-align: right; font-weight: 600; }
+.app .legend { display: flex; gap: 18px; font-size: 12px; color: var(--ink2); margin-top: 10px; flex-wrap: wrap; }
+.app .legend i { display: inline-block; width: 12px; height: 10px; vertical-align: -1px; margin-right: 6px; border-radius: 2px; background: var(--s1); }
+.app .legend i.hatch { background: repeating-linear-gradient(45deg, var(--hatch-a) 0 3px, var(--hatch-b) 3px 6px); }
+.app .funnel .step { display: grid; grid-template-columns: 190px 1fr 92px; gap: 12px; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--grid); }
+.app .funnel .step .lab { font-size: 13px; } .app .funnel .step .lab small { display: block; color: var(--muted); font-size: 11.5px; }
+.app .funnel .step .fill { height: 14px; background: var(--grid); border-radius: 4px; overflow: hidden; }
+.app .funnel .step .fill i { display: block; height: 100%; border-radius: 4px 0 0 4px; }
+.app .funnel .step .v { text-align: right; font-weight: 600; } .app .funnel .step .v small { display: block; font-weight: 400; color: var(--muted); font-size: 11.5px; }
+@media (max-width: 640px) { .app .funnel .step { grid-template-columns: 1fr 70px; } .app .funnel .step .fill { grid-column: 1 / -1; } .app .rung { grid-template-columns: 120px 1fr 48px; } }
+
+.app .tabs { display: flex; gap: 4px; margin-bottom: 12px; flex-wrap: wrap; }
+.app .tabs button { font: inherit; font-size: 13px; padding: 5px 12px; border: 1px solid var(--border); background: var(--surface); border-radius: 8px; cursor: pointer; color: var(--ink2); }
+.app .tabs button.on { background: var(--ink); color: var(--page); border-color: var(--ink); }
+.app .tabs button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.app .callout { border-left: 3px solid var(--accent); padding: 8px 14px; color: var(--ink2); font-size: 13px; margin: 0 0 16px; max-width: 78ch; background: var(--surface); border-radius: 0 8px 8px 0; }
+.app .callout.warn { border-left-color: var(--bad); }
+.app .insights { max-width: 82ch; margin-top: 20px; }
+.app .insights p { margin: 0 0 10px; font-size: 13.5px; color: var(--ink2); }
+.app .live { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 720px) { .app .live { grid-template-columns: 1fr; } }
+.app .livecard { display: flex; justify-content: space-between; gap: 12px; align-items: center; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; cursor: pointer; text-align: left; font: inherit; color: inherit; }
+.app .livecard:hover { border-color: var(--accent); }
+.app .livecard b { display: block; font-size: 14px; }
+.app .livecard span { color: var(--ink2); font-size: 12.5px; }
+.app footer { color: var(--muted); font-size: 12.5px; margin-top: 30px; padding-top: 16px; border-top: 1px solid var(--grid); max-width: 86ch; }
+.app .tip { background: var(--surface); border: 1px solid var(--border); padding: 8px 10px; font-size: 12.5px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0,0,0,0.08); }
+.app .tip .t { color: var(--ink2); margin-bottom: 4px; }
+.app .tip .row { display: flex; align-items: center; gap: 8px; }
+.app .tip .row b { color: var(--ink); min-width: 36px; }
+.app .tip .row span { color: var(--ink2); }
+.app .tip .k { width: 12px; height: 3px; border-radius: 2px; display: inline-block; }
+`;
+
+// ============================================================================
+// SMALL COMPONENTS
+// ============================================================================
+
+function Tip({ active, payload, label, fmtv }) {
+  if (!active || !payload || !payload.length) return null;
+  return (
+    <div className="tip">
+      <div className="t">{label}</div>
+      {payload.map((p) => (
+        <div className="row" key={p.dataKey}><i className="k" style={{ background: p.color || p.fill }} /><b>{fmtv ? fmtv(p.value, p.dataKey) : fmt(p.value)}</b><span>{p.name}</span></div>
+      ))}
+    </div>
+  );
+}
+
+function Delta({ v, good = true, suffix = "%" }) {
+  if (v === null || v === undefined || !isFinite(v)) return <span className="delta flat">n/a</span>;
+  const dir = v > 1 ? "up" : v < -1 ? "down" : "flat";
+  const cls = dir === "flat" ? "flat" : (dir === "up") === good ? "up" : "down";
+  return <span className={`delta ${cls}`}>{dir === "up" ? "▲" : dir === "down" ? "▼" : "▬"} {Math.abs(v).toFixed(1)}{suffix}</span>;
+}
+
+function Spark({ values, color, dim, width = 76, height = 24 }) {
+  const vs = values.filter((v) => v !== null && v !== undefined);
+  if (vs.length < 2) return null;
+  const min = Math.min(...vs), max = Math.max(...vs), span = max - min || 1;
+  const pts = values.map((v, i) => [(i / (values.length - 1)) * (width - 6) + 3, height - 3 - (((v ?? min) - min) / span) * (height - 6)]);
+  const path = pts.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" ");
+  const last = pts[pts.length - 1];
+  return (
+    <svg width={width} height={height} aria-hidden="true">
+      <path d={path} fill="none" stroke={dim} strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" />
+      <circle cx={last[0]} cy={last[1]} r="3.5" fill={color} stroke="var(--surface)" strokeWidth="2" />
+    </svg>
+  );
+}
+
+function Stat({ label, value, sub, delta, deltaGood = true, deltaSuffix, spark, T, hero }) {
+  return (
+    <div className="stat">
+      <span className="lab">{label}</span>
+      <div className={`val${hero ? " hero" : ""}`}>
+        <span>{value}</span>
+        {delta !== undefined && <Delta v={delta} good={deltaGood} suffix={deltaSuffix} />}
+        {spark && <Spark values={spark} color={T.s1} dim={T.dim} />}
+      </div>
+      {sub && <span className="sub">{sub}</span>}
+    </div>
+  );
+}
+
+function Notes({ items, title }) {
+  const list = Array.isArray(items) ? items : items ? [items] : [];
+  if (!list.length) return null;
+  return (
+    <div className="insights">
+      {title && <h2 style={{ marginTop: 4 }}>{title}</h2>}
+      {list.map((t, i) => <p key={i}>{t}</p>)}
+    </div>
+  );
+}
+
+const axis = (T) => ({ tick: { fontSize: 11.5, fill: T.muted }, axisLine: false, tickLine: false });
+
+function PaceTrack() {
+  const target = PACE.target || 0, stretch = PACE.stretchPlus || 0;
+  const max = Math.max(stretch, target, projHigh || 0, monthToNow) * 1.08 || 1;
+  const p = (v) => `${(v / max) * 100}%`;
+  return (
+    <div className="track" aria-label="Monthly onboardings pace">
+      <div className="rail" />
+      {hasPace && <div className="range" style={{ left: p(projLow), width: p(projHigh - projLow) }} />}
+      <div className="done" style={{ width: p(monthToNow) }} />
+      <div className="lbl above left" style={{ left: 0 }}>
+        <b>{monthToNow}</b>onboarded, 1 {PACE.monthShort} to now ({todaySoFar} today so far)
+      </div>
+      {hasPace && <><div className="mark light" style={{ left: p(projMid) }} />
+        <div className="lbl above" style={{ left: p(projMid) }}><b>{projMid}</b>projected, range {projLow} to {projHigh}</div></>}
+      {target > 0 && <><div className="mark" style={{ left: p(target) }} /><div className="lbl below" style={{ left: p(target) }}><b>{target}</b>{PACE.monthShort} target</div></>}
+      {stretch > 0 && <><div className="mark" style={{ left: p(stretch) }} /><div className="lbl below" style={{ left: p(stretch) }}><b>{stretch}</b>stretch plus</div></>}
+      {!target && <div className="lbl below right" style={{ left: "100%" }}><b>no target</b>set for {PACE.monthName} in config.json</div>}
+    </div>
+  );
+}
+
+// ============================================================================
+// REFERRER TABLE
+// ============================================================================
 
 const REF_COLS_ALL = [
   { key: "id", label: "Exporter ID", num: true },
@@ -102,190 +389,6 @@ const REF_COLS_ALL = [
   { key: "gift", label: "Gift claimed" },
   { key: "cohort", label: "Cohort" },
 ];
-
-
-
-// Card 6
-const CLAIMS = D.CLAIMS;
-
-// Card 7: weekly, all referral campaigns before 31 Aug, campaign 26 after
-const WEEKLY = D.WEEKLY;
-
-// Card 8: MTD vs same days last month, payees excluded from base
-const COHORTS = D.COHORTS;
-
-// Card 9
-
-
-// Card 10
-const QUALITY = D.QUALITY;
-
-// ============================================================================
-// DERIVED
-// ============================================================================
-
-const shares = PACE.months.map((m) => m.firstN / m.full);
-const avgShare = shares.reduce((a, b) => a + b, 0) / shares.length;
-const projMid = Math.round(PACE.sepToDate / avgShare);
-const projLow = Math.round(PACE.sepToDate / Math.max(...shares));
-const projHigh = Math.round(PACE.sepToDate / Math.min(...shares));
-const straightLine = Math.round((PACE.sepToDate / SNAPSHOT.fullDays) * PACE.daysInMonth);
-
-const dailyWithAvg = DAILY.map((d, i) => {
-  const window = DAILY.slice(Math.max(0, i - 6), i + 1);
-  const avg = window.reduce((a, b) => a + b.signups, 0) / window.length;
-  return { ...d, avg7: Math.round(avg * 10) / 10 };
-});
-const week1 = DAILY.slice(0, 7).reduce((a, b) => a + b.signups, 0);
-const week2 = DAILY.slice(7, 14).reduce((a, b) => a + b.signups, 0);
-const lastDay = DAILY[DAILY.length - 1];
-
-const fmt = (n) => n.toLocaleString("en-IN");
-
-// ============================================================================
-// STYLES
-// ============================================================================
-
-const css = `
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap');
-.msd { font-family: 'IBM Plex Sans', system-ui, -apple-system, sans-serif; color: #171C2E; background: #FAFAFC; padding: 32px 36px 48px; font-size: 14px; line-height: 1.45; -webkit-font-smoothing: antialiased; font-variant-numeric: tabular-nums; }
-.msd * { box-sizing: border-box; }
-.msd h1 { font-size: 26px; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
-.msd h2 { font-size: 15px; font-weight: 600; margin: 0 0 4px; }
-.msd .sub { color: #6C7386; font-size: 13px; margin: 0; }
-.msd .head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; margin-bottom: 28px; }
-.msd .daycount { text-align: right; }
-.msd .daycount b { font-size: 26px; font-weight: 600; display: block; line-height: 1.1; }
-.msd section { padding: 22px 0; border-top: 1px solid #E4E7EE; }
-.msd section.first { border-top: none; padding-top: 0; }
-.msd .sechead { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 14px; }
-.msd .note { color: #6C7386; font-size: 13px; max-width: 72ch; }
-.msd .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; }
-.msd .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 36px; }
-@media (max-width: 900px) { .msd .grid2, .msd .grid3 { grid-template-columns: 1fr; } .msd { padding: 20px 16px; } }
-
-/* stats row */
-.msd .stats { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
-@media (max-width: 900px) { .msd .stats { grid-template-columns: repeat(3, 1fr); } }
-.msd .stat { padding: 10px 0 0; border-top: 2px solid #171C2E; }
-.msd .stat b { display: block; font-size: 24px; font-weight: 600; line-height: 1.1; }
-.msd .stat span { display: block; color: #6C7386; font-size: 12.5px; margin-top: 3px; }
-.msd .stat small { display: block; color: #6C7386; font-size: 12px; margin-top: 4px; }
-
-/* pace track */
-.msd .track { position: relative; height: 118px; margin: 30px 0 6px; }
-.msd .track .rail { position: absolute; left: 0; right: 0; top: 56px; height: 14px; background: #E9EBF2; border-radius: 3px; }
-.msd .track .done { position: absolute; left: 0; top: 56px; height: 14px; background: #2F5BEA; border-radius: 3px 0 0 3px; }
-.msd .track .range { position: absolute; top: 56px; height: 14px; background: rgba(47,91,234,0.18); border-left: 1px dashed #2F5BEA; border-right: 1px dashed #2F5BEA; }
-.msd .track .mark { position: absolute; top: 46px; width: 2px; height: 34px; background: #171C2E; }
-.msd .track .mark.light { background: #9AA1B4; }
-.msd .track .lbl { position: absolute; font-size: 12px; white-space: nowrap; color: #6C7386; transform: translateX(-50%); }
-.msd .track .lbl b { display: block; color: #171C2E; font-size: 15px; font-weight: 600; }
-.msd .track .lbl.above { top: 0; }
-.msd .track .lbl.below { top: 86px; }
-.msd .track .lbl.left { transform: translateX(0); }
-.msd .track .lbl.right { transform: translateX(-100%); }
-
-/* tables */
-.msd table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.msd th { text-align: left; font-weight: 500; color: #6C7386; padding: 6px 8px 8px 0; border-bottom: 1px solid #E4E7EE; white-space: nowrap; }
-.msd td { padding: 7px 8px 7px 0; border-bottom: 1px solid #F0F1F5; vertical-align: top; }
-.msd th.num, .msd td.num { text-align: right; padding-right: 0; padding-left: 8px; }
-.msd tr.parent td { font-weight: 600; }
-.msd td.indent { padding-left: 18px; color: #3B4256; }
-.msd .up { color: #1B8A5A; } .msd .down { color: #C9432B; } .msd .flat { color: #6C7386; }
-.msd .bar { display: inline-block; height: 8px; background: #2F5BEA; vertical-align: middle; border-radius: 2px; margin-right: 8px; }
-.msd .bar.neg { background: #C9432B; }
-
-/* ladder */
-.msd .rung { display: grid; grid-template-columns: 150px 1fr 60px; gap: 12px; align-items: center; padding: 8px 0; border-bottom: 1px solid #F0F1F5; }
-.msd .rung .name { font-weight: 500; } .msd .rung .name small { display: block; color: #6C7386; font-weight: 400; font-size: 12px; }
-.msd .rung .fill { height: 18px; background: #E9EBF2; border-radius: 3px; position: relative; overflow: hidden; }
-.msd .rung .fill i { position: absolute; left: 0; top: 0; bottom: 0; background: #2F5BEA; }
-.msd .rung .fill em { position: absolute; left: 0; top: 0; bottom: 0; background: repeating-linear-gradient(45deg, #B9C7F5 0 4px, #D6DEF9 4px 8px); }
-.msd .rung .n { text-align: right; font-weight: 600; }
-.msd .legend { display: flex; gap: 18px; font-size: 12px; color: #6C7386; margin-top: 10px; }
-.msd .legend i { display: inline-block; width: 12px; height: 10px; vertical-align: -1px; margin-right: 6px; border-radius: 2px; background: #2F5BEA; }
-.msd .legend i.hatch { background: repeating-linear-gradient(45deg, #B9C7F5 0 3px, #D6DEF9 3px 6px); }
-
-.msd .pill { display: inline-block; padding: 1px 7px; border-radius: 10px; font-size: 11.5px; background: #EEF2FF; color: #2F5BEA; }
-.msd .tabs { display: flex; gap: 4px; margin-bottom: 12px; }
-.msd .tabs button { font: inherit; font-size: 13px; padding: 5px 12px; border: 1px solid #E4E7EE; background: #fff; border-radius: 6px; cursor: pointer; color: #3B4256; }
-.msd .tabs button.on { background: #171C2E; color: #fff; border-color: #171C2E; }
-.msd .tabs button:focus-visible { outline: 2px solid #2F5BEA; outline-offset: 2px; }
-.msd .callout { border-left: 3px solid #2F5BEA; padding: 6px 14px; color: #3B4256; font-size: 13px; margin: 0 0 16px; max-width: 78ch; }
-.msd .viewtabs { display: flex; gap: 0; border-bottom: 1px solid #E4E7EE; margin: 0 0 24px; }
-.msd .viewtabs button { font: inherit; font-size: 14px; font-weight: 500; padding: 8px 16px; border: none; border-bottom: 2px solid transparent; background: none; cursor: pointer; color: #6C7386; margin-bottom: -1px; }
-.msd .viewtabs button.on { color: #171C2E; border-bottom-color: #171C2E; }
-.msd .viewtabs button:focus-visible { outline: 2px solid #2F5BEA; outline-offset: -2px; }
-.msd .sortable th { cursor: pointer; user-select: none; }
-.msd .sortable th:hover { color: #171C2E; }
-.msd .sortable th .arrow { display: inline-block; width: 10px; margin-left: 4px; color: #2F5BEA; font-size: 11px; }
-.msd .sortable td { padding-top: 5px; padding-bottom: 5px; white-space: nowrap; }
-.msd .sortable td.name { white-space: normal; min-width: 180px; }
-.msd .tablewrap { overflow-x: auto; max-height: 640px; overflow-y: auto; border: 1px solid #E4E7EE; border-radius: 4px; }
-.msd .tablewrap table { min-width: 1000px; }
-.msd .tablewrap thead th { position: sticky; top: 0; background: #FAFAFC; z-index: 1; padding: 8px 8px 8px 0; }
-.msd .tablewrap thead th:first-child, .msd .tablewrap td:first-child { padding-left: 10px; }
-.msd .tablewrap thead th.num, .msd .tablewrap td.num { padding-right: 10px; }
-.msd .filters { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; font-size: 13px; color: #6C7386; }
-.msd .filters select, .msd .filters input { font: inherit; font-size: 13px; padding: 5px 8px; border: 1px solid #E4E7EE; border-radius: 4px; background: #fff; color: #171C2E; }
-.msd .insights { max-width: 82ch; margin-top: 20px; }
-.msd .insights p { margin: 0 0 10px; font-size: 13.5px; color: #3B4256; }
-.msd footer { color: #6C7386; font-size: 12.5px; margin-top: 30px; padding-top: 16px; border-top: 1px solid #E4E7EE; max-width: 80ch; }
-`;
-
-// ============================================================================
-// COMPONENTS
-// ============================================================================
-
-function Delta({ v }) {
-  if (v === null || v === undefined) return <span className="flat">n/a</span>;
-  const cls = v > 2 ? "up" : v < -2 ? "down" : "flat";
-  const sign = v > 0 ? "+" : "";
-  return <span className={cls}>{sign}{v.toFixed(1)}%</span>;
-}
-
-function PaceTrack() {
-  const max = Math.max(PACE.stretchPlus, projHigh) * 1.06;
-  const pct = (v) => `${(v / max) * 100}%`;
-  return (
-    <div className="track" aria-label="Monthly onboardings pace">
-      <div className="rail" />
-      <div className="range" style={{ left: pct(projLow), width: pct(projHigh - projLow) }} />
-      <div className="done" style={{ width: pct(monthToNow) }} />
-
-      <div className="lbl above left" style={{ left: 0 }}>
-        <b>{monthToNow}</b>onboarded, 1 {PACE.monthShort} to now ({todaySoFar} today so far)
-      </div>
-      <div className="mark light" style={{ left: pct(projMid) }} />
-      <div className="lbl above" style={{ left: pct(projMid) }}>
-        <b>{projMid}</b>projected, range {projLow} to {projHigh}
-      </div>
-      <div className="mark" style={{ left: pct(PACE.target) }} />
-      <div className="lbl below" style={{ left: pct(PACE.target) }}>
-        <b>{PACE.target}</b>{PACE.monthShort} target
-      </div>
-      <div className="mark" style={{ left: pct(PACE.stretchPlus) }} />
-      <div className="lbl below" style={{ left: pct(PACE.stretchPlus) }}>
-        <b>{PACE.stretchPlus}</b>stretch plus
-      </div>
-    </div>
-  );
-}
-
-function CustomTip({ active, payload, label }) {
-  if (!active || !payload || !payload.length) return null;
-  return (
-    <div style={{ background: "#fff", border: "1px solid #E4E7EE", padding: "8px 10px", fontSize: 12.5, borderRadius: 4 }}>
-      <div style={{ fontWeight: 600, marginBottom: 4 }}>{label}</div>
-      {payload.map((p) => (
-        <div key={p.dataKey} style={{ color: "#3B4256" }}>{p.name}: <b>{p.value}</b></div>
-      ))}
-    </div>
-  );
-}
-
 const REF_COLS = SHOW_NAMES ? [REF_COLS_ALL[0], { key: "name", label: "Name" }, ...REF_COLS_ALL.slice(1)] : REF_COLS_ALL;
 
 function ReferrerTable() {
@@ -294,7 +397,6 @@ function ReferrerTable() {
   const [cohort, setCohort] = useState("all");
   const [bt, setBt] = useState("all");
   const [q, setQ] = useState("");
-
   const onSort = (key) => {
     if (key === sortKey) setDir(-dir);
     else { setSortKey(key); setDir(REF_COLS.find((c) => c.key === key).num ? -1 : 1); }
@@ -311,7 +413,6 @@ function ReferrerTable() {
       return (av < bv ? -1 : 1) * dir;
     });
   const sum = (k) => rows.reduce((a, r) => a + r[k], 0);
-
   return (
     <>
       <div className="filters">
@@ -332,7 +433,7 @@ function ReferrerTable() {
             <tr>
               {REF_COLS.map((c) => (
                 <th key={c.key} className={c.num ? "num" : ""} onClick={() => onSort(c.key)}>
-                  {c.label}<span className="arrow">{sortKey === c.key ? (dir === 1 ? "\u25B2" : "\u25BC") : ""}</span>
+                  {c.label}<span className="arrow">{sortKey === c.key ? (dir === 1 ? "▲" : "▼") : ""}</span>
                 </th>
               ))}
             </tr>
@@ -344,7 +445,7 @@ function ReferrerTable() {
                 {SHOW_NAMES && <td className="name">{r.name}</td>}
                 <td>{r.bt}</td>
                 <td>{r.onboarded}</td>
-                <td>{r.activated || <span style={{ color: "#9AA1B4" }}>not yet</span>}</td>
+                <td>{r.activated || <span className="muted">not yet</span>}</td>
                 <td className="num">{r.signups}</td>
                 <td className="num">{r.obs}</td>
                 <td className="num">{r.acts}</td>
@@ -359,145 +460,180 @@ function ReferrerTable() {
   );
 }
 
-export default function MilestoneDashboard() {
-  const [tab, setTab] = useState("mix");
-  const [view, setView] = useState("overview");
-  const maxRef = Math.max(...LADDER.map((r) => r.referrers));
+// ============================================================================
+// VIEWS
+// ============================================================================
 
+function Overview({ T, go }) {
+  const last = TRENDS[TRENDS.length - 1] || {};
+  const prev = TRENDS[TRENDS.length - 2] || {};
+  const sameDaysLastMonth = PACE.months[PACE.months.length - 1];
+  const obDelta = sameDaysLastMonth && sameDaysLastMonth.firstN ? (100 * (PACE.sepToDate - sameDaysLastMonth.firstN)) / sameDaysLastMonth.firstN : null;
+  const rewards = CLAIMS.reduce((a, c) => a + (c.status === "Claimed" ? c.count : 0), 0);
+  const spark = (k) => TRENDS.slice(-12).map((t) => t[k]);
+  const trendRows = TRENDS.map((t) => ({ ...t, label: t.month + (t.partial ? " (to date)" : "") }));
   return (
-    <div className="msd">
-      <style>{css}</style>
-
-      <div className="head">
+    <>
+      <div className="pagehead">
         <div>
-          <h1>Milestone referral campaign</h1>
-          <p className="sub">1 Sep to 31 Oct 2026. Ladder: 1 Polaroid, 3 AirPods, 5 Ray-Ban Meta, 8 iPhone 17. Data as of {SNAPSHOT.asOf}.</p>
-        </div>
-        <div className="daycount">
-          <b>Day {SNAPSHOT.campaignDay} of 61</b>
-          <span className="sub">{SNAPSHOT.daysLeft} days left</span>
+          <h2 style={{ fontSize: 18 }}>Referrals at a glance</h2>
+          <p className="sub">Program-wide numbers, every campaign included. {PACE.monthName} is {SNAPSHOT.fullDays} full day{SNAPSHOT.fullDays === 1 ? "" : "s"} in.</p>
         </div>
       </div>
 
-      <div className="viewtabs" role="tablist">
-        <button className={view === "overview" ? "on" : ""} onClick={() => setView("overview")}>Overview</button>
-        <button className={view === "referrers" ? "on" : ""} onClick={() => setView("referrers")}>Referrers</button>
-        <button className={view === "quality" ? "on" : ""} onClick={() => setView("quality")}>Referee quality</button>
-      </div>
+      <section className="first">
+        <div className="stats">
+          <Stat T={T} label={`${PACE.monthName} referral onboardings`} value={fmt(monthToNow)} hero
+            sub={PACE.target ? `target ${PACE.target}${projMid ? `, projecting about ${projMid}` : ""}` : projMid ? `projecting about ${projMid}` : "no target set"}
+            delta={obDelta} deltaGood spark={spark("refOnboardings")} />
+          <Stat T={T} label="Referral signups this month" value={fmt(last.signups)} sub={`${fmt(last.referrers)} referrers, ${fmt(last.firstTimers)} first-timers`} spark={spark("signups")} />
+          <Stat T={T} label="Referral activations this month" value={fmt(last.refActivations)} sub={`${prev.month || "last month"}: ${fmt(prev.refActivations)}`} spark={spark("refActivations")} />
+          <Stat T={T} label="Share rate" value={last.shareRate != null ? `${last.shareRate}%` : "n/a"} sub={`of ${fmt(last.transactors)} transactors referred. ${prev.month || ""}: ${prev.shareRate}%`} spark={spark("shareRate")} />
+          <Stat T={T} label="Referral share of all onboardings" value={last.refShare != null ? `${last.refShare}%` : "n/a"} sub={`${fmt(last.refOnboardings)} of ${fmt(last.allOnboardings)}. ${prev.month || ""}: ${prev.refShare}%`} spark={spark("refShare")} />
+          <Stat T={T} label="Gifts claimed, live campaigns" value={fmt(rewards + (GOLD ? GOLD.funnel.claimed : 0))} sub={`${rewards} milestone rewards, ${GOLD ? GOLD.funnel.claimed : 0} gold coins`} />
+        </div>
+      </section>
 
-      {view === "quality" && (
-        <section className="first">
-          <div className="sechead">
-            <h2>Are campaign referees different from the referees we usually get?</h2>
-            <span className="note">{N.qualityHeader}</span>
+      <section>
+        <div className="sechead"><h2>What is running</h2></div>
+        <div className="live">
+          <button className="livecard" onClick={() => go("milestone")}>
+            <div><b>Milestone ladder campaign</b><span>{SNAPSHOT.campaignEnded ? `Ended ${SNAPSHOT.campaignEnd}` : `Day ${SNAPSHOT.campaignDay} of ${SNAPSHOT.campaignDays || 61}, ${SNAPSHOT.daysLeft} days left`}. {fmt(HEADLINE.signups)} signups, {fmt(HEADLINE.activations)} activations, {rewards} rewards claimed.</span></div>
+            <span className={`pill ${SNAPSHOT.campaignEnded ? "ended" : "live"}`}>{SNAPSHOT.campaignEnded ? "ended" : "live"}</span>
+          </button>
+          {GOLD && <button className="livecard" onClick={() => go("gold")}>
+            <div><b>{GOLD.label}</b><span>Day {GOLD.dayN}, since {GOLD.startLabel}. {fmt(GOLD.pinned.n)} never-referrers offered a {GOLD.reward}: {GOLD.funnel.referrers} have referred, {GOLD.funnel.achieved} activated, {GOLD.funnel.claimed} coins claimed.</span></div>
+            <span className="pill live">live</span>
+          </button>}
+        </div>
+      </section>
+
+      <section>
+        <div className="sechead">
+          <h2>Thirteen months of referrals</h2>
+          <span className="note">Signups and referrers exclude internal and flagged ids. Onboardings and activations count each referee once, on their first referrer. The current month is partial.</span>
+        </div>
+        <div className="chart" style={{ height: 280 }}>
+          <ResponsiveContainer>
+            <LineChart data={trendRows} margin={{ top: 12, right: 16, left: -14, bottom: 0 }}>
+              <CartesianGrid vertical={false} stroke={T.grid} />
+              <XAxis dataKey="month" {...axis(T)} />
+              <YAxis {...axis(T)} tickFormatter={fmtc} />
+              <Tooltip content={<Tip />} cursor={{ stroke: T.axis }} />
+              <Legend iconType="plainline" iconSize={14} wrapperStyle={{ fontSize: 12, color: T.ink2 }} />
+              <Line dataKey="signups" name="Signups" stroke={T.s1} strokeWidth={2} dot={{ r: 3.5, fill: T.s1, stroke: T.surface, strokeWidth: 2 }} activeDot={{ r: 5 }} />
+              <Line dataKey="refOnboardings" name="Onboardings" stroke={T.s3} strokeWidth={2} dot={{ r: 3.5, fill: T.s3, stroke: T.surface, strokeWidth: 2 }} activeDot={{ r: 5 }} />
+              <Line dataKey="refActivations" name="Activations" stroke={T.s2} strokeWidth={2} dot={{ r: 3.5, fill: T.s2, stroke: T.surface, strokeWidth: 2 }} activeDot={{ r: 5 }} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+        <div className="grid2" style={{ marginTop: 22 }}>
+          <div>
+            <h3>Share rate: transactors who referred that month</h3>
+            <div className="chart" style={{ height: 180 }}>
+              <ResponsiveContainer>
+                <ComposedChart data={trendRows} margin={{ top: 8, right: 16, left: -18, bottom: 0 }}>
+                  <CartesianGrid vertical={false} stroke={T.grid} />
+                  <XAxis dataKey="month" {...axis(T)} interval={2} />
+                  <YAxis {...axis(T)} tickFormatter={(v) => `${v}%`} />
+                  <Tooltip content={<Tip fmtv={(v) => `${v}%`} />} cursor={{ stroke: T.axis }} />
+                  <Line dataKey="shareRate" name="Share rate" stroke={T.s1} strokeWidth={2} dot={{ r: 3, fill: T.s1, stroke: T.surface, strokeWidth: 2 }} />
+                </ComposedChart>
+              </ResponsiveContainer>
+            </div>
           </div>
-
-          <h2 style={{ fontSize: 14, marginTop: 8 }}>Funnel by source</h2>
-          <table style={{ marginBottom: 6 }}>
-            <thead><tr><th>Referees from</th><th className="num">Signups</th><th className="num">Onboarded in 1 day</th><th className="num">In 7 days</th><th className="num">Onboarded 10+ days ago</th><th className="num">Active within 10 days</th><th className="num">Median first settlement</th></tr></thead>
+          <div>
+            <h3>Referral share of all onboardings</h3>
+            <div className="chart" style={{ height: 180 }}>
+              <ResponsiveContainer>
+                <ComposedChart data={trendRows} margin={{ top: 8, right: 16, left: -18, bottom: 0 }}>
+                  <CartesianGrid vertical={false} stroke={T.grid} />
+                  <XAxis dataKey="month" {...axis(T)} interval={2} />
+                  <YAxis {...axis(T)} tickFormatter={(v) => `${v}%`} />
+                  <Tooltip content={<Tip fmtv={(v) => `${v}%`} />} cursor={{ stroke: T.axis }} />
+                  <Line dataKey="refShare" name="Referral share" stroke={T.s3} strokeWidth={2} dot={{ r: 3, fill: T.s3, stroke: T.surface, strokeWidth: 2 }} />
+                </ComposedChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+        <div className="tablewrap short" style={{ marginTop: 18 }}>
+          <table>
+            <thead><tr><th>Month</th><th className="num">Signups</th><th className="num">Referrers</th><th className="num">First-timers</th><th className="num">Onboardings</th><th className="num">Activations</th><th className="num">All onboardings</th><th className="num">Referral share</th><th className="num">Transactors</th><th className="num">Share rate</th></tr></thead>
             <tbody>
-              {Q_FUNNEL.map((r) => (
-                <tr key={r.src}><td>{r.src}</td><td className="num">{fmt(r.n)}</td><td className="num">{r.ob1d}%</td><td className="num">{r.ob7d}%</td><td className="num">{r.matureN}</td><td className="num">{r.act10}%</td><td className="num">${fmt(Math.round(r.medianFirstInr / FX))}</td></tr>
+              {TRENDS.slice(-7).map((t) => (
+                <tr key={t.ym} className={t.partial ? "hl" : ""}><td>{t.month}{t.partial ? " (to date)" : ""}</td><td className="num">{fmt(t.signups)}</td><td className="num">{fmt(t.referrers)}</td><td className="num">{fmt(t.firstTimers)}</td><td className="num">{fmt(t.refOnboardings)}</td><td className="num">{fmt(t.refActivations)}</td><td className="num">{fmt(t.allOnboardings)}</td><td className="num">{t.refShare}%</td><td className="num">{fmt(t.transactors)}</td><td className="num">{t.shareRate}%</td></tr>
               ))}
             </tbody>
           </table>
-          <p className="note">{N.qualityWindow}</p>
+        </div>
+        <Notes items={N.overview} title="What the trend says" />
+      </section>
+    </>
+  );
+}
 
-          <div className="grid2" style={{ marginTop: 22 }}>
-            <div>
-              <h2 style={{ fontSize: 14 }}>Business type of onboarded referees</h2>
-              <table>
-                <thead><tr><th>Type</th><th className="num">Aug</th><th className="num">Share</th><th className="num">Sept</th><th className="num">Share</th><th className="num">Active 10d, Aug</th><th className="num">Sept</th></tr></thead>
-                <tbody>
-                  {Q_BT.map((r) => (
-                    <tr key={r.bt}><td>{r.bt}</td><td className="num">{r.preN}</td><td className="num">{r.preShare}%</td><td className="num">{r.cN}</td><td className="num">{r.cShare}%</td><td className="num">{r.preAct}%</td><td className="num">{r.cAct === null ? <span style={{ color: "#9AA1B4" }}>n/a</span> : `${r.cAct}%`}</td></tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div>
-              <h2 style={{ fontSize: 14 }}>Stated monthly volume of onboarded referees</h2>
-              <table>
-                <thead><tr><th>Stated at signup</th><th className="num">Aug</th><th className="num">Share</th><th className="num">Sept</th><th className="num">Share</th><th className="num">Active 10d, Aug</th><th className="num">Sept</th></tr></thead>
-                <tbody>
-                  {Q_VOL.map((r) => (
-                    <tr key={r.vol}><td>{r.vol}</td><td className="num">{r.preN}</td><td className="num">{r.preShare}%</td><td className="num">{r.cN}</td><td className="num">{r.cShare}%</td><td className="num">{r.preAct}%</td><td className="num">{r.cAct === null ? <span style={{ color: "#9AA1B4" }}>n/a</span> : `${r.cAct}%`}</td></tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+function Milestone({ T }) {
+  const [tab, setTab] = useState("mix");
+  const maxRef = Math.max(...LADDER.map((r) => r.referrers), 1);
+  const weeklyRows = WEEKLY.map((w) => ({ ...w, pre: w.period === "pre" ? w.signups : null, camp: w.period === "campaign" ? w.signups : null }));
+  return (
+    <>
+      <div className="pagehead">
+        <div>
+          <h2 style={{ fontSize: 18 }}>Milestone ladder campaign</h2>
+          <p className="sub">1 Sep to 31 Oct 2026. Ladder: 1 Polaroid, 3 AirPods 4, 5 Ray-Ban Meta, 8 iPhone 17. Campaign 26 signups only, except the monthly target block.</p>
+        </div>
+        <div className="count">
+          <b>{SNAPSHOT.campaignEnded ? "Campaign ended" : `Day ${SNAPSHOT.campaignDay} of ${SNAPSHOT.campaignDays || 61}`}</b>
+          <span className="sub">{SNAPSHOT.campaignEnded ? `on ${SNAPSHOT.campaignEnd}` : `${SNAPSHOT.daysLeft} days left`}</span>
+        </div>
+      </div>
 
-          <div className="insights">
-            <h2 style={{ marginTop: 4 }}>Early read on quality</h2>
-            {(N.refereeQuality || []).map((t, i) => <p key={i}>{t}</p>)}
-          </div>
-        </section>
-      )}
-
-      {view === "referrers" && (
-        <section className="first">
-          <div className="sechead">
-            <h2>Every campaign referrer: signups, onboardings, activations</h2>
-            <span className="note">Campaign 26 only. Onboarded and activated dates are the referrer's own. Cohort is based on referral history before 1 Sep.</span>
-          </div>
-          <ReferrerTable />
-          <div className="insights">
-            <h2 style={{ marginTop: 4 }}>What the table says</h2>
-            {(N.referrers || []).map((t, i) => <p key={i}>{t}</p>)}
-          </div>
-        </section>
-      )}
-
-      {view === "overview" && (<>
-      {/* PACE */}
       <section className="first">
         <div className="sechead">
           <h2>{PACE.monthName} onboardings against target</h2>
-          <span className="note">All referral onboardings, not just campaign signups, so it lines up with the {PACE.target} target. Projection uses full days only.</span>
+          <span className="note">All referral onboardings, not just campaign signups, so it lines up with the {PACE.target || "monthly"} target. Projection uses full days only.</span>
         </div>
         <PaceTrack />
         <p className="note" style={{ marginTop: 22 }}>{N.pace}</p>
       </section>
 
-      {/* HEADLINE */}
       <section>
         <div className="sechead"><h2>Campaign totals</h2><span className="note">Signups on campaign 26 only.</span></div>
         <div className="stats">
-          <div className="stat"><b>{HEADLINE.signups}</b><span>signups</span></div>
-          <div className="stat"><b>{HEADLINE.referrers}</b><span>referrers</span><small>{HEADLINE.signupsPerReferrer} signups each</small></div>
-          <div className="stat"><b>{HEADLINE.onboardings}</b><span>onboarded</span><small>{HEADLINE.signupToOb}% of signups</small></div>
-          <div className="stat"><b>{HEADLINE.activations}</b><span>activated</span><small>{HEADLINE.obToAct}% of onboarded</small></div>
-          <div className="stat"><b>{HEADLINE.onboardingsPerDay}</b><span>onboardings per day</span></div>
-          <div className="stat"><b>{HEADLINE.rewardsClaimed}</b><span>rewards claimed</span><small>all Polaroid</small></div>
+          <Stat T={T} label="Signups" value={fmt(HEADLINE.signups)} />
+          <Stat T={T} label="Referrers" value={fmt(HEADLINE.referrers)} sub={`${HEADLINE.signupsPerReferrer} signups each`} />
+          <Stat T={T} label="Onboarded" value={fmt(HEADLINE.onboardings)} sub={`${HEADLINE.signupToOb}% of signups`} />
+          <Stat T={T} label="Activated" value={fmt(HEADLINE.activations)} sub={`${HEADLINE.obToAct}% of onboarded`} />
+          <Stat T={T} label="Onboardings per day" value={HEADLINE.onboardingsPerDay} />
+          <Stat T={T} label="Rewards claimed" value={fmt(HEADLINE.rewardsClaimed)} sub={CLAIMS.map((c) => `${c.count} ${c.reward.replace(" Camera", "")}`).join(", ")} />
         </div>
-        {N.excluded && <p className="callout" style={{ marginTop: 16, borderLeftColor: "#C9432B" }}>{N.excluded}</p>}
+        {N.excluded && <p className="callout warn" style={{ marginTop: 16 }}>{N.excluded}</p>}
       </section>
 
-      {/* DAILY */}
       <section>
         <div className="sechead">
-          <h2>Daily signups and onboardings</h2>
+          <h2>Daily signups, onboardings and activations</h2>
           <span className="note">{N.daily}</span>
         </div>
-        <div style={{ width: "100%", height: 260 }}>
+        <div className="chart" style={{ height: 270 }}>
           <ResponsiveContainer>
-            <ComposedChart data={dailyWithAvg} margin={{ top: 10, right: 10, left: -18, bottom: 0 }}>
-              <CartesianGrid vertical={false} stroke="#EEF0F4" />
-              <XAxis dataKey="day" tick={{ fontSize: 11.5, fill: "#6C7386" }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 11.5, fill: "#6C7386" }} axisLine={false} tickLine={false} />
-              <Tooltip content={<CustomTip />} cursor={{ fill: "rgba(47,91,234,0.06)" }} />
-              <Legend iconType="square" iconSize={10} wrapperStyle={{ fontSize: 12, color: "#6C7386" }} />
-              <Bar dataKey="signups" name="Signups" fill="#2F5BEA" radius={[2, 2, 0, 0]} maxBarSize={28} />
-              <Bar dataKey="onboardings" name="Onboardings" fill="#B9C7F5" radius={[2, 2, 0, 0]} maxBarSize={28} />
-              <Line dataKey="avg7" name="Signups, 7-day avg" stroke="#171C2E" strokeWidth={2} dot={false} />
-              <Line dataKey="activations" name="Activations" stroke="#1B8A5A" strokeWidth={1.5} dot={{ r: 2 }} />
+            <ComposedChart data={dailyWithAvg} margin={{ top: 10, right: 10, left: -18, bottom: 0 }} barGap={2}>
+              <CartesianGrid vertical={false} stroke={T.grid} />
+              <XAxis dataKey="day" {...axis(T)} interval="preserveStartEnd" minTickGap={28} />
+              <YAxis {...axis(T)} />
+              <Tooltip content={<Tip />} cursor={{ fill: T.wash }} />
+              <Legend iconSize={10} wrapperStyle={{ fontSize: 12, color: T.ink2 }} />
+              <Bar dataKey="signups" name="Signups" fill={T.s1} radius={[4, 4, 0, 0]} maxBarSize={22} />
+              <Bar dataKey="onboardings" name="Onboardings" fill={T.s3} radius={[4, 4, 0, 0]} maxBarSize={22} />
+              <Line dataKey="avg7" name="Signups, 7-day average" stroke={T.ink} strokeWidth={2} dot={false} />
+              <Line dataKey="activations" name="Activations" stroke={T.s2} strokeWidth={2} dot={false} />
             </ComposedChart>
           </ResponsiveContainer>
         </div>
       </section>
 
-      {/* LADDER + NUDGE */}
       <section>
         <div className="grid2">
           <div>
@@ -522,7 +658,7 @@ export default function MilestoneDashboard() {
               <tbody>
                 {NUDGE.map((n) => (
                   <tr key={n.id}>
-                    <td>{n.name ? <>{n.name} <span style={{ color: "#9AA1B4" }}>{n.id}</span></> : <>Exporter {n.id}</>}{n.claimed && <> <span className="pill">claimed {n.claimed}</span></>}</td>
+                    <td>{n.name ? <>{n.name} <span className="muted">{n.id}</span></> : <>Exporter {n.id}</>}{n.claimed && <> <span className="pill">claimed {n.claimed}</span></>}</td>
                     <td className="num">{n.achieved}</td>
                     <td className="num">{n.waiting || ""}</td>
                     <td style={{ paddingLeft: 16 }}>{n.next}</td>
@@ -535,140 +671,445 @@ export default function MilestoneDashboard() {
         </div>
       </section>
 
-      {/* COHORTS */}
       <section>
         <div className="sechead">
-          <h2>Share rate by cohort, {D.COHORT_LABELS.now} MTD vs same days in {D.COHORT_LABELS.prev}</h2>
+          <h2>Share rate by cohort, {LBL.now} to date vs the same days in {LBL.prev}</h2>
           <span className="note">Share rate = referrers in the window / users in the cohort. Payees excluded, so bases run a little lower than the leadership sheet.</span>
         </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Cohort</th><th className="num">Base</th>
-              <th className="num">Referrers {D.COHORT_LABELS.now}</th><th className="num">Share {D.COHORT_LABELS.now}</th>
-              <th className="num">Referrers Aug</th><th className="num">Share Aug</th>
-              <th style={{ paddingLeft: 24 }}>Change</th>
-            </tr>
-          </thead>
-          <tbody>
-            {COHORTS.map((c) => (
-              <tr key={c.id} className={c.indent ? "" : "parent"}>
-                <td className={c.indent ? "indent" : ""}>{c.id}&nbsp; {c.label}</td>
-                <td className="num">{fmt(c.base)}</td>
-                <td className="num">{c.refNow}</td>
-                <td className="num">{c.rateNow.toFixed(2)}%</td>
-                <td className="num">{c.refPrev}</td>
-                <td className="num">{c.ratePrev.toFixed(2)}%</td>
-                <td style={{ paddingLeft: 24, whiteSpace: "nowrap" }}>
-                  <span className={`bar${c.delta < 0 ? " neg" : ""}`} style={{ width: Math.min(90, Math.abs(c.delta) * 1.1) }} />
-                  <Delta v={c.delta} />
-                </td>
+        <div className="tablewrap short">
+          <table>
+            <thead>
+              <tr>
+                <th>Cohort</th><th className="num">Base</th>
+                <th className="num">Referrers {LBL.now}</th><th className="num">Share {LBL.now}</th>
+                <th className="num">Referrers {LBL.prev}</th><th className="num">Share {LBL.prev}</th>
+                <th style={{ paddingLeft: 24 }}>Change</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {COHORTS.map((c) => (
+                <tr key={c.id} className={c.indent ? "" : "parent"}>
+                  <td className={c.indent ? "indent" : ""}>{c.id}&nbsp; {c.label}</td>
+                  <td className="num">{fmt(c.base)}</td>
+                  <td className="num">{c.refNow}</td>
+                  <td className="num">{c.rateNow.toFixed(2)}%</td>
+                  <td className="num">{c.refPrev}</td>
+                  <td className="num">{c.ratePrev.toFixed(2)}%</td>
+                  <td style={{ paddingLeft: 24, whiteSpace: "nowrap" }}>
+                    <span className={`bar${(c.delta || 0) < 0 ? " neg" : ""}`} style={{ width: Math.min(90, Math.abs(c.delta || 0) * 1.1) }} />
+                    <Delta v={c.delta} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
         <p className="note" style={{ marginTop: 12 }}>{N.cohorts}</p>
       </section>
 
-      {/* WEEKLY + MIX + QUALITY */}
       <section>
         <div className="grid2">
           <div>
-            <div className="sechead"><h2>Weekly signups, before and during</h2><span className="note">Signups per referrer on the right axis.</span></div>
-            <div style={{ width: "100%", height: 240 }}>
+            <div className="sechead"><h2>Weekly signups, before and during</h2><span className="note">Grey weeks are the eight before launch.</span></div>
+            <div className="chart" style={{ height: 200 }}>
               <ResponsiveContainer>
-                <ComposedChart data={WEEKLY} margin={{ top: 10, right: 0, left: -18, bottom: 0 }}>
-                  <CartesianGrid vertical={false} stroke="#EEF0F4" />
-                  <XAxis dataKey="week" tick={{ fontSize: 11.5, fill: "#6C7386" }} axisLine={false} tickLine={false} />
-                  <YAxis yAxisId="l" tick={{ fontSize: 11.5, fill: "#6C7386" }} axisLine={false} tickLine={false} />
-                  <YAxis yAxisId="r" orientation="right" domain={[0.9, 1.5]} tick={{ fontSize: 11.5, fill: "#6C7386" }} axisLine={false} tickLine={false} width={34} />
-                  <Tooltip content={<CustomTip />} cursor={{ fill: "rgba(47,91,234,0.06)" }} />
-                  <ReferenceLine yAxisId="l" x="31 Aug" stroke="#9AA1B4" strokeDasharray="3 3" />
-                  <Bar yAxisId="l" dataKey="signups" name="Signups" maxBarSize={30} radius={[2, 2, 0, 0]}
-                    fill="#2F5BEA" shape={(p) => <rect x={p.x} y={p.y} width={p.width} height={p.height} rx={2} fill={p.payload.period === "campaign" ? "#2F5BEA" : "#C4C9D6"} />} />
-                  <Line yAxisId="r" dataKey="perRef" name="Signups per referrer" stroke="#171C2E" strokeWidth={2} dot={{ r: 2.5 }} />
+                <ComposedChart data={weeklyRows} margin={{ top: 10, right: 0, left: -18, bottom: 0 }} barGap={2}>
+                  <CartesianGrid vertical={false} stroke={T.grid} />
+                  <XAxis dataKey="week" {...axis(T)} interval={1} />
+                  <YAxis {...axis(T)} />
+                  <Tooltip content={<Tip />} cursor={{ fill: T.wash }} />
+                  <Legend iconSize={10} wrapperStyle={{ fontSize: 12, color: T.ink2 }} />
+                  <Bar dataKey="pre" name="Before the campaign" fill={T.dim} radius={[4, 4, 0, 0]} maxBarSize={22} stackId="w" />
+                  <Bar dataKey="camp" name="Campaign weeks" fill={T.s1} radius={[4, 4, 0, 0]} maxBarSize={22} stackId="w" />
                 </ComposedChart>
+              </ResponsiveContainer>
+            </div>
+            <h3 style={{ marginTop: 14 }}>Signups per referrer, by week</h3>
+            <div className="chart" style={{ height: 120 }}>
+              <ResponsiveContainer>
+                <LineChart data={weeklyRows} margin={{ top: 6, right: 8, left: -18, bottom: 0 }}>
+                  <CartesianGrid vertical={false} stroke={T.grid} />
+                  <XAxis dataKey="week" {...axis(T)} interval={1} />
+                  <YAxis {...axis(T)} domain={[1, "auto"]} tickFormatter={(v) => v.toFixed(1)} />
+                  <Tooltip content={<Tip fmtv={(v) => v.toFixed(2)} />} cursor={{ stroke: T.axis }} />
+                  <Line dataKey="perRef" name="Signups per referrer" stroke={T.ink} strokeWidth={2} dot={{ r: 3, fill: T.ink, stroke: T.surface, strokeWidth: 2 }} />
+                </LineChart>
               </ResponsiveContainer>
             </div>
           </div>
           <div>
             <div className="tabs" role="tablist">
               <button className={tab === "mix" ? "on" : ""} onClick={() => setTab("mix")}>Who is referring</button>
-              <button className={tab === "quality" ? "on" : ""} onClick={() => setTab("quality")}>Referee quality</button>
+              <button className={tab === "quality" ? "on" : ""} onClick={() => setTab("quality")}>Onboarding speed</button>
               <button className={tab === "claims" ? "on" : ""} onClick={() => setTab("claims")}>Claims</button>
             </div>
-            {tab === "mix" && (
-              <>
-                <table>
-                  <thead><tr><th>Referrer type</th><th className="num">Referrers</th><th className="num">Signups</th><th className="num">Each</th><th className="num">Onboarded</th><th className="num">OB %</th></tr></thead>
-                  <tbody>
-                    {NEW_VS_REPEAT.map((r) => (
-                      <tr key={r.type}><td>{r.type}</td><td className="num">{r.referrers}</td><td className="num">{r.signups}</td><td className="num">{r.perRef.toFixed(2)}</td><td className="num">{r.onboarded}</td><td className="num">{r.obPct}%</td></tr>
-                    ))}
-                  </tbody>
-                </table>
-                <p className="note" style={{ marginTop: 10 }}>{N.mix}</p>
-              </>
-            )}
-            {tab === "quality" && (
-              <>
-                <table>
-                  <thead><tr><th>Signup week</th><th className="num">Signups</th><th className="num">OB in 1d</th><th className="num">OB in 7d</th><th className="num">OB so far</th><th className="num">Active of OB</th><th className="num">Median days OB to active</th></tr></thead>
-                  <tbody>
-                    {QUALITY.map((q) => (
-                      <tr key={q.week}><td>{q.week}</td><td className="num">{q.signups}</td><td className="num">{q.ob1d}%</td><td className="num">{q.ob7d}%</td><td className="num">{q.obSoFar}%</td><td className="num">{q.actOfOb}%</td><td className="num">{q.medianDays}</td></tr>
-                    ))}
-                  </tbody>
-                </table>
-                <p className="note" style={{ marginTop: 10 }}>{N.weeklyQuality}</p>
-              </>
-            )}
-            {tab === "claims" && (
-              <>
-                <table>
-                  <thead><tr><th>Reward</th><th className="num">At</th><th>Status</th><th className="num">Count</th><th>First</th><th>Last</th><th className="num">Avg activations at claim</th></tr></thead>
-                  <tbody>
-                    {CLAIMS.map((c) => (
-                      <tr key={c.reward}><td>{c.reward}</td><td className="num">{c.threshold}</td><td>{c.status}</td><td className="num">{c.count}</td><td>{c.first}</td><td>{c.last}</td><td className="num">{c.avgAchieved.toFixed(1)}</td></tr>
-                    ))}
-                  </tbody>
-                </table>
-                <p className="note" style={{ marginTop: 10 }}>{N.claims}</p>
-              </>
-            )}
+            {tab === "mix" && (<>
+              <div className="tablewrap short"><table>
+                <thead><tr><th>Referrer type</th><th className="num">Referrers</th><th className="num">Signups</th><th className="num">Each</th><th className="num">Onboarded</th><th className="num">OB %</th></tr></thead>
+                <tbody>{NEW_VS_REPEAT.map((r) => (
+                  <tr key={r.type}><td>{r.type}</td><td className="num">{r.referrers}</td><td className="num">{r.signups}</td><td className="num">{r.perRef.toFixed(2)}</td><td className="num">{r.onboarded}</td><td className="num">{r.obPct}%</td></tr>))}
+                </tbody></table></div>
+              <p className="note" style={{ marginTop: 10 }}>{N.mix}</p>
+            </>)}
+            {tab === "quality" && (<>
+              <div className="tablewrap short"><table>
+                <thead><tr><th>Signup week</th><th className="num">Signups</th><th className="num">OB in 1d</th><th className="num">OB in 7d</th><th className="num">OB so far</th><th className="num">Active of OB</th><th className="num">Median days OB to active</th></tr></thead>
+                <tbody>{QUALITY.map((q) => (
+                  <tr key={q.week}><td>{q.week}</td><td className="num">{q.signups}</td><td className="num">{q.ob1d}%</td><td className="num">{q.ob7d}%</td><td className="num">{q.obSoFar}%</td><td className="num">{q.actOfOb}%</td><td className="num">{q.medianDays}</td></tr>))}
+                </tbody></table></div>
+              <p className="note" style={{ marginTop: 10 }}>{N.weeklyQuality}</p>
+            </>)}
+            {tab === "claims" && (<>
+              <div className="tablewrap short"><table>
+                <thead><tr><th>Reward</th><th className="num">At</th><th>Status</th><th className="num">Count</th><th>First</th><th>Last</th><th className="num">Avg activations at claim</th></tr></thead>
+                <tbody>{CLAIMS.map((c) => (
+                  <tr key={c.reward + c.status}><td>{c.reward}</td><td className="num">{c.threshold}</td><td>{c.status}</td><td className="num">{c.count}</td><td>{c.first}</td><td>{c.last}</td><td className="num">{Number(c.avgAchieved).toFixed(1)}</td></tr>))}
+                </tbody></table></div>
+              <p className="note" style={{ marginTop: 10 }}>{N.claims}</p>
+            </>)}
           </div>
         </div>
       </section>
 
-      {/* POPUP FUNNEL */}
       <section>
         <div className="sechead">
           <h2>Reward popup: what people choose</h2>
-          <span className="note">{N.popupHeader}</span>
+          <span className="note">{N.popupHeader}{POPUP.stale ? " Mixpanel did not answer on the last run, so these are the previous numbers." : ""}</span>
         </div>
         <div className="grid3">
-          <div>
-            <div className="stats" style={{ gridTemplateColumns: "1fr 1fr" }}>
-              <div className="stat"><b>{fmt(POPUP.widgetUniqueUsers)}</b><span>saw the campaign widget</span><small>unique users, {POPUP.window}</small></div>
-              <div className="stat"><b>{(100 * HEADLINE.referrers / Math.max(1, POPUP.widgetUniqueUsers)).toFixed(1)}%</b><span>of them referred</span><small>{HEADLINE.referrers} referrers</small></div>
-            </div>
+          <div className="stats" style={{ gridTemplateColumns: "1fr 1fr" }}>
+            <Stat T={T} label="Saw the campaign widget" value={fmtc(POPUP.widgetUniqueUsers)} sub={`unique users, ${POPUP.window}`} />
+            <Stat T={T} label="Of them referred" value={pct(HEADLINE.referrers, POPUP.widgetUniqueUsers)} sub={`${HEADLINE.referrers} referrers`} />
           </div>
           <div>
             <div className="rung"><div className="name">Opened claim popup</div><div className="fill"><i style={{ width: "100%" }} /></div><div className="n">{POPUP.claimCta}</div></div>
-            <div className="rung"><div className="name">Took the reward<small>exits to default $30 program</small></div><div className="fill"><i style={{ width: `${(POPUP.claimConfirm / POPUP.claimCta) * 100}%` }} /></div><div className="n">{POPUP.claimConfirm}</div></div>
-            <div className="rung"><div className="name">Chose to keep referring</div><div className="fill" /><div className="n">{POPUP.keepReferring}</div></div>
+            <div className="rung"><div className="name">Took the reward<small>exits to default $30 program</small></div><div className="fill"><i style={{ width: `${POPUP.claimCta ? (POPUP.claimConfirm / POPUP.claimCta) * 100 : 0}%` }} /></div><div className="n">{POPUP.claimConfirm}</div></div>
+            <div className="rung"><div className="name">Chose to keep referring</div><div className="fill"><i style={{ width: `${POPUP.claimCta ? (POPUP.keepReferring / POPUP.claimCta) * 100 : 0}%` }} /></div><div className="n">{POPUP.keepReferring}</div></div>
+          </div>
+          <div>{(N.popup || []).map((t, i) => <p key={i} className="note" style={{ marginBottom: 10 }}>{t}</p>)}</div>
+        </div>
+      </section>
+    </>
+  );
+}
+
+function Gold({ T }) {
+  if (!GOLD) return <section className="first"><p className="note">Gold coin data has not been collected yet. It appears after the next refresh.</p></section>;
+  const f = GOLD.funnel, p = GOLD.pinned;
+  const steps = [
+    { lab: "Offered the gold coin", sub: `pinned on ${p.date}`, v: p.n },
+    { lab: "Saw the campaign widget", sub: `unique users, ${GOLD.window}`, v: GOLD.widgetUsers },
+    { lab: "Referred someone", sub: `${f.firstEverReferrers} for the first time ever`, v: f.referrers },
+    { lab: "Referee signups", sub: `${(f.signups / Math.max(1, f.referrers)).toFixed(2)} per referrer`, v: f.signups },
+    { lab: "Referees onboarded", sub: "completed onboarding", v: f.onboarded },
+    { lab: "Referees activated", sub: "first settled payment", v: f.achieved },
+    { lab: "Gold coins claimed", sub: "auto-claimed on activation", v: f.claimed },
+  ];
+  const ramp = T.ramp;
+  const weeks = GOLD.weekly.map((w) => ({ ...w, label: w.week + (w.partial ? "*" : ""), rate: w.shareRate }));
+  const pre = GOLD.weekly.filter((w) => !w.post), post = GOLD.weekly.filter((w) => w.post && !w.partial);
+  const avg = (rows, k) => (rows.length ? rows.reduce((a, r) => a + (r[k] || 0), 0) / rows.length : null);
+  const d2f = (() => {
+    const buckets = [["0-1", 0, 1], ["2-3", 2, 3], ["4-5", 4, 5], ["6-7", 6, 7], ["8-10", 8, 10], ["11+", 11, 1e9]];
+    return buckets.map(([lab, lo, hi]) => ({ bucket: lab, n: GOLD.daysToFirst.filter((x) => x.days >= lo && x.days <= hi).reduce((a, x) => a + x.n, 0) }));
+  })();
+  const daily = GOLD.daily.map((x) => ({ ...x, label: x.day + (x.partial ? "*" : "") }));
+  return (
+    <>
+      <div className="pagehead">
+        <div>
+          <h2 style={{ fontSize: 18 }}>{GOLD.label}</h2>
+          <p className="sub">{fmt(p.n)} activated users who had never referred were pinned to campaign {GOLD.campaignId} on {p.date}. The first referee who completes a payment earns the referrer a {GOLD.reward}. One coin per referrer.</p>
+        </div>
+        <div className="count"><b>Day {GOLD.dayN}</b><span className="sub">since {GOLD.startLabel}</span></div>
+      </div>
+
+      <section className="first">
+        <div className="stats">
+          <Stat T={T} label="Never-referrers offered the coin" value={fmtc(p.n)} sub={`${fmtc(p.active90d)} transacted in the last 90 days`} />
+          <Stat T={T} label="Saw the gold coin widget" value={fmtc(GOLD.widgetUsers)} sub={GOLD.widgetUsers != null ? `${pct(GOLD.widgetUsers, p.n)} of the group, ${GOLD.window}` : "Mixpanel unavailable"} />
+          <Stat T={T} label="Referred for the first time" value={fmt(f.referrers)} hero sub={`${f.firstEverReferrers} had never referred before, ${f.signups} signups between them`} />
+          <Stat T={T} label="Referees onboarded" value={fmt(f.onboarded)} sub={`${pct(f.onboarded, f.signups, 0)} of signups`} />
+          <Stat T={T} label="Referees activated" value={fmt(f.achieved)} sub={`${pct(f.achieved, f.onboarded, 0)} of onboarded`} />
+          <Stat T={T} label="Gold coins claimed" value={fmt(f.claimed)} sub="auto-claimed, no popup" />
+        </div>
+      </section>
+
+      <section>
+        <div className="grid32">
+          <div>
+            <div className="sechead"><h2>From offer to coin</h2><span className="note">Each bar is a share of the step above it.</span></div>
+            <div className="funnel">
+              {steps.map((s, i) => {
+                const prev = i ? steps[i - 1].v : null;
+                const share = s.v == null ? null : prev ? Math.min(100, (100 * s.v) / prev) : 100;
+                return (
+                  <div className="step" key={s.lab}>
+                    <div className="lab">{s.lab}<small>{s.sub}</small></div>
+                    <div className="fill" title={share != null ? `${share.toFixed(1)}% of the step above` : ""}><i style={{ width: `${share == null ? 0 : Math.max(share, s.v ? 1.5 : 0)}%`, background: ramp[Math.min(i, ramp.length - 1)] }} /></div>
+                    <div className="v">{s.v == null ? "n/a" : fmt(s.v)}<small>{i && share != null ? `${share < 1 ? share.toFixed(2) : share.toFixed(1)}% of previous` : ""}</small></div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
           <div>
-            {(N.popup || []).map((t, i) => <p key={i} className="note" style={i === 0 ? { margin: 0 } : {}}>{t}</p>)}
+            <div className="sechead"><h2>Did the offer move never-referrers?</h2><span className="note">Weekly referrers from the pinned group, as a share of those who transacted that week. The line marks the pin.</span></div>
+            <div className="chart" style={{ height: 190 }}>
+              <ResponsiveContainer>
+                <ComposedChart data={weeks} margin={{ top: 10, right: 12, left: -18, bottom: 0 }}>
+                  <CartesianGrid vertical={false} stroke={T.grid} />
+                  <XAxis dataKey="label" {...axis(T)} interval={1} />
+                  <YAxis {...axis(T)} tickFormatter={(v) => `${v}%`} />
+                  <Tooltip content={<Tip fmtv={(v, k) => (k === "rate" ? `${v}%` : fmt(v))} />} cursor={{ stroke: T.axis }} />
+                  <ReferenceLine x={GOLD.startLabel} stroke={T.muted} label={{ value: "pinned", position: "insideTopLeft", fontSize: 11, fill: T.muted }} />
+                  <Line dataKey="rate" name="Share rate" stroke={T.s1} strokeWidth={2} dot={{ r: 3.5, fill: T.s1, stroke: T.surface, strokeWidth: 2 }} />
+                </ComposedChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="stats" style={{ gridTemplateColumns: "1fr 1fr", marginTop: 10 }}>
+              <Stat T={T} label="Before the pin, weekly average" value={avg(pre, "shareRate") != null ? `${avg(pre, "shareRate").toFixed(2)}%` : "n/a"} sub={`${avg(pre, "referrers") != null ? avg(pre, "referrers").toFixed(1) : "n/a"} referrers a week over ${pre.length} weeks`} />
+              <Stat T={T} label="Since the pin, full weeks" value={avg(post, "shareRate") != null ? `${avg(post, "shareRate").toFixed(2)}%` : "n/a"} sub={post.length ? `${avg(post, "referrers").toFixed(1)} referrers a week over ${post.length} week${post.length === 1 ? "" : "s"}` : "no full week yet"} delta={avg(pre, "shareRate") && avg(post, "shareRate") != null ? (100 * (avg(post, "shareRate") - avg(pre, "shareRate"))) / avg(pre, "shareRate") : undefined} />
+            </div>
           </div>
         </div>
       </section>
 
-      </>)}
+      <section>
+        <div className="grid2">
+          <div>
+            <div className="sechead"><h2>Daily referee signups and onboardings</h2><span className="note">* today so far.</span></div>
+            <div className="chart" style={{ height: 220 }}>
+              <ResponsiveContainer>
+                <ComposedChart data={daily} margin={{ top: 10, right: 8, left: -18, bottom: 0 }} barGap={2}>
+                  <CartesianGrid vertical={false} stroke={T.grid} />
+                  <XAxis dataKey="label" {...axis(T)} interval={0} minTickGap={6} />
+                  <YAxis {...axis(T)} allowDecimals={false} />
+                  <Tooltip content={<Tip />} cursor={{ fill: T.wash }} />
+                  <Legend iconSize={10} wrapperStyle={{ fontSize: 12, color: T.ink2 }} />
+                  <Bar dataKey="signups" name="Signups" fill={T.s1} radius={[4, 4, 0, 0]} maxBarSize={22}>
+                    {daily.map((x) => <Cell key={x.date} fill={T.s1} opacity={x.partial ? 0.45 : 1} />)}
+                  </Bar>
+                  <Bar dataKey="onboarded" name="Onboarded" fill={T.s3} radius={[4, 4, 0, 0]} maxBarSize={22}>
+                    {daily.map((x) => <Cell key={x.date} fill={T.s3} opacity={x.partial ? 0.45 : 1} />)}
+                  </Bar>
+                </ComposedChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+          <div>
+            <div className="sechead"><h2>Days from the pin to the first referral</h2><span className="note">How quickly the offer turned into action.</span></div>
+            <div className="chart" style={{ height: 220 }}>
+              <ResponsiveContainer>
+                <BarChart data={d2f} margin={{ top: 10, right: 8, left: -18, bottom: 0 }}>
+                  <CartesianGrid vertical={false} stroke={T.grid} />
+                  <XAxis dataKey="bucket" {...axis(T)} />
+                  <YAxis {...axis(T)} allowDecimals={false} />
+                  <Tooltip content={<Tip />} cursor={{ fill: T.wash }} />
+                  <Bar dataKey="n" name="Referrers" fill={T.s1} radius={[4, 4, 0, 0]} maxBarSize={28} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+      </section>
 
-      <footer>
-        Refreshed automatically every hour from Metabase and Mixpanel. Last refresh {SNAPSHOT.asOf}. Referral counts on the referee's first settled payment. Internal ids 2, 3, 4, 14, the affiliate referrer 38679 and any flagged referrers listed above are excluded from campaign metrics. The monthly onboarding count against target includes all referral onboardings.
-      </footer>
+      <section>
+        <div className="grid2">
+          <div>
+            <div className="sechead"><h2>Coins claimed</h2></div>
+            {GOLD.claims.length ? (
+              <div className="tablewrap short"><table>
+                <thead><tr><th>Date</th><th>Referrer</th><th>Status</th><th>How</th></tr></thead>
+                <tbody>{GOLD.claims.map((c) => <tr key={c.id}><td>{c.date}</td><td>Exporter {c.id}</td><td>{c.status === "CLAIMED" ? "Claimed" : c.status}</td><td>{c.source === "AUTO" ? "Automatic on activation" : c.source}</td></tr>)}</tbody>
+              </table></div>
+            ) : <p className="note">No coins claimed yet.</p>}
+          </div>
+          <div>
+            <div className="sechead"><h2>Week by week</h2><span className="note">* partial week.</span></div>
+            <div className="tablewrap short"><table>
+              <thead><tr><th>Week of</th><th className="num">Referrers</th><th className="num">Signups</th><th className="num">Onboarded</th><th className="num">Activated</th><th className="num">Transacted</th><th className="num">Share rate</th></tr></thead>
+              <tbody>{weeks.map((w) => <tr key={w.ws} className={w.post ? "hl" : ""}><td>{w.label}</td><td className="num">{w.referrers}</td><td className="num">{w.signups}</td><td className="num">{w.onboarded}</td><td className="num">{w.achieved}</td><td className="num">{fmt(w.transactors)}</td><td className="num">{w.shareRate != null ? `${w.shareRate}%` : "n/a"}</td></tr>)}</tbody>
+            </table></div>
+          </div>
+        </div>
+        <Notes items={N.gold} title="Reading the gold coin numbers" />
+      </section>
+    </>
+  );
+}
+
+function Referrers() {
+  return (
+    <section className="first">
+      <div className="pagehead" style={{ marginTop: 0 }}>
+        <div><h2 style={{ fontSize: 18 }}>Every milestone campaign referrer</h2><p className="sub">Campaign 26 only. Onboarded and activated dates are the referrer's own. Cohort is based on referral history before 1 Sep.</p></div>
+      </div>
+      <ReferrerTable />
+      <Notes items={N.referrers} title="What the table says" />
+    </section>
+  );
+}
+
+function Quality() {
+  const prev = LBL.prev, now = LBL.now;
+  return (
+    <section className="first">
+      <div className="pagehead" style={{ marginTop: 0 }}>
+        <div><h2 style={{ fontSize: 18 }}>Are campaign referees different from the referees we usually get?</h2><p className="sub">{N.qualityHeader}</p></div>
+      </div>
+      <h3>Funnel by source</h3>
+      <div className="tablewrap short"><table style={{ marginBottom: 6 }}>
+        <thead><tr><th>Referees from</th><th className="num">Signups</th><th className="num">Onboarded in 1 day</th><th className="num">In 7 days</th><th className="num">Onboarded 10+ days ago</th><th className="num">Active within 10 days</th><th className="num">Median first settlement</th></tr></thead>
+        <tbody>{Q_FUNNEL.map((r) => (
+          <tr key={r.src}><td>{r.src}</td><td className="num">{fmt(r.n)}</td><td className="num">{r.ob1d}%</td><td className="num">{r.ob7d}%</td><td className="num">{r.matureN}</td><td className="num">{r.act10 == null ? "n/a" : `${r.act10}%`}</td><td className="num">{r.medianFirstInr ? `$${fmt(Math.round(r.medianFirstInr / FX))}` : "n/a"}</td></tr>))}
+        </tbody></table></div>
+      <p className="note">{N.qualityWindow}</p>
+      <div className="grid2" style={{ marginTop: 22 }}>
+        <div>
+          <h3>Business type of onboarded referees</h3>
+          <div className="tablewrap short"><table>
+            <thead><tr><th>Type</th><th className="num">{prev}</th><th className="num">Share</th><th className="num">{now}</th><th className="num">Share</th><th className="num">Active 10d, {prev}</th><th className="num">{now}</th></tr></thead>
+            <tbody>{Q_BT.map((r) => (
+              <tr key={r.bt}><td>{r.bt}</td><td className="num">{fmt(r.preN)}</td><td className="num">{r.preShare == null ? "n/a" : `${r.preShare}%`}</td><td className="num">{fmt(r.cN)}</td><td className="num">{r.cShare == null ? "n/a" : `${r.cShare}%`}</td><td className="num">{r.preAct == null ? "n/a" : `${r.preAct}%`}</td><td className="num">{r.cAct === null || r.cAct === undefined ? <span className="muted">n/a</span> : `${r.cAct}%`}</td></tr>))}
+            </tbody></table></div>
+        </div>
+        <div>
+          <h3>Stated monthly volume of onboarded referees</h3>
+          <div className="tablewrap short"><table>
+            <thead><tr><th>Stated at signup</th><th className="num">{prev}</th><th className="num">Share</th><th className="num">{now}</th><th className="num">Share</th><th className="num">Active 10d, {prev}</th><th className="num">{now}</th></tr></thead>
+            <tbody>{Q_VOL.map((r) => (
+              <tr key={r.vol}><td>{r.vol}</td><td className="num">{fmt(r.preN)}</td><td className="num">{r.preShare == null ? "n/a" : `${r.preShare}%`}</td><td className="num">{fmt(r.cN)}</td><td className="num">{r.cShare == null ? "n/a" : `${r.cShare}%`}</td><td className="num">{r.preAct == null ? "n/a" : `${r.preAct}%`}</td><td className="num">{r.cAct === null || r.cAct === undefined ? <span className="muted">n/a</span> : `${r.cAct}%`}</td></tr>))}
+            </tbody></table></div>
+        </div>
+      </div>
+      <Notes items={N.refereeQuality} title="Early read on quality" />
+    </section>
+  );
+}
+
+function Campaigns({ T }) {
+  const rows = CAMPAIGNS.filter((c) => c.signups > 0 || c.live);
+  const chartRows = rows.filter((c) => c.id !== 16).map((c) => ({ ...c, name: c.label.replace("Group A: ", "").replace(" (Moonshot)", "") }));
+  return (
+    <>
+      <div className="pagehead">
+        <div><h2 style={{ fontSize: 18 }}>Every gift campaign since 2025</h2><p className="sub">Signups tagged to each campaign at the referee's signup, internal and flagged ids excluded. Referees keep earning the gift of the campaign they were tagged under, so ended campaigns still gain activations. Group A campaigns were offered only to never-referrers.</p></div>
+      </div>
+      <section className="first">
+        <div className="tablewrap short">
+          <table>
+            <thead><tr><th>Campaign</th><th>Gift</th><th>From</th><th>To</th><th className="num">Days</th><th className="num">Signups</th><th className="num">Per day</th><th className="num">Referrers</th><th className="num">Onboarded</th><th className="num">OB %</th><th className="num">Activated</th><th className="num">Act %</th><th className="num">Gifts claimed</th></tr></thead>
+            <tbody>
+              {rows.map((c) => (
+                <tr key={c.id} className={c.live ? "hl" : ""}>
+                  <td>{c.label} {c.live && <span className="pill live">live</span>}</td><td>{c.gift}</td><td>{c.startLabel}</td><td>{c.endLabel}</td>
+                  <td className="num">{c.days}</td><td className="num">{fmt(c.signups)}</td><td className="num">{c.perDay.toFixed(1)}</td><td className="num">{fmt(c.referrers)}</td>
+                  <td className="num">{fmt(c.onboarded)}</td><td className="num">{c.obRate == null ? "n/a" : `${c.obRate}%`}</td><td className="num">{fmt(c.achieved)}</td><td className="num">{c.actRate == null ? "n/a" : `${c.actRate}%`}</td>
+                  <td className="num">{c.id === 16 ? "cash" : fmt(c.claimed)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section>
+        <div className="grid2">
+          <div>
+            <div className="sechead"><h2>Signups per day while live</h2><span className="note">Live campaigns in blue. The default program is left out: it runs all the time.</span></div>
+            <div className="chart" style={{ height: 34 * chartRows.length + 30 }}>
+              <ResponsiveContainer>
+                <BarChart data={chartRows} layout="vertical" margin={{ top: 4, right: 40, left: 10, bottom: 0 }}>
+                  <CartesianGrid horizontal={false} stroke={T.grid} />
+                  <XAxis type="number" {...axis(T)} />
+                  <YAxis type="category" dataKey="name" {...axis(T)} width={150} />
+                  <Tooltip content={<Tip fmtv={(v) => v.toFixed(1)} />} cursor={{ fill: T.wash }} />
+                  <Bar dataKey="perDay" name="Signups per day" radius={[0, 4, 4, 0]} maxBarSize={18} label={{ position: "right", fontSize: 11.5, fill: T.ink2, formatter: (v) => v.toFixed(1) }}>
+                    {chartRows.map((c) => <Cell key={c.id} fill={c.live ? T.s1 : T.dim} />)}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+          <div>
+            <div className="sechead"><h2>Activation rate of onboarded referees</h2><span className="note">Older campaigns have had longer to mature.</span></div>
+            <div className="chart" style={{ height: 34 * chartRows.length + 30 }}>
+              <ResponsiveContainer>
+                <BarChart data={chartRows} layout="vertical" margin={{ top: 4, right: 40, left: 10, bottom: 0 }}>
+                  <CartesianGrid horizontal={false} stroke={T.grid} />
+                  <XAxis type="number" {...axis(T)} domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
+                  <YAxis type="category" dataKey="name" {...axis(T)} width={150} />
+                  <Tooltip content={<Tip fmtv={(v) => `${v}%`} />} cursor={{ fill: T.wash }} />
+                  <Bar dataKey="actRate" name="Activated of onboarded" radius={[0, 4, 4, 0]} maxBarSize={18} label={{ position: "right", fontSize: 11.5, fill: T.ink2, formatter: (v) => `${v}%` }}>
+                    {chartRows.map((c) => <Cell key={c.id} fill={c.live ? T.s3 : T.dim} />)}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+        <Notes items={N.campaigns} title="How the campaigns compare" />
+      </section>
+    </>
+  );
+}
+
+// ============================================================================
+// APP
+// ============================================================================
+
+const TABS = [["overview", "Overview"], ["milestone", "Milestone campaign"], ["gold", "Gold coin"], ["referrers", "Referrers"], ["quality", "Referee quality"], ["campaigns", "Campaigns"]];
+const readHash = () => { const h = (window.location.hash || "").replace("#", ""); return TABS.some((t) => t[0] === h) ? h : "overview"; };
+
+function Freshness() {
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => { const id = setInterval(() => setNow(Date.now()), 60000); return () => clearInterval(id); }, []);
+  const ms = SNAPSHOT.asOfIso ? Date.parse(SNAPSHOT.asOfIso) : NaN;
+  const age = isFinite(ms) ? (now - ms) / 60000 : null;
+  const txt = age === null ? "" : age < 2 ? "just now" : age < 60 ? `${Math.round(age)} min ago` : age < 48 * 60 ? `${Math.round(age / 60)} h ago` : `${Math.round(age / 1440)} days ago`;
+  const cls = age === null ? "" : age > 24 * 60 ? " old" : age > 3 * 60 ? " stale" : "";
+  return <span className={`fresh${cls}`} title={`Data as of ${SNAPSHOT.asOf}`}><i />Updated {SNAPSHOT.asOf.replace(/^\d+ \w+ \d+, /, "")}{txt ? `, ${txt}` : ""}</span>;
+}
+
+export default function MilestoneDashboard() {
+  const T = useTheme();
+  const [pref, setPrefState] = useState(readPref);
+  const [view, setView] = useState(readHash);
+  useEffect(() => { const fn = () => setView(readHash()); window.addEventListener("hashchange", fn); return () => window.removeEventListener("hashchange", fn); }, []);
+  const go = (v) => { setView(v); try { history.replaceState(null, "", "#" + v); } catch (e) { window.location.hash = v; } window.scrollTo({ top: 0, behavior: "smooth" }); };
+  const cycle = () => { const next = pref === "auto" ? "dark" : pref === "dark" ? "light" : "auto"; setPref(next); setPrefState(next); };
+  const counts = { milestone: SNAPSHOT.campaignEnded ? "ended" : `day ${SNAPSHOT.campaignDay}`, gold: GOLD ? `day ${GOLD.dayN}` : "", referrers: fmt(REFERRERS.length), campaigns: fmt(CAMPAIGNS.length) };
+
+  return (
+    <div className="app">
+      <style>{css}</style>
+      <header className="top">
+        <div className="topin">
+          <div className="brand">
+            <div className="l"><div className="logo" aria-hidden="true">Sk</div><div><h1>Skydo referrals</h1></div></div>
+            <div className="r">
+              <Freshness />
+              <button className="btn" onClick={cycle} title="Switch between automatic, dark and light">{pref === "auto" ? "Theme: auto" : pref === "dark" ? "Theme: dark" : "Theme: light"}</button>
+            </div>
+          </div>
+          <nav role="tablist" aria-label="Sections">
+            {TABS.map(([k, label]) => <button key={k} role="tab" aria-selected={view === k} className={view === k ? "on" : ""} onClick={() => go(k)}>{label}{counts[k] ? <b>{counts[k]}</b> : null}</button>)}
+          </nav>
+        </div>
+      </header>
+
+      <div className="wrap">
+        {view === "overview" && <Overview T={T} go={go} />}
+        {view === "milestone" && <Milestone T={T} />}
+        {view === "gold" && <Gold T={T} />}
+        {view === "referrers" && <Referrers />}
+        {view === "quality" && <Quality />}
+        {view === "campaigns" && <Campaigns T={T} />}
+
+        <footer>
+          Refreshed every hour from Metabase and Mixpanel; the last refresh was {SNAPSHOT.asOf}. A referral counts as activated on the referee's first settled payment. Internal ids 2, 3, 4, 14, the affiliate referrer 38679 and any flagged referrers are excluded from campaign numbers. Monthly onboarding counts against target include every referral onboarding, flagged referrers included. Share rate is the share of exporters with a settled payment in the period who also referred in it.
+        </footer>
+      </div>
     </div>
   );
 }

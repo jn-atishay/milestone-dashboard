@@ -1,5 +1,5 @@
 -- All referral onboardings (every campaign, referee deduped to earliest referrer), the definition the monthly target uses.
--- Flagged referrers are NOT excluded here: their onboardings are real onboardings.
+-- Flagged referrers are NOT excluded here: their onboardings are real onboardings. {{ALWAYS_EXCLUDED}} = always_excluded_referrers only.
 -- Rows: 'month' = previous three months (full month, and first N days where N = full days elapsed this month);
 --       'day'   = each full day of the current month;
 --       'today' = onboardings so far today (always one row, 0 if none).
@@ -9,7 +9,7 @@ referee_ob AS (SELECT exporter_id, MIN(created_at AT TIME ZONE 'UTC' AT TIME ZON
 rd AS (
   SELECT DISTINCT ON (referee_exporter_id) referee_exporter_id FROM referral_relation
   WHERE referral_state IN ('ONBOARDING_COMPLETE','ACHIEVED') AND is_deleted = false
-    AND referrer_exporter_id IS NOT NULL AND referrer_exporter_id NOT IN (2,3,4,14,38679,272788)
+    AND referrer_exporter_id IS NOT NULL AND referrer_exporter_id NOT IN ({{ALWAYS_EXCLUDED}})
   ORDER BY referee_exporter_id, referral_date
 ),
 org AS (SELECT ro.fo AS ts FROM rd JOIN referee_ob ro ON ro.exporter_id = rd.referee_exporter_id, n WHERE ro.fo >= n.m0 - INTERVAL '3 months')

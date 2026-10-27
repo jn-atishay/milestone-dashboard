@@ -4,11 +4,81 @@
   "campaign_start": "2026-09-01",
   "campaign_end": "2026-10-31",
   "campaign_days": 61,
-  "always_excluded_referrers": [2, 3, 4, 14, 38679, 272788],
-  "flagged_referrers": [85276],
+  "always_excluded_referrers": [
+    2,
+    3,
+    4,
+    14,
+    38679,
+    272788
+  ],
+  "flagged_referrers": [
+    85276
+  ],
   "targets": {
-    "2026-09": { "target": 552, "stretchPlus": 600 },
-    "2026-10": { "target": 662, "stretchPlus": 777 }
+    "2026-09": {
+      "target": 552,
+      "stretchPlus": 600
+    },
+    "2026-10": {
+      "target": 662,
+      "stretchPlus": 777
+    }
   },
-  "show_customer_names": true
+  "show_customer_names": true,
+  "gold_coin": {
+    "campaign_id": 29,
+    "start": "2026-10-16",
+    "label": "Gold coin campaign",
+    "reward": "24K gold coin",
+    "widget_type": "group_a_goldcoin2026"
+  },
+  "milestone_widget_type": "moonshot_campaign",
+  "campaign_history": [
+    {
+      "id": 16,
+      "label": "$30 + $30 (default)",
+      "gift": "$30 cashback each"
+    },
+    {
+      "id": 19,
+      "label": "Diwali gold coin 2025",
+      "gift": "Gold coin"
+    },
+    {
+      "id": 21,
+      "label": "Alexa Echo Dot",
+      "gift": "Echo Dot"
+    },
+    {
+      "id": 22,
+      "label": "Group A: Mokobara bag",
+      "gift": "Mokobara backpack"
+    },
+    {
+      "id": 23,
+      "label": "Group A: Coffee machine",
+      "gift": "Coffee machine"
+    },
+    {
+      "id": 24,
+      "label": "Group A: Power bank",
+      "gift": "Power bank"
+    },
+    {
+      "id": 25,
+      "label": "Group A: Tommy bag",
+      "gift": "Tommy Hilfiger bag"
+    },
+    {
+      "id": 26,
+      "label": "Milestone ladder (Moonshot)",
+      "gift": "Polaroid / AirPods / Ray-Ban / iPhone"
+    },
+    {
+      "id": 29,
+      "label": "Group A: Gold coin 2026",
+      "gift": "24K gold coin"
+    }
+  ]
 }

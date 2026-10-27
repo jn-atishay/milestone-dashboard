@@ -1,6 +1,7 @@
 -- Campaign-level daily funnel, weekly quality, weekly referrals, claims.
 -- {{EXCLUDED}} = always_excluded_referrers + flagged_referrers from config.json, comma separated.
 -- Output columns: g, k, k2, v1..v6 (all text). One row group per dashboard block.
+-- 'top24h' rows list referrers with 5+ campaign signups in the last 24 hours (for the flag rule).
 WITH today AS (SELECT (now() AT TIME ZONE 'Asia/Kolkata')::date AS d),
 rel AS (
   SELECT rr.id, rr.referrer_exporter_id, rr.referral_state, rr.referral_date AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Kolkata' AS sat
@@ -52,4 +53,10 @@ SELECT 'claims', m.label, c.status, m.threshold::text, COUNT(*)::text,
 FROM referral_milestone_claim c JOIN referral_campaign_milestone m ON m.id = c.milestone_id
 WHERE c.campaign_id = {{CAMPAIGN_ID}} AND c.is_deleted = false AND c.referrer_exporter_id NOT IN ({{EXCLUDED}})
 GROUP BY 2, 3, 4
+UNION ALL
+SELECT 'top24h', rr.referrer_exporter_id::text, NULL, COUNT(*)::text, NULL, NULL, NULL, NULL, NULL
+FROM referral_relation rr
+WHERE rr.campaign_id = {{CAMPAIGN_ID}} AND rr.is_deleted = false AND rr.referrer_exporter_id IS NOT NULL
+  AND rr.referrer_exporter_id NOT IN ({{EXCLUDED}}) AND rr.referral_date >= now() - INTERVAL '24 hours'
+GROUP BY 2 HAVING COUNT(*) >= 5
 ORDER BY 1, 2;

@@ -191,7 +191,7 @@ html, body { background: var(--page); margin: 0; }
 .app a { color: var(--accent); }
 .app .sub, .app .note { color: var(--ink2); font-size: 13px; }
 .app .muted { color: var(--muted); }
-.app .wrap { max-width: 1180px; margin: 0 auto; padding: 0 20px 56px; }
+.app .wrap { max-width: 1180px; margin: 0 auto; padding: 0 20px 56px; overflow-x: clip; }
 @media (max-width: 640px) { .app .wrap { padding: 0 16px 48px; } }
 
 /* top bar */
@@ -228,6 +228,7 @@ html, body { background: var(--page); margin: 0; }
 .app .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
 .app .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 28px; }
 .app .grid32 { display: grid; grid-template-columns: 3fr 2fr; gap: 32px; }
+.app .grid2 > *, .app .grid3 > *, .app .grid32 > *, .app .live > *, .app .stats > * { min-width: 0; }
 @media (max-width: 900px) { .app .grid2, .app .grid3, .app .grid32 { grid-template-columns: 1fr; gap: 24px; } }
 .app .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; }
 .app .chart { width: 100%; }
@@ -561,9 +562,9 @@ function Overview({ T, go }) {
               <YAxis {...axis(T)} tickFormatter={fmtc} />
               <Tooltip content={<Tip />} cursor={{ stroke: T.axis }} />
               <Legend iconType="plainline" iconSize={14} wrapperStyle={{ fontSize: 12, color: T.ink2 }} />
-              <Line dataKey="signups" name="Signups" stroke={T.s1} strokeWidth={2} dot={{ r: 3.5, fill: T.s1, stroke: T.surface, strokeWidth: 2 }} activeDot={{ r: 5 }} />
-              <Line dataKey="refOnboardings" name="Onboardings" stroke={T.s3} strokeWidth={2} dot={{ r: 3.5, fill: T.s3, stroke: T.surface, strokeWidth: 2 }} activeDot={{ r: 5 }} />
-              <Line dataKey="refActivations" name="Activations" stroke={T.s2} strokeWidth={2} dot={{ r: 3.5, fill: T.s2, stroke: T.surface, strokeWidth: 2 }} activeDot={{ r: 5 }} />
+              <Line isAnimationActive={false} dataKey="signups" name="Signups" stroke={T.s1} strokeWidth={2} dot={{ r: 3.5, fill: T.s1, stroke: T.surface, strokeWidth: 2 }} activeDot={{ r: 5 }} />
+              <Line isAnimationActive={false} dataKey="refOnboardings" name="Onboardings" stroke={T.s3} strokeWidth={2} dot={{ r: 3.5, fill: T.s3, stroke: T.surface, strokeWidth: 2 }} activeDot={{ r: 5 }} />
+              <Line isAnimationActive={false} dataKey="refActivations" name="Activations" stroke={T.s2} strokeWidth={2} dot={{ r: 3.5, fill: T.s2, stroke: T.surface, strokeWidth: 2 }} activeDot={{ r: 5 }} />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -577,7 +578,7 @@ function Overview({ T, go }) {
                   <XAxis dataKey="month" {...axis(T)} interval={2} />
                   <YAxis {...axis(T)} tickFormatter={(v) => `${v}%`} />
                   <Tooltip content={<Tip fmtv={(v) => `${v}%`} />} cursor={{ stroke: T.axis }} />
-                  <Line dataKey="shareRate" name="Share rate" stroke={T.s1} strokeWidth={2} dot={{ r: 3, fill: T.s1, stroke: T.surface, strokeWidth: 2 }} />
+                  <Line isAnimationActive={false} dataKey="shareRate" name="Share rate" stroke={T.s1} strokeWidth={2} dot={{ r: 3, fill: T.s1, stroke: T.surface, strokeWidth: 2 }} />
                 </ComposedChart>
               </ResponsiveContainer>
             </div>
@@ -591,7 +592,7 @@ function Overview({ T, go }) {
                   <XAxis dataKey="month" {...axis(T)} interval={2} />
                   <YAxis {...axis(T)} tickFormatter={(v) => `${v}%`} />
                   <Tooltip content={<Tip fmtv={(v) => `${v}%`} />} cursor={{ stroke: T.axis }} />
-                  <Line dataKey="refShare" name="Referral share" stroke={T.s3} strokeWidth={2} dot={{ r: 3, fill: T.s3, stroke: T.surface, strokeWidth: 2 }} />
+                  <Line isAnimationActive={false} dataKey="refShare" name="Referral share" stroke={T.s3} strokeWidth={2} dot={{ r: 3, fill: T.s3, stroke: T.surface, strokeWidth: 2 }} />
                 </ComposedChart>
               </ResponsiveContainer>
             </div>
@@ -602,7 +603,7 @@ function Overview({ T, go }) {
             <thead><tr><th>Month</th><th className="num">Signups</th><th className="num">Referrers</th><th className="num">First-timers</th><th className="num">Onboardings</th><th className="num">Activations</th><th className="num">All onboardings</th><th className="num">Referral share</th><th className="num">Transactors</th><th className="num">Share rate</th></tr></thead>
             <tbody>
               {TRENDS.slice(-7).map((t) => (
-                <tr key={t.ym} className={t.partial ? "hl" : ""}><td>{t.month}{t.partial ? " (to date)" : ""}</td><td className="num">{fmt(t.signups)}</td><td className="num">{fmt(t.referrers)}</td><td className="num">{fmt(t.firstTimers)}</td><td className="num">{fmt(t.refOnboardings)}</td><td className="num">{fmt(t.refActivations)}</td><td className="num">{fmt(t.allOnboardings)}</td><td className="num">{t.refShare}%</td><td className="num">{fmt(t.transactors)}</td><td className="num">{t.shareRate}%</td></tr>
+                <tr key={t.ym} className={t.partial ? "hl" : ""}><td style={{ whiteSpace: "nowrap" }}>{t.month}{t.partial ? " (to date)" : ""}</td><td className="num">{fmt(t.signups)}</td><td className="num">{fmt(t.referrers)}</td><td className="num">{fmt(t.firstTimers)}</td><td className="num">{fmt(t.refOnboardings)}</td><td className="num">{fmt(t.refActivations)}</td><td className="num">{fmt(t.allOnboardings)}</td><td className="num">{t.refShare}%</td><td className="num">{fmt(t.transactors)}</td><td className="num">{t.shareRate}%</td></tr>
               ))}
             </tbody>
           </table>
@@ -665,10 +666,10 @@ function Milestone({ T }) {
               <YAxis {...axis(T)} />
               <Tooltip content={<Tip />} cursor={{ fill: T.wash }} />
               <Legend iconSize={10} wrapperStyle={{ fontSize: 12, color: T.ink2 }} />
-              <Bar dataKey="signups" name="Signups" fill={T.s1} radius={[4, 4, 0, 0]} maxBarSize={22} />
-              <Bar dataKey="onboardings" name="Onboardings" fill={T.s3} radius={[4, 4, 0, 0]} maxBarSize={22} />
-              <Line dataKey="avg7" name="Signups, 7-day average" stroke={T.ink} strokeWidth={2} dot={false} />
-              <Line dataKey="activations" name="Activations" stroke={T.s2} strokeWidth={2} dot={false} />
+              <Bar isAnimationActive={false} dataKey="signups" name="Signups" fill={T.s1} radius={[4, 4, 0, 0]} maxBarSize={22} />
+              <Bar isAnimationActive={false} dataKey="onboardings" name="Onboardings" fill={T.s3} radius={[4, 4, 0, 0]} maxBarSize={22} />
+              <Line isAnimationActive={false} dataKey="avg7" name="Signups, 7-day average" stroke={T.ink} strokeWidth={2} dot={false} />
+              <Line isAnimationActive={false} dataKey="activations" name="Activations" stroke={T.s2} strokeWidth={2} dot={false} />
             </ComposedChart>
           </ResponsiveContainer>
         </div>
@@ -701,7 +702,7 @@ function Milestone({ T }) {
                     <td>{n.name ? <>{n.name} <span className="muted">{n.id}</span></> : <>Exporter {n.id}</>}{n.claimed && <> <span className="pill">claimed {n.claimed}</span></>}</td>
                     <td className="num">{n.achieved}</td>
                     <td className="num">{n.waiting || ""}</td>
-                    <td style={{ paddingLeft: 16 }}>{n.next}</td>
+                    <td style={{ paddingLeft: 16, whiteSpace: "nowrap" }}>{n.next}</td>
                     <td className="num">{n.needed}</td>
                   </tr>
                 ))}
@@ -759,8 +760,8 @@ function Milestone({ T }) {
                   <YAxis {...axis(T)} />
                   <Tooltip content={<Tip />} cursor={{ fill: T.wash }} />
                   <Legend iconSize={10} wrapperStyle={{ fontSize: 12, color: T.ink2 }} />
-                  <Bar dataKey="pre" name="Before the campaign" fill={T.dim} radius={[4, 4, 0, 0]} maxBarSize={22} stackId="w" />
-                  <Bar dataKey="camp" name="Campaign weeks" fill={T.s1} radius={[4, 4, 0, 0]} maxBarSize={22} stackId="w" />
+                  <Bar isAnimationActive={false} dataKey="pre" name="Before the campaign" fill={T.dim} radius={[4, 4, 0, 0]} maxBarSize={22} stackId="w" />
+                  <Bar isAnimationActive={false} dataKey="camp" name="Campaign weeks" fill={T.s1} radius={[4, 4, 0, 0]} maxBarSize={22} stackId="w" />
                 </ComposedChart>
               </ResponsiveContainer>
             </div>
@@ -772,7 +773,7 @@ function Milestone({ T }) {
                   <XAxis dataKey="week" {...axis(T)} interval={1} />
                   <YAxis {...axis(T)} domain={[1, "auto"]} tickFormatter={(v) => v.toFixed(1)} />
                   <Tooltip content={<Tip fmtv={(v) => v.toFixed(2)} />} cursor={{ stroke: T.axis }} />
-                  <Line dataKey="perRef" name="Signups per referrer" stroke={T.ink} strokeWidth={2} dot={{ r: 3, fill: T.ink, stroke: T.surface, strokeWidth: 2 }} />
+                  <Line isAnimationActive={false} dataKey="perRef" name="Signups per referrer" stroke={T.ink} strokeWidth={2} dot={{ r: 3, fill: T.ink, stroke: T.surface, strokeWidth: 2 }} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -840,7 +841,7 @@ function Gold({ T }) {
     { lab: "Offered the gold coin", sub: `pinned on ${p.date}`, v: p.n },
     { lab: "Saw the campaign widget", sub: `unique users, ${GOLD.window}`, v: GOLD.widgetUsers },
     { lab: "Referred someone", sub: `${f.firstEverReferrers} for the first time ever`, v: f.referrers },
-    { lab: "Referee signups", sub: `${(f.signups / Math.max(1, f.referrers)).toFixed(2)} per referrer`, v: f.signups },
+    { lab: "Referee signups", sub: `${(f.signups / Math.max(1, f.referrers)).toFixed(2)} per referrer`, v: f.signups, noShare: true },
     { lab: "Referees onboarded", sub: "completed onboarding", v: f.onboarded },
     { lab: "Referees activated", sub: "first settled payment", v: f.achieved },
     { lab: "Gold coins claimed", sub: "auto-claimed on activation", v: f.claimed },
@@ -882,12 +883,12 @@ function Gold({ T }) {
             <div className="funnel">
               {steps.map((s, i) => {
                 const prev = i ? steps[i - 1].v : null;
-                const share = s.v == null ? null : prev ? Math.min(100, (100 * s.v) / prev) : 100;
+                const share = s.v == null ? null : s.noShare ? 100 : prev ? Math.min(100, (100 * s.v) / prev) : 100;
                 return (
                   <div className="step" key={s.lab}>
                     <div className="lab">{s.lab}<small>{s.sub}</small></div>
                     <div className="fill" title={share != null ? `${share.toFixed(1)}% of the step above` : ""}><i style={{ width: `${share == null ? 0 : Math.max(share, s.v ? 1.5 : 0)}%`, background: ramp[Math.min(i, ramp.length - 1)] }} /></div>
-                    <div className="v">{s.v == null ? "n/a" : fmt(s.v)}<small>{i && share != null ? `${share < 1 ? share.toFixed(2) : share.toFixed(1)}% of previous` : ""}</small></div>
+                    <div className="v">{s.v == null ? "n/a" : fmt(s.v)}<small>{i && share != null && !s.noShare ? `${share < 1 ? share.toFixed(2) : share.toFixed(1)}% of previous` : ""}</small></div>
                   </div>
                 );
               })}
@@ -903,7 +904,7 @@ function Gold({ T }) {
                   <YAxis {...axis(T)} tickFormatter={(v) => `${v}%`} />
                   <Tooltip content={<Tip fmtv={(v, k) => (k === "rate" ? `${v}%` : fmt(v))} />} cursor={{ stroke: T.axis }} />
                   <ReferenceLine x={GOLD.startLabel} stroke={T.muted} label={{ value: "pinned", position: "insideTopLeft", fontSize: 11, fill: T.muted }} />
-                  <Line dataKey="rate" name="Share rate" stroke={T.s1} strokeWidth={2} dot={{ r: 3.5, fill: T.s1, stroke: T.surface, strokeWidth: 2 }} />
+                  <Line isAnimationActive={false} dataKey="rate" name="Share rate" stroke={T.s1} strokeWidth={2} dot={{ r: 3.5, fill: T.s1, stroke: T.surface, strokeWidth: 2 }} />
                 </ComposedChart>
               </ResponsiveContainer>
             </div>
@@ -923,14 +924,14 @@ function Gold({ T }) {
               <ResponsiveContainer>
                 <ComposedChart data={daily} margin={{ top: 10, right: 8, left: -18, bottom: 0 }} barGap={2}>
                   <CartesianGrid vertical={false} stroke={T.grid} />
-                  <XAxis dataKey="label" {...axis(T)} interval={0} minTickGap={6} />
+                  <XAxis dataKey="label" {...axis(T)} interval="preserveStartEnd" minTickGap={14} />
                   <YAxis {...axis(T)} allowDecimals={false} />
                   <Tooltip content={<Tip />} cursor={{ fill: T.wash }} />
                   <Legend iconSize={10} wrapperStyle={{ fontSize: 12, color: T.ink2 }} />
-                  <Bar dataKey="signups" name="Signups" fill={T.s1} radius={[4, 4, 0, 0]} maxBarSize={22}>
+                  <Bar isAnimationActive={false} dataKey="signups" name="Signups" fill={T.s1} radius={[4, 4, 0, 0]} maxBarSize={22}>
                     {daily.map((x) => <Cell key={x.date} fill={T.s1} opacity={x.partial ? 0.45 : 1} />)}
                   </Bar>
-                  <Bar dataKey="onboarded" name="Onboarded" fill={T.s3} radius={[4, 4, 0, 0]} maxBarSize={22}>
+                  <Bar isAnimationActive={false} dataKey="onboarded" name="Onboarded" fill={T.s3} radius={[4, 4, 0, 0]} maxBarSize={22}>
                     {daily.map((x) => <Cell key={x.date} fill={T.s3} opacity={x.partial ? 0.45 : 1} />)}
                   </Bar>
                 </ComposedChart>
@@ -946,7 +947,7 @@ function Gold({ T }) {
                   <XAxis dataKey="bucket" {...axis(T)} />
                   <YAxis {...axis(T)} allowDecimals={false} />
                   <Tooltip content={<Tip />} cursor={{ fill: T.wash }} />
-                  <Bar dataKey="n" name="Referrers" fill={T.s1} radius={[4, 4, 0, 0]} maxBarSize={28} />
+                  <Bar isAnimationActive={false} dataKey="n" name="Referrers" fill={T.s1} radius={[4, 4, 0, 0]} maxBarSize={28} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -1064,7 +1065,7 @@ function Campaigns({ T }) {
                   <XAxis type="number" {...axis(T)} />
                   <YAxis type="category" dataKey="name" {...axis(T)} width={150} />
                   <Tooltip content={<Tip fmtv={(v) => v.toFixed(1)} />} cursor={{ fill: T.wash }} />
-                  <Bar dataKey="perDay" name="Signups per day" radius={[0, 4, 4, 0]} maxBarSize={18} label={{ position: "right", fontSize: 11.5, fill: T.ink2, formatter: (v) => v.toFixed(1) }}>
+                  <Bar isAnimationActive={false} dataKey="perDay" name="Signups per day" radius={[0, 4, 4, 0]} maxBarSize={18} label={{ position: "right", fontSize: 11.5, fill: T.ink2, formatter: (v) => v.toFixed(1) }}>
                     {chartRows.map((c) => <Cell key={c.id} fill={c.live ? T.s1 : T.dim} />)}
                   </Bar>
                 </BarChart>
@@ -1080,7 +1081,7 @@ function Campaigns({ T }) {
                   <XAxis type="number" {...axis(T)} domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
                   <YAxis type="category" dataKey="name" {...axis(T)} width={150} />
                   <Tooltip content={<Tip fmtv={(v) => `${v}%`} />} cursor={{ fill: T.wash }} />
-                  <Bar dataKey="actRate" name="Activated of onboarded" radius={[0, 4, 4, 0]} maxBarSize={18} label={{ position: "right", fontSize: 11.5, fill: T.ink2, formatter: (v) => `${v}%` }}>
+                  <Bar isAnimationActive={false} dataKey="actRate" name="Activated of onboarded" radius={[0, 4, 4, 0]} maxBarSize={18} label={{ position: "right", fontSize: 11.5, fill: T.ink2, formatter: (v) => `${v}%` }}>
                     {chartRows.map((c) => <Cell key={c.id} fill={c.live ? T.s3 : T.dim} />)}
                   </Bar>
                 </BarChart>

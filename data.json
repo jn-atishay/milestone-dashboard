@@ -1,7 +1,7 @@
 {
  "SNAPSHOT": {
-  "asOf": "27 Oct 2026, 17:00 IST",
-  "asOfIso": "2026-10-27T17:00+05:30",
+  "asOf": "27 Oct 2026, 17:20 IST",
+  "asOfIso": "2026-10-27T17:20+05:30",
   "campaignStart": "2026-09-01",
   "campaignEnd": "2026-10-31",
   "campaignDay": 57,
@@ -50,18 +50,18 @@
    20,
    23,
    9,
-   3,
-   18,
+   5,
+   33,
    10,
-   32,
+   33,
    33,
    28,
    12,
    16,
    36
   ],
-  "sepToDate": 508,
-  "todaySoFar": 14,
+  "sepToDate": 526,
+  "todaySoFar": 16,
   "monthName": "October",
   "monthShort": "Oct",
   "daysInMonth": 31
@@ -741,8 +741,8 @@
   {
    "week": "26 Oct",
    "period": "campaign",
-   "signups": 79,
-   "referrers": 64,
+   "signups": 80,
+   "referrers": 65,
    "perRef": 1.23
   }
  ],
@@ -919,18 +919,18 @@
    "week": "19 Oct",
    "signups": 180,
    "ob1d": 43.9,
-   "ob7d": 52.2,
-   "obSoFar": 52.2,
+   "ob7d": 52.8,
+   "obSoFar": 52.8,
    "actOfOb": 7.4,
    "medianDays": 3.6
   },
   {
    "week": "26 Oct",
-   "signups": 60,
-   "ob1d": 48.3,
-   "ob7d": 48.3,
-   "obSoFar": 48.3,
-   "actOfOb": 10.3,
+   "signups": 61,
+   "ob1d": 49.2,
+   "ob7d": 49.2,
+   "obSoFar": 49.2,
+   "actOfOb": 10.0,
    "medianDays": 0.9
   }
  ],
@@ -8221,6 +8221,18 @@
    "FT"
   ],
   [
+   237208,
+   "Aviral Sharma",
+   "SP",
+   "2026-07-31",
+   null,
+   1,
+   1,
+   0,
+   "",
+   "FT"
+  ],
+  [
    238068,
    "Shivam Tyagi",
    "F",
@@ -8944,6 +8956,18 @@
    271587,
    "Paul Johnson",
    "SP",
+   "2026-10-09",
+   "2026-10-13",
+   1,
+   1,
+   0,
+   "",
+   "FT"
+  ],
+  [
+   271604,
+   "Maran S",
+   "C",
    "2026-10-09",
    "2026-10-13",
    1,
@@ -11701,18 +11725,6 @@
    "FT"
   ],
   [
-   237208,
-   "Aviral Sharma",
-   "SP",
-   "2026-07-31",
-   null,
-   1,
-   0,
-   0,
-   "",
-   "FT"
-  ],
-  [
    237834,
    "Mohd Zaid",
    "SP",
@@ -12332,7 +12344,7 @@
   ],
   "qualityHeader": "Referees deduped to their first referral, internal and flagged ids excluded. September against October so far (to 26 Oct). Money in USD at the October median rate of Rs 95 per dollar.",
   "qualityWindow": "Activation is measured on a 10 day window. Late October referees have not matured yet, so the current month activation and value columns cover referees from earlier in the month. Read September as the settled result.",
-  "excluded": "Excluded from every campaign number on this page: exporter 85276 (freelancer, onboarded May 2025, never transacted), who has sent 2,218 campaign signups since 23 Sep, 93 of them in the last seven days, with 31 onboarded and none activated. The first burst on 24 Sep came in at one signup every 56 seconds from distinct phone numbers, the pattern of a link posted into a large group rather than personal referrals. Flagged referrers like 85276 are left out of campaign metrics but their onboardings still count toward the monthly target. Exporter 272788 sent 1,067 signups between 18 and 24 Oct, 18 onboarded and none activated, and is removed from every number on the page, the monthly target included.",
+  "excluded": "Excluded from every campaign number on this page: exporter 85276 (freelancer, onboarded May 2025, never transacted), who has sent 2,218 campaign signups since 23 Sep, 93 of them in the last seven days, with 31 onboarded and none activated. The first burst on 24 Sep came in at one signup every 56 seconds from distinct phone numbers, the pattern of a link posted into a large group rather than personal referrals. Flagged referrers like 85276 are left out of campaign metrics but their onboardings still count toward the monthly target. Exporter 272788 sent 1,067 signups between 18 and 24 Oct, 18 onboarded and none activated, and is flagged the same way: out of the campaign numbers, but its 18 October onboardings count toward the monthly target.",
   "overview": [
    "October to date, 26 full days in: 787 referral signups from 489 referrers, 296 of them referring for the first time, with 522 onboardings and 349 activations. September closed at 950 signups, 610 onboardings and 355 activations, so October is on course to match it on onboardings and activations even though signups are running below September's campaign-launch level.",
    "Share rate, the share of transactors who referred in the month, is 2.41% so far in October against 3.21% in September and about 3% through the summer. It will rise as the month closes, since late referrers still count, but it is tracking below the summer level. Referral share of all onboardings is at a four-month high of 17.9%, up from 15.8% in September and 11 to 13% over the summer, because total onboardings fell to 2,909 so far while referral onboardings held up.",
@@ -12532,16 +12544,16 @@
   {
    "ym": "2026-10",
    "month": "Oct 26",
-   "signups": 787,
-   "referrers": 489,
-   "firstTimers": 296,
-   "refOnboardings": 522,
+   "signups": 788,
+   "referrers": 490,
+   "firstTimers": 297,
+   "refOnboardings": 542,
    "refActivations": 349,
-   "allOnboardings": 2909,
-   "transactors": 11101,
-   "sharers": 267,
+   "allOnboardings": 2917,
+   "transactors": 11102,
+   "sharers": 268,
    "shareRate": 2.41,
-   "refShare": 17.9,
+   "refShare": 18.6,
    "partial": true
   }
  ],
@@ -12807,8 +12819,8 @@
     "signups": 33,
     "onboarded": 19,
     "achieved": 1,
-    "transactors": 1388,
-    "shareRate": 2.38
+    "transactors": 1391,
+    "shareRate": 2.37
    }
   ],
   "claims": [
@@ -13052,14 +13064,14 @@
    "endLabel": "live",
    "live": true,
    "days": 58,
-   "signups": 1658,
-   "referrers": 936,
-   "onboarded": 996,
+   "signups": 1659,
+   "referrers": 937,
+   "onboarded": 998,
    "achieved": 383,
    "claimed": 153,
-   "perDay": 28.59,
-   "obRate": 60.1,
-   "actRate": 38.5,
+   "perDay": 28.6,
+   "obRate": 60.2,
+   "actRate": 38.4,
    "claimRate": 39.9
   },
   {

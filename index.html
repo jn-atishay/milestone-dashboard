@@ -525,7 +525,7 @@ function Overview({ T, go }) {
       <section className="first">
         <div className="stats">
           <Stat T={T} label={`${PACE.monthName} referral onboardings`} value={fmt(monthToNow)} hero
-            sub={PACE.target ? `target ${PACE.target}${projMid ? `, projecting about ${projMid}` : ""}` : projMid ? `projecting about ${projMid}` : "no target set"}
+            sub={`${PACE.target ? `target ${PACE.target}${projMid ? `, projecting about ${projMid}` : ""}` : projMid ? `projecting about ${projMid}` : "no target set"}${obDelta !== null ? `. Arrow: first ${SNAPSHOT.fullDays} full days, ${fmt(PACE.sepToDate)} vs ${fmt(sameDaysLastMonth.firstN)} in ${LBL.prev}` : ""}`}
             delta={obDelta} deltaGood spark={spark("refOnboardings")} />
           <Stat T={T} label="Referral signups this month" value={fmt(last.signups)} sub={`${fmt(last.referrers)} referrers, ${fmt(last.firstTimers)} first-timers`} spark={spark("signups")} />
           <Stat T={T} label="Referral activations this month" value={fmt(last.refActivations)} sub={`${prev.month || "last month"}: ${fmt(prev.refActivations)}`} spark={spark("refActivations")} />

@@ -1,7 +1,7 @@
 {
  "SNAPSHOT": {
-  "asOf": "30 Oct 2026, 16:00 IST",
-  "asOfIso": "2026-10-30T16:00+05:30",
+  "asOf": "30 Oct 2026, 17:09 IST",
+  "asOfIso": "2026-10-30T17:09+05:30",
   "campaignStart": "2026-09-01",
   "campaignEnd": "2026-10-31",
   "campaignDay": 60,
@@ -64,7 +64,7 @@
    33
   ],
   "sepToDate": 615,
-  "todaySoFar": 19,
+  "todaySoFar": 27,
   "monthName": "October",
   "monthShort": "Oct",
   "daysInMonth": 31
@@ -603,7 +603,7 @@
   }
  ],
  "POPUP": {
-  "widgetUniqueUsers": 24715,
+  "widgetUniqueUsers": 24714,
   "claimCta": 158,
   "claimConfirm": 141,
   "keepReferring": 3,
@@ -771,9 +771,9 @@
   {
    "week": "26 Oct",
    "period": "campaign",
-   "signups": 226,
-   "referrers": 147,
-   "perRef": 1.54
+   "signups": 235,
+   "referrers": 151,
+   "perRef": 1.56
   }
  ],
  "COHORTS": [
@@ -847,29 +847,29 @@
    "id": "2",
    "label": "New activations this month (M0)",
    "indent": 0,
-   "base": 1301,
+   "base": 1314,
    "refNow": 61,
-   "rateNow": 4.69,
+   "rateNow": 4.64,
    "refPrev": 83,
-   "ratePrev": 3.79,
-   "delta": 23.7
+   "ratePrev": 3.78,
+   "delta": 22.8
   },
   {
    "id": "3",
    "label": "Not activated, onboarded this month",
    "indent": 0,
-   "base": 2520,
+   "base": 2513,
    "refNow": 33,
    "rateNow": 1.31,
    "refPrev": 29,
-   "ratePrev": 1.2,
-   "delta": 9.2
+   "ratePrev": 1.21,
+   "delta": 8.3
   },
   {
    "id": "4",
    "label": "Not activated, old onboarder",
    "indent": 0,
-   "base": 35074,
+   "base": 35067,
    "refNow": 54,
    "rateNow": 0.15,
    "refPrev": 51,
@@ -951,16 +951,16 @@
    "ob1d": 43.9,
    "ob7d": 54.4,
    "obSoFar": 55.6,
-   "actOfOb": 12.0,
+   "actOfOb": 13.0,
    "medianDays": 6.3
   },
   {
    "week": "26 Oct",
-   "signups": 185,
-   "ob1d": 45.9,
-   "ob7d": 50.8,
-   "obSoFar": 50.8,
-   "actOfOb": 7.4,
+   "signups": 194,
+   "ob1d": 46.4,
+   "ob7d": 52.1,
+   "obSoFar": 52.1,
+   "actOfOb": 6.9,
    "medianDays": 0.9
   }
  ],
@@ -1603,6 +1603,18 @@
    "R1"
   ],
   [
+   185894,
+   "Mathews Xavier",
+   "SP",
+   "2026-04-14",
+   "2026-04-30",
+   2,
+   2,
+   2,
+   "",
+   "R1"
+  ],
+  [
    255696,
    "Mohit Jain",
    "F",
@@ -1620,7 +1632,7 @@
    "F",
    "2024-03-16",
    null,
-   56,
+   57,
    15,
    1,
    "",
@@ -1925,6 +1937,18 @@
    1,
    "P",
    "RN"
+  ],
+  [
+   274000,
+   "Sumer Bains",
+   "C",
+   "2026-10-15",
+   "2026-10-23",
+   2,
+   2,
+   1,
+   "",
+   "FT"
   ],
   [
    274306,
@@ -3523,6 +3547,18 @@
    "RN"
   ],
   [
+   169981,
+   "Mohammed Mukarram Khan Shajahan",
+   "F",
+   "2026-02-06",
+   "2026-02-13",
+   1,
+   1,
+   1,
+   "",
+   "R1"
+  ],
+  [
    170265,
    "Sidharth Giri",
    "F",
@@ -4168,6 +4204,18 @@
    1,
    1,
    "P",
+   "FT"
+  ],
+  [
+   223435,
+   "Mahesh Madev Naik",
+   "F",
+   "2026-06-29",
+   "2026-08-31",
+   1,
+   1,
+   1,
+   "",
    "FT"
   ],
   [
@@ -4927,6 +4975,18 @@
    "FT"
   ],
   [
+   133972,
+   "Jayesh Jankiram Chaudhari",
+   "F",
+   "2025-10-22",
+   null,
+   16,
+   11,
+   0,
+   "",
+   "R1"
+  ],
+  [
    202727,
    "Rahul Vats",
    "SP",
@@ -4937,18 +4997,6 @@
    0,
    "",
    "RN"
-  ],
-  [
-   133972,
-   "Jayesh Jankiram Chaudhari",
-   "F",
-   "2025-10-22",
-   null,
-   16,
-   10,
-   0,
-   "",
-   "R1"
   ],
   [
    168469,
@@ -4968,8 +5016,8 @@
    "SP",
    "2026-10-01",
    null,
+   9,
    8,
-   7,
    0,
    "",
    "FT"
@@ -5071,6 +5119,18 @@
    "FT"
   ],
   [
+   271508,
+   "Chandni Yadav",
+   "F",
+   "2026-10-09",
+   null,
+   4,
+   4,
+   0,
+   "",
+   "FT"
+  ],
+  [
    239337,
    "Raj Kumar Pagariya",
    "SP",
@@ -5124,18 +5184,6 @@
    "SP",
    "2026-08-11",
    "2026-09-02",
-   3,
-   3,
-   0,
-   "",
-   "FT"
-  ],
-  [
-   271508,
-   "Chandni Yadav",
-   "F",
-   "2026-10-09",
-   null,
    3,
    3,
    0,
@@ -5311,18 +5359,6 @@
    "R1"
   ],
   [
-   185894,
-   "Mathews Xavier",
-   "SP",
-   "2026-04-14",
-   "2026-04-30",
-   2,
-   2,
-   0,
-   "",
-   "R1"
-  ],
-  [
    190744,
    "Vaibhav Kalra",
    "SP",
@@ -5395,18 +5431,6 @@
    "FT"
   ],
   [
-   274000,
-   "Sumer Bains",
-   "C",
-   "2026-10-15",
-   "2026-10-23",
-   2,
-   2,
-   0,
-   "",
-   "FT"
-  ],
-  [
    274237,
    "Ajinkya Sanjeev Chavan",
    "C",
@@ -5424,7 +5448,7 @@
    "SP",
    "2026-09-21",
    null,
-   18,
+   19,
    1,
    0,
    "",
@@ -6823,6 +6847,18 @@
    "R1"
   ],
   [
+   96044,
+   "Karthik",
+   "SP",
+   "2025-06-09",
+   "2025-07-09",
+   1,
+   1,
+   0,
+   "",
+   "FT"
+  ],
+  [
    96998,
    "Somenath Paul",
    "C",
@@ -7399,6 +7435,18 @@
    "FT"
   ],
   [
+   158792,
+   "Prathamesh Tanaji Deshmukh",
+   "F",
+   null,
+   null,
+   1,
+   1,
+   0,
+   "",
+   "FT"
+  ],
+  [
    161063,
    "Pranav Mishra",
    "F",
@@ -7493,18 +7541,6 @@
    0,
    "",
    "FT"
-  ],
-  [
-   169981,
-   "Mohammed Mukarram Khan Shajahan",
-   "F",
-   "2026-02-06",
-   "2026-02-13",
-   1,
-   1,
-   0,
-   "",
-   "R1"
   ],
   [
    170166,
@@ -8395,18 +8431,6 @@
    "FT"
   ],
   [
-   223435,
-   "Mahesh Madev Naik",
-   "F",
-   "2026-06-29",
-   "2026-08-31",
-   1,
-   1,
-   0,
-   "",
-   "FT"
-  ],
-  [
    223527,
    "Aman Maqsood",
    "F",
@@ -9103,6 +9127,18 @@
    "FT"
   ],
   [
+   262694,
+   "Chamarti Ramachandra Bhardwaj",
+   "F",
+   "2026-09-22",
+   "2026-09-30",
+   1,
+   1,
+   0,
+   "",
+   "FT"
+  ],
+  [
    262754,
    "Moveen Alam",
    "F",
@@ -9143,6 +9179,18 @@
    "Susanta Saren",
    "F",
    "2026-09-24",
+   null,
+   1,
+   1,
+   0,
+   "",
+   "FT"
+  ],
+  [
+   264924,
+   "Gufran Babu Mustaq Ansari",
+   "F",
+   null,
    null,
    1,
    1,
@@ -9463,6 +9511,18 @@
    "FT"
   ],
   [
+   274409,
+   "Lavneet Sharma",
+   "F",
+   "2026-10-16",
+   "2026-10-28",
+   1,
+   1,
+   0,
+   "",
+   "FT"
+  ],
+  [
    274613,
    "Patel Heminkumar Dhirenkumar",
    "F",
@@ -9653,6 +9713,18 @@
    0,
    "",
    "RN"
+  ],
+  [
+   231126,
+   "Akhil Gupta",
+   "SP",
+   "2026-07-17",
+   null,
+   3,
+   0,
+   0,
+   "",
+   "FT"
   ],
   [
    246338,
@@ -12007,18 +12079,6 @@
    "FT"
   ],
   [
-   231126,
-   "Akhil Gupta",
-   "SP",
-   "2026-07-17",
-   null,
-   1,
-   0,
-   0,
-   "",
-   "FT"
-  ],
-  [
    231287,
    "Mohammed Salah",
    "SP",
@@ -12595,18 +12655,6 @@
    "FT"
   ],
   [
-   262694,
-   "Chamarti Ramachandra Bhardwaj",
-   "F",
-   "2026-09-22",
-   "2026-09-30",
-   1,
-   0,
-   0,
-   "",
-   "FT"
-  ],
-  [
    264120,
    "Priyansh Chetan Kothari",
    "LLP",
@@ -12623,18 +12671,6 @@
    "Ankit Saini",
    "F",
    "2026-09-24",
-   null,
-   1,
-   0,
-   0,
-   "",
-   "FT"
-  ],
-  [
-   264924,
-   "Gufran Babu Mustaq Ansari",
-   "F",
-   null,
    null,
    1,
    0,
@@ -12873,24 +12909,24 @@
  ],
  "qualityRefreshedOn": "2026-10-30",
  "notes": {
-  "pace": "October onboardings stand at 615 through 29 full days, with 19 more already in today, against a target of 662. With two days left including today we need 47 more, about 23.5 a day, and the last seven days have run 25.7 a day, so the target is within reach if pace holds. The straight line finish lands at 657, just under, while the smoothed projection midpoint is 673, a little above, with a range of 658 to 689. The 777 stretch is out of reach. For reference, the last three months filled 89 to 94 percent of their full total by this day.",
-  "daily": "Campaign signups by week have held in a tight band: 228 in the week of 19 Oct and 226 in the week of 26 Oct, both from 147 referrers, about 1.55 then 1.54 each. The last full day, Thursday 29 Oct, was strong on both sides of the funnel with 56 signups from 33 referrers, 29 onboarded, 12 activated and 11 gift claims, close to the single-day high of 59 set on 22 Sep. No single referrer sent more than 25 signups in the last 24 hours, so nothing needs a closer look this run.",
-  "ladder": "981 people have sent at least one campaign signup. 319 have unlocked a reward by crossing the first rung and 177 have claimed something, while 483 are still in the pipeline below their first activation. Of those climbing, 14 sit at exactly 2 activations, one away from AirPods at 3, and 6 sit at exactly 4, one away from the Ray-Ban glasses at 5; one more, exporter 133487, sits at 7, one short of the iPhone at 8, and 29 have reached 3 or more. Two referrers, exporter 18133 and exporter 224027, have reached 8 activations and both claimed the iPhone 17, and exporter 103270 claimed the Ray-Ban at five.",
-  "cohorts": "Referral rates are measured against last month, September, and softened across the board. The strongest established group is still exporters who referred before, at 4.09 percent this month, nearly four times the 1.08 percent of those who never referred. Never-referrers, cohort 1a and the largest group at 16,876 people, keep drifting down, off 12.9 percent from September, and they remain the main drag. Carrying the program are this month's new activations at 4.69 percent, up 23.7 percent, and the long dormant group at 0.44 percent, up off a tiny base. Exporters who transacted this month refer at 2.59 percent but are down 14.0 percent.",
-  "mix": "By referrer type this month: 634 first-time referrers sent 1,109 signups, 1.75 each, onboarding 58 percent with 244 activations. 99 returning-but-new senders averaged 1.65 each at 66 percent onboarding. 190 one-time-past referrers sent 1.83 each at 67 percent with 96 activations. The 58 frequent referrers are the most intense at 2.81 signups each, onboarding 59 percent with 47 activations.",
-  "weeklyQuality": "Onboarding speed holds up: the 26 Oct cohort is already at about 46 percent within a day and 51 percent within seven days, in line with the autumn, and the median days to onboard has shortened to under a day for the newest week. Activation-of-onboarded looks low for the last two weeks, 12.0 percent for 19 Oct and 7.4 percent for 26 Oct, but that is only because those signups are too fresh to have activated yet; older weeks settle far higher.",
+  "pace": "October onboardings stand at 615 through 29 full days, with 27 more already in today, against a target of 662. With two days left including today we need 47 more, about 23.5 a day, and the last seven days have run 25.7 a day, so the target is within reach if pace holds. The straight line finish lands at 657, just under, while the smoothed projection midpoint is 673, a little above, with a range of 658 to 689. The 777 stretch is out of reach. For reference, the last three months filled 89 to 94 percent of their full total by this day.",
+  "daily": "Campaign signups by week have held in a tight band: 228 in the week of 19 Oct and 235 in the week of 26 Oct, about 1.55 then 1.56 signups each referrer. The last full day, Thursday 29 Oct, was strong on both sides of the funnel with 56 signups from 33 referrers, 29 onboarded, 12 activated and 11 gift claims, close to the single-day high of 59 set on 22 Sep. No single referrer sent more than 25 signups in the last 24 hours, so nothing needs a closer look this run.",
+  "ladder": "984 people have sent at least one campaign signup. 323 have unlocked a reward by crossing the first rung and 177 have claimed something, while 485 are still in the pipeline below their first activation. Of those climbing, 15 sit at exactly 2 activations, one away from AirPods at 3, and 6 sit at exactly 4, one away from the Ray-Ban glasses at 5; one more, exporter 133487, sits at 7, one short of the iPhone at 8, and 29 have reached 3 or more. Two referrers, exporter 18133 and exporter 224027, have reached 8 activations and both claimed the iPhone 17, and exporter 103270 claimed the Ray-Ban at five.",
+  "cohorts": "Referral rates are measured against last month, September, and softened across most groups. The strongest established group is still exporters who referred before, at 4.09 percent this month, nearly four times the 1.08 percent of those who never referred. Never-referrers, cohort 1a and the largest group at 16,876 people, keep drifting down, off 12.9 percent from September, and they remain the main drag on the top of the funnel. Carrying the program are this month's new activations at 4.64 percent, up 22.8 percent, and the long dormant group at 0.44 percent, up off a tiny base. Exporters who transacted this month refer at 2.59 percent but are down 14.0 percent.",
+  "mix": "By referrer type this month: 637 first-time referrers sent 1,118 signups, 1.76 each, onboarding 58 percent with 246 activations. 99 returning-but-new senders averaged 1.65 each at 66 percent onboarding. 190 one-time-past referrers sent 1.83 each at 67 percent with 99 activations. The 58 frequent referrers are the most intense at 2.81 signups each, onboarding 59 percent with 47 activations.",
+  "weeklyQuality": "Onboarding speed holds up: the 26 Oct cohort is already at about 46 percent within a day and 52 percent within seven days, in line with the autumn, and the median days to onboard has shortened to under a day for the newest week. Activation-of-onboarded looks low for the last two weeks, 13.0 percent for 19 Oct and 6.9 percent for 26 Oct, but that is only because those signups are too fresh to have activated yet; older weeks settle far higher.",
   "claims": "Rewards claimed to date: 165 Polaroid cameras at the one-activation rung, 9 AirPods at three, 1 Meta Ray-Ban at five (first claimed 27 Oct), and 2 iPhone 17s at eight. Every claim came in at exactly its threshold, and the ladder is being worked up steadily from the bottom.",
   "popupHeader": "Referral popup, 1 Sep to 29 Oct",
   "popup": [
-   "24,715 unique users opened the referral widget over the window. 158 clicked to claim a reward and 141 confirmed a claim, an 89 percent follow-through.",
+   "24,714 unique users opened the referral widget over the window. 158 clicked to claim a reward and 141 confirmed a claim, an 89 percent follow-through.",
    "Only 3 users went straight back to referring after claiming, so the claim step is close to the end of the journey for most."
   ],
   "referrers": [
-   "981 referrers have sent 1,783 signups, producing 1,075 onboardings and 419 activations.",
-   "769 sent a single signup and onboarded at 69 percent. The 212 who sent more carried the volume, 1,014 signups, but onboarded at a lower 54 percent with 191 activations.",
-   "The highest-volume referrer, 260681, sent 61 signups but onboarded only 15 and activated 4. Next, 5561 sent 56 with 15 onboarded and 1 activated, and 38154 sent 46 with 11 onboarded and 2 activated.",
+   "984 referrers have sent 1,792 signups, producing 1,083 onboardings and 424 activations.",
+   "771 sent a single signup and onboarded at 69 percent. The 213 who sent more carried the volume, 1,021 signups, but onboarded at a lower 54 percent with 194 activations.",
+   "The highest-volume referrer, 260681, sent 61 signups but onboarded only 15 and activated 4. Next, 5561 sent 57 with 15 onboarded and 1 activated, and 38154 sent 46 with 11 onboarded and 2 activated.",
    "By contrast 247807 sent 27 and onboarded 13, a much cleaner list.",
-   "279 referrers have no onboardings at all from 356 signups. A further 171 have onboarded referees but never activated themselves, from 406 signups with 176 onboarded.",
+   "277 referrers have no onboardings at all from 356 signups. A further 172 have onboarded referees but never activated themselves, from 413 signups with 181 onboarded.",
    "The pattern holds: a few high-volume senders bring low-quality lists, while single-signup referrers convert best."
   ],
   "refereeQuality": [
@@ -12904,18 +12940,18 @@
   "qualityWindow": "Figures use a 95 rupee to the dollar conversion; September referrals are mature, October still filling in.",
   "excluded": "Excluded from every campaign number on this page: exporter 85276 (freelancer, onboarded May 2025, never transacted), who has sent 2,218 campaign signups since 23 Sep, 93 of them in the last seven days, with 31 onboarded and none activated. The first burst on 24 Sep came in at one signup every 56 seconds from distinct phone numbers, the pattern of a link posted into a large group rather than personal referrals. Flagged referrers like 85276 are left out of campaign metrics but their onboardings still count toward the monthly target. Exporter 272788 sent 1,067 signups between 18 and 24 Oct, 18 onboarded and none activated, and is flagged the same way: out of the campaign numbers, but its 18 October onboardings count toward the monthly target.",
   "overview": [
-   "October is still partial. Campaign signups sit at 934 so far, just below September's full 950 but well above July's 562 and August's 628. Referral onboardings at 634 have already passed September's full 611, and referral activations at 396 are the highest of the last four months.",
-   "The referral share of all onboardings keeps climbing, now 19.1 percent, up from 15.8 percent in September and 11.3 percent in July; lower total onboardings this partial month, 3,318, lift that share as well.",
-   "The one thing to watch is share rate, the percent of transactors who refer, at 2.71 percent this month against 3.21 in September. Some of that is the partial month, but the declining never-referrer rate is the real signal worth attention."
+   "October is still partial. Campaign signups sit at 943 so far, just below September's full 950 but well above July's 562 and August's 628. Referral onboardings at 643 have already passed September's full 611, and referral activations at 403 are the highest of the last four months.",
+   "The referral share of all onboardings keeps climbing, now 19.3 percent, up from 15.8 percent in September and 11.3 percent in July; lower total onboardings this partial month, 3,336, lift that share as well.",
+   "The one thing to watch is share rate, the percent of transactors who refer, at 2.7 percent this month against 3.21 in September. Some of that is the partial month, but the declining never-referrer rate is the real signal worth attention."
   ],
   "gold": [
-   "The gold coin campaign is 15 days in. Of about 10,062 never-before-referrers pinned on 16 Oct, 82 have sent a signup and 80 of those are referring for the first time ever, with 91 signups and 56 onboardings. These are small numbers off a very large pinned group.",
+   "The gold coin campaign is 15 days in. Of about 10,050 never-before-referrers pinned on 16 Oct, 82 have sent a signup and 80 of those are referring for the first time ever, with 91 signups and 57 onboardings. These are small numbers off a very large pinned group.",
    "The group's weekly share rate lifted from a pre-pin average of 0.43 percent to 1.44 percent in the first week and 1.96 percent in the second full week, roughly 12.7 referrers a week before the pin against 31 then 47 after.",
    "10 have reached the activation needed for the coin and 9 have claimed, all automatically, the latest on 30 Oct. First referrals came in gradually rather than immediately, clustering across days 4 to 10 after the pin. It is early and the volumes are tiny, but the direction is up."
   ],
   "campaigns": [
-   "The live gold coin campaign is running 6.1 signups a day, in the same range as the 2025 Diwali coin at 5.9 and the coffee machine at 5.0, but far below the big draws like the Tommy bag at 17.2 and the power bank at 11.6 a day. Its onboarding rate is 62 percent against the 70 to 75 percent typical of past gift campaigns, and only 17.9 percent have activated so far because it is new. Claims are keeping pace at 90.0 percent of those who qualified.",
-   "The live milestone ladder remains the volume engine at 29.2 signups a day over 61 days, far above any past campaign, but with a lower 60.3 percent onboarding and 39.0 percent activation, and 42.2 percent of qualifiers claimed. Past finished gift campaigns like the Tommy bag, power bank and coffee machine all closed around 70 percent onboarding, 70 percent activation and over 93 percent claimed, the quality bar the live campaigns are still working toward."
+   "The live gold coin campaign is running 6.1 signups a day, in the same range as the 2025 Diwali coin at 5.9 and the coffee machine at 5.0, but far below the big draws like the Tommy bag at 17.2 and the power bank at 11.6 a day. Its onboarding rate is 63 percent against the 70 to 75 percent typical of past gift campaigns, and only 17.5 percent have activated so far because it is new. Claims are keeping pace at 90.0 percent of those who qualified.",
+   "The live milestone ladder remains the volume engine at 29.4 signups a day over 61 days, far above any past campaign, but with a lower 60.4 percent onboarding and 39.2 percent activation, and 41.7 percent of qualifiers claimed. Past finished gift campaigns like the Tommy bag, power bank and coffee machine all closed around 70 percent onboarding, 70 percent activation and over 93 percent claimed, the quality bar the live campaigns are still working toward."
   ]
  },
  "TRENDS": [
@@ -13102,16 +13138,16 @@
   {
    "ym": "2026-10",
    "month": "Oct 26",
-   "signups": 934,
-   "referrers": 554,
-   "firstTimers": 343,
-   "refOnboardings": 634,
-   "refActivations": 396,
-   "allOnboardings": 3318,
-   "transactors": 12197,
-   "sharers": 331,
-   "shareRate": 2.71,
-   "refShare": 19.1,
+   "signups": 943,
+   "referrers": 558,
+   "firstTimers": 346,
+   "refOnboardings": 643,
+   "refActivations": 403,
+   "allOnboardings": 3336,
+   "transactors": 12313,
+   "sharers": 333,
+   "shareRate": 2.7,
+   "refShare": 19.3,
    "partial": true
   }
  ],
@@ -13132,7 +13168,7 @@
   "funnel": {
    "signups": 91,
    "referrers": 82,
-   "onboarded": 56,
+   "onboarded": 57,
    "achieved": 10,
    "claimed": 9,
    "firstEverReferrers": 80
@@ -13197,7 +13233,7 @@
     "date": "2026-10-22",
     "signups": 12,
     "referrers": 11,
-    "onboarded": 8,
+    "onboarded": 9,
     "achieved": 4,
     "partial": false
    },
@@ -13390,7 +13426,7 @@
     "partial": false,
     "referrers": 31,
     "signups": 36,
-    "onboarded": 23,
+    "onboarded": 24,
     "achieved": 8,
     "transactors": 2160,
     "shareRate": 1.44
@@ -13402,7 +13438,7 @@
     "partial": false,
     "referrers": 47,
     "signups": 50,
-    "onboarded": 31,
+    "onboarded": 32,
     "achieved": 2,
     "transactors": 2398,
     "shareRate": 1.96
@@ -13416,8 +13452,8 @@
     "signups": 6,
     "onboarded": 2,
     "achieved": 0,
-    "transactors": 243,
-    "shareRate": 2.47
+    "transactors": 394,
+    "shareRate": 1.52
    }
   ],
   "claims": [
@@ -13553,7 +13589,7 @@
    "signups": 3799,
    "referrers": 2547,
    "onboarded": 2730,
-   "achieved": 2011,
+   "achieved": 2012,
    "claimed": 0,
    "perDay": 7.17,
    "obRate": 71.9,
@@ -13595,11 +13631,11 @@
    "signups": 399,
    "referrers": 349,
    "onboarded": 299,
-   "achieved": 215,
-   "claimed": 196,
+   "achieved": 216,
+   "claimed": 197,
    "perDay": 1.96,
    "obRate": 74.9,
-   "actRate": 71.9,
+   "actRate": 72.2,
    "claimRate": 91.2
   },
   {
@@ -13697,15 +13733,15 @@
    "endLabel": "live",
    "live": true,
    "days": 61,
-   "signups": 1783,
-   "referrers": 981,
-   "onboarded": 1075,
-   "achieved": 419,
+   "signups": 1792,
+   "referrers": 984,
+   "onboarded": 1083,
+   "achieved": 424,
    "claimed": 177,
-   "perDay": 29.23,
-   "obRate": 60.3,
-   "actRate": 39.0,
-   "claimRate": 42.2
+   "perDay": 29.38,
+   "obRate": 60.4,
+   "actRate": 39.2,
+   "claimRate": 41.7
   },
   {
    "id": 29,
@@ -13720,12 +13756,12 @@
    "days": 15,
    "signups": 91,
    "referrers": 82,
-   "onboarded": 56,
+   "onboarded": 57,
    "achieved": 10,
    "claimed": 9,
    "perDay": 6.07,
-   "obRate": 61.5,
-   "actRate": 17.9,
+   "obRate": 62.6,
+   "actRate": 17.5,
    "claimRate": 90.0
   }
  ]
